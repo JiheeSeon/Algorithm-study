@@ -5,8 +5,6 @@ import java.io.InputStreamReader;
 
 class Main{
     public static void main(String[] args) throws IOException{
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
         BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(System.out)); //선언
         bufferedWriter.write("Hello World!");
         // write한다고 해서 바로바로 출력되지 않습니다.

@@ -9,7 +9,7 @@ class Main{
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append("first\n"); 
         stringBuffer.append("second\n");
-        bufferedWriter.write(stringBuffer.toString()); //STringBuilder의 반환 객체를 String 형태로 변환
+        bufferedWriter.write(stringBuffer.toString()); //StringBuilder의 반환 객체를 String 형태로 변환
 
         bufferedWriter.flush();
         bufferedWriter.close();
