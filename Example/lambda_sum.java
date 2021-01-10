@@ -1,10 +1,20 @@
 import java.util.Arrays;
-import java.util.Optional;
-import java.lang.StringBuilder;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+import java.io.IOException;
+import java.util.List;
 
 class Main4{
-    public static void main(String[] args){
+    public static void main(String[] args) throws IOException{
         // 배열의 합 구하기
-        StringBuilder stb = new StringBuilder("");
-        Arrays.stream(stb).map(e -> Integer.parseInt(e)).reduce((accu, curr) -> accu+curr);
+        List<String> input = Arrays.asList(new BufferedReader(new InputStreamReader(System.in)).readLine().split(","));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        bw.write(String.valueOf(input.stream().map(Integer::parseInt).reduce((accu, curr) -> accu+curr)));
+        
+        input.stream().map(Integer::parseInt).reduce((accu, curr) -> accu+curr);
+        // int sum = input.stream().mapToInt(Integer::parseInt).sum();
     }
+}
