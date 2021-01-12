@@ -1,3 +1,3 @@
-fun main(){
-    print("Hello World!")
+fun main2557(){
+   print("Hello World!")
 }
