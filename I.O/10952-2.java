@@ -1,6 +1,5 @@
 import java.io.*;
 import java.util.regex.Pattern;
-import java.util.stream.*;
 
 class Main10952_2{
     public static void main(String[] args) throws IOException {
@@ -11,7 +10,7 @@ class Main10952_2{
             s = br.readLine();
             if(s.equals("0 0"))
                 break;
-            System.out.println(Pattern.compile(" ").splitAsStream(s).map(Integer::parseInt).collect(Collectors.toList()).stream().mapToInt(a->a).sum());
+            System.out.println(Pattern.compile(" ").splitAsStream(s).mapToInt(Integer::parseInt).sum());
         }
     }
 }
