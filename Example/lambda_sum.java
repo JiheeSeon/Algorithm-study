@@ -7,7 +7,7 @@ import java.io.OutputStreamWriter;
 import java.io.IOException;
 import java.util.List;
 
-class Main4{
+class MainLambdaSum{
     public static void main(String[] args) throws IOException{
         // 배열의 합 구하기
         List<String> input = Arrays.asList(new BufferedReader(new InputStreamReader(System.in)).readLine().split(","));

@@ -2,7 +2,7 @@ import java.io.IOException;
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 
-class Main{
+class MainBFW{
     public static void main(String[] args) throws IOException{
         BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(System.out)); //선언
         bufferedWriter.write("Hello World!");

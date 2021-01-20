@@ -3,7 +3,7 @@ import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.lang.StringBuffer;
 
-class Main3{
+class Main3STB{
     public static void main(String[] args) throws IOException{
         BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(System.out));
         StringBuffer stringBuffer = new StringBuffer();

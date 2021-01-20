@@ -20,7 +20,7 @@ import java.lang.StringBuilder;
     ha
 */
 
-class Main2{
+class MainIOAdv{
     public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringBuilder stb = new StringBuilder();

@@ -8,7 +8,7 @@ import java.lang.StringBuilder;
 
 /*BufferedReader, BufferedWriter, StringTokenizer, StringBuilder 사용*/
 
-class Main{
+class Main10951{
     public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
