@@ -4,7 +4,7 @@ import java.io.InputStreamReader;
 import java.util.regex.Pattern;
 
 
-class Main {
+class Main10953 {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int i = 0;
