@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-class Main {
+class Main2742 {
     public static void main(String[] args) throws IOException {
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         int T = Integer.parseInt(new BufferedReader(new InputStreamReader(System.in)).readLine());
