@@ -25,7 +25,7 @@ class Main9012 {
     }
 
     static int stackHandler(String line) {
-        Stack<Character> stack = new Stack<Character>();
+        Stack<Character> stack = new Stack<>();
         int idx = 0;
         char token;
         while (idx < line.length()) {
