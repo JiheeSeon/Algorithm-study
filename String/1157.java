@@ -14,7 +14,6 @@ class Main1157 {
         int valueOfSingleLetter;
         int letterOfMax = -1;
         int numberOfMax = -1;
-        boolean duplicateFlag = false;
         int[] numberEachLetterAppeared = new int[valueOf_Z - valueOf_A + 1];
 
         InputStreamReader isr = new InputStreamReader(System.in);
