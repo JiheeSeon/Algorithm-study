@@ -2,7 +2,7 @@ import java.io.*;
 
 class Main5622 {
     public static void main(String[] args) throws IOException {
-        int intValueOfA = 'A';
+        int intValueOfA = 'A'; //65
         int intValueOfNewline = 10;
         int intValueOfCurrentLetter;
         int indexOfCurrentLetter;
