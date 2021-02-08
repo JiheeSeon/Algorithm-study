@@ -3,6 +3,7 @@ import java.io.*;
 class Main2156{
     static long[][] memo;
     static long[] amount;
+
     public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
