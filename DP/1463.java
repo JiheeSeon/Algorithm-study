@@ -12,8 +12,9 @@ class Main1463 {
         /*initialize DP array*/
         dp[2] = dp[3] = 1;
 
-        for (int i = 4; i <= N; i++)
+        for (int i = 4; i <= N; i++) {
             solveWithDPBottomUp(i);
+        }
 
         bw.write(Integer.toString(dp[N]));
         bw.flush();
