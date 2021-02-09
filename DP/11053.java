@@ -2,8 +2,6 @@ import java.io.*;
 import java.util.regex.Pattern;
 
 class Main11053 {
-    static final int MEMO = 0;
-    static final int MAX = 1;
     static long[] originalInput;
     static long[] maxLengthOfIncrementalSequenceEndsWithIndex;
 
