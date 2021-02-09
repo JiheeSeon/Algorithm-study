@@ -22,7 +22,7 @@ class Main1912_1 {
         bw.flush();
         bw.close();
     }
-    //account.. hell
+
     static void getSuccessiveSum(int n) {
         if (n == 1) {
             memo[INCLUDE_X][n] = input[n];
