@@ -21,7 +21,6 @@ class Main1699 {
     }
 
     static void getSquareSum(int n) {
-
         switch (n) {
             case 1, 2, 3 -> memo[n] = n;
             default -> {
