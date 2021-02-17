@@ -16,27 +16,30 @@ class Main1260 {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int[] NMV = Pattern.compile(" ").splitAsStream(br.readLine()).mapToInt(Integer::parseInt).toArray();
+        int[] VEF = Pattern.compile(" ").splitAsStream(br.readLine()).mapToInt(Integer::parseInt).toArray();
 
-        numberOfVertex = NMV[0];
-        numberOfEdges = NMV[1];
-        firstVertexToSearch = NMV[2];
+        numberOfVertex = VEF[0];
+        numberOfEdges = VEF[1];
+        firstVertexToSearch = VEF[2];
         check = new boolean[numberOfVertex + 1];
         graph = (ArrayList<Integer>[]) new ArrayList[numberOfVertex + 1];
 
         for (int i = 1; i <= numberOfVertex; i++)
             graph[i] = new ArrayList<Integer>();
 
-
         int[] edgeInput;
+        int u, v;
         for (int i = 1; i <= numberOfEdges; i++) {
             edgeInput = Pattern.compile(" ").splitAsStream(br.readLine()).mapToInt(Integer::parseInt).toArray();
-            graph[edgeInput[0]].add(edgeInput[1]);
-            graph[edgeInput[1]].add(edgeInput[0]);
+            u = edgeInput[0];
+            v = edgeInput[1];
+
+            graph[u].add(v);
+            graph[v].add(u);
         }
 
         for (int i = 1; i <= numberOfVertex; i++)
-            Collections.sort(graph[i]);
+            Collections.sort(graph[i]); // 각 노드마다 연결된 간선(노드) 재배열
 
         dfs(firstVertexToSearch);
         stb.append("\n");
@@ -49,15 +52,15 @@ class Main1260 {
     }
 
     static void dfs(int topVertex) {
-        if(check[topVertex])
-            return;
+        if (check[topVertex])
+            return; // pop
 
         check[topVertex] = true;
         stb.append(topVertex).append(" ");
 
-        for(int i : graph[topVertex])
-            if(!check[i])
-                dfs(i);
+        for (int i : graph[topVertex])
+            if (!check[i])
+                dfs(i); // push
     }
 
     static void bfs(int startVertex) {
@@ -66,11 +69,11 @@ class Main1260 {
         q.add(startVertex);
         check[startVertex] = true;
 
-        while(!q.isEmpty()){
+        while (!q.isEmpty()) {
             int frontVertex = q.remove();
             stb.append(frontVertex).append(" ");
 
-            for(int i : graph[frontVertex]){
+            for (int i : graph[frontVertex]) {
                 if (!check[i]) {
                     check[i] = true;
                     q.add(i);

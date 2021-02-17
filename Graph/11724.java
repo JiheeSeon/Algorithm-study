@@ -22,15 +22,19 @@ class Main11724 {
             graph[i] = new ArrayList<>();
 
         int[] temp;
+        int u, v;
 
         for (i = 1; i <= numberOfEdge; i++) {
             temp = Pattern.compile(" ").splitAsStream(br.readLine()).mapToInt(Integer::parseInt).toArray();
-            graph[temp[0]].add(temp[1]);
-            graph[temp[1]].add(temp[0]);
+            u = temp[0];
+            v = temp[1];
+
+            graph[u].add(v);
+            graph[v].add(u);
         }
 
-        for (i = 1; i <= numberOfVertex; i++){
-            if(!check[i]){
+        for (i = 1; i <= numberOfVertex; i++) { //모든 정점을 start vertex로 놓고
+            if (!check[i]) {
                 dfs(i);
                 result += 1;
             }
