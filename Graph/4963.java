@@ -48,7 +48,6 @@ class Main4963 {
     }
 
     static void dfs(int y, int x, int apt) {
-//        System.out.println(graph[0].length);
         if (y < 0 || x < 0 || y >= graph.length || x >= graph[0].length) return; //삐져나가는 경우
         if (graph[y][x] == 0) return; //단지 인지
         if (check[y][x] != 0) return; //이미 간 데인지
