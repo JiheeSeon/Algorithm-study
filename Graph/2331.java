@@ -15,6 +15,5 @@ class Main2331 {
     }
 
     static void dfs(int n, int a){
-
     }
 }
