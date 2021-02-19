@@ -12,7 +12,7 @@ class MainEdgeList {
     static int numOfVertex, numOfEdge;
     static int[] input;
     static int[][] graph;
-    static int[] check;
+    static int[] visited;
     static int[] count;
 
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -24,7 +24,7 @@ class MainEdgeList {
         numOfVertex = input[0];
         numOfEdge = input[1];
         graph = new int[numOfEdge * 2][3];
-        check = new int[numOfVertex];
+        visited = new int[numOfVertex];
         count = new int[numOfVertex + 1];
 
         for (int i = 0; i < numOfEdge; i++) {
@@ -47,17 +47,16 @@ class MainEdgeList {
     }
 
     static void show1DArray(int[] array1D) throws IOException {
-        stb = new StringBuilder();
         for (int i = 1; i < array1D.length; i++) {
             stb.append(array1D[i]).append(" ");
         }
         bw.write(stb.toString());
         bw.flush();
+
+        stb = new StringBuilder(); //나갈 때 초기화시켜 여기서 사용한걸 더이상 append하지 않도록
     }
 
     static void show2DArray(int[][] array2D) throws IOException {
-        stb = new StringBuilder();
-
         for (int i = 0; i < array2D.length; i++) {
             for (int j = 0; j < array2D[0].length; j++)
                 stb.append(array2D[i][j]).append(" ");
@@ -65,5 +64,7 @@ class MainEdgeList {
         }
         bw.write(stb.toString());
         bw.flush();
+
+        stb = new StringBuilder();
     }
 }
