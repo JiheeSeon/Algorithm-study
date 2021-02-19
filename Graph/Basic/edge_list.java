@@ -67,4 +67,12 @@ class MainEdgeList {
 
         stb = new StringBuilder();
     }
+
+    static void dfs() {
+
+    }
+
+    static void bfs(int startVertex) {
+
+    }
 }

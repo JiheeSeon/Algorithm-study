@@ -32,12 +32,12 @@ class MainAdjacencyMatrix {
         1 1 0 1 0
          */
 
-        numOfVertex = Integer.parseInt(br.readLine());
-        graph = new int[numOfVertex][numOfVertex];
-        visited = new boolean[numOfVertex];
-
-        for (int i = 0; i < numOfVertex; i++)
-            graph[i] = getInputAndSplit();
+//        numOfVertex = Integer.parseInt(br.readLine());
+//        graph = new int[numOfVertex][numOfVertex];
+//        visited = new boolean[numOfVertex];
+//
+//        for (int i = 0; i < numOfVertex; i++)
+//            graph[i] = getInputAndSplit();
 
         /* case 2.
          *
@@ -105,8 +105,8 @@ class MainAdjacencyMatrix {
     static void bfs() {
         Queue<Integer> willVisit = new LinkedList<>();
 
-        isInQueue[startVertex] = true;
         willVisit.add(startVertex);
+        isInQueue[startVertex] = true;
 
         int visiting;
 
@@ -116,8 +116,8 @@ class MainAdjacencyMatrix {
 
             for (int i = 0; i < numOfVertex; i++) {
                 if (graph[visiting][i] == 1 && !isInQueue[i]) { // 연결된 거
-                    isInQueue[i] = true; // 큐에 들어간다 라고 표시
                     willVisit.add(i); // 큐에 넣어
+                    isInQueue[i] = true; // 큐에 들어간다 라고 표시
                 }
             }
         }
