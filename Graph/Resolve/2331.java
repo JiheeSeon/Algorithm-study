@@ -3,37 +3,41 @@ package Resolve;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 class Main2331Resolve {
-    static int numOfVertex, numOfEdge;
     static int startVertex, power;
     static ArrayList<Integer> graph;
-    static int[] visited;
     static int[] temp;
 
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-    static StringBuilder stb = new StringBuilder();
 
     public static void main(String[] args) throws IOException {
         temp = getInputAndSplit();
         startVertex = temp[0];
         power = temp[1];
-        graph = new ArrayList<Integer>();
+        graph = new ArrayList<>();
+        int cycleIndex;
 
-        while (true) { // making graph
+        graph.add(startVertex);
+
+        while (true) {
             int nextVertex = getNextVertex(startVertex);
 
-            if (graph.contains(nextVertex))  break;
-
+            if (graph.contains(nextVertex)){
+                cycleIndex = graph.indexOf(nextVertex);
+                break;
+            }
             graph.add(nextVertex);
+            startVertex = nextVertex;
         }
 
-
+        bw.write(Integer.toString(cycleIndex));
+        bw.flush();
+        bw.close();
     }
 
-    static int getNextVertex(int currentVertex) throws IOException {
+    static int getNextVertex(int currentVertex) {
         return Pattern.compile("").splitAsStream(Integer.toString(currentVertex)).mapToInt(a -> (int) Math.pow(Integer.parseInt(a), power)).sum();
     }
 
