@@ -2,6 +2,8 @@ package Resolve;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.regex.Pattern;
 
 class Main2667Resolve {
@@ -9,6 +11,7 @@ class Main2667Resolve {
     static int aptNum = 0;
 
     static int[][] visited;
+    static int[][] isInQueue;
     static int[][] graph;
     static int[] res;
 
@@ -70,7 +73,31 @@ class Main2667Resolve {
 
         visited[x][y] = apt;
 
+        /* 이후 방문 가능한 노드에 대해 dfs 실행 */
         for (int i = 0; i < 4; i++)
             dfs(x + dx[i], y + dy[i], apt);
     }
+
+    static void bfs(){
+        Queue<Point> willVisit = new LinkedList<>();
+        willVisit.add(new Point(0, 0));
+        isInQueue[0][0] = graph[0][0];
+
+        Point visiting;
+        int nextX, nextY;
+
+        while(!willVisit.isEmpty()){
+            visiting = willVisit.poll();
+        }
+    }
+
+    static private class Point{
+        int x, y;
+
+        public Point(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
 }
