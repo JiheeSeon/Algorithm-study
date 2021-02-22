@@ -11,7 +11,6 @@ class Main2178Resolve {
 
     static int[] input;
     static int yHeight, xWidth;
-    static int dist = 0;
     static int[][] graph;
     static int[][] isInQueue;
 
@@ -64,7 +63,6 @@ class Main2178Resolve {
                        if (temp == 0) temp = isInQueue[nowY][nowX] + 1;
                        willVisit.add(new Point(nextY, nextX));
                        isInQueue[nextY][nextX] = temp;
-
 //                       System.out.println("next added one = (y: " + nextY + ", x: " + nextX + ")");
 //                       System.out.println("dist = " + dist);
                    }
