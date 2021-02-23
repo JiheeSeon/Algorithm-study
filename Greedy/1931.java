@@ -26,7 +26,7 @@ class Main1931 {
         for (i = 0; i < numOfMeeting; i++)
             schedule[i] = Pattern.compile(" ").splitAsStream(br.readLine()).mapToInt(Integer::parseInt).toArray();
 
-        Arrays.sort(schedule, Comparator.comparingInt(a -> a[0]));
+        Arrays.sort(schedule, (o1, o2) -> o1[1] == o2[1] ? Integer.compare(o1[0], o2[0]) : Integer.compare(o1[1], o2[1]));
 
         for (j = 0; j < numOfMeeting; j++)
             setScheduleWithDp(j);
