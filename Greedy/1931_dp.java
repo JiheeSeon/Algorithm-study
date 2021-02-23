@@ -1,9 +1,8 @@
 import java.io.*;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.regex.Pattern;
 
-class Main1931 {
+class Main1931Dp {
     static final int START = 0;
     static final int END = 1;
 
@@ -26,7 +25,7 @@ class Main1931 {
         for (i = 0; i < numOfMeeting; i++)
             schedule[i] = Pattern.compile(" ").splitAsStream(br.readLine()).mapToInt(Integer::parseInt).toArray();
 
-        Arrays.sort(schedule, (o1, o2) -> o1[1] == o2[1] ? Integer.compare(o1[0], o2[0]) : Integer.compare(o1[1], o2[1]));
+        Arrays.sort(schedule, (o1, o2) -> o1[0] == o2[0] ? Integer.compare(o1[1], o2[1]) : Integer.compare(o1[0], o2[0]));
 
         for (j = 0; j < numOfMeeting; j++)
             setScheduleWithDp(j);
@@ -62,6 +61,4 @@ class Main1931 {
         if (memo[idx] == 0) memo[idx] = 1;
         if (memo[idx] > max) max = memo[idx];
     }
-
-
 }
