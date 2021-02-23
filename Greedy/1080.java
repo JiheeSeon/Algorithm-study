@@ -8,6 +8,7 @@ class Main1080{
          BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
         int [] input = processInput(2);
+        int [] temp;
         int yHeight = input[0]; int xWidth = input[1];
 
         int[][] matrixA = new int[yHeight][xWidth];
@@ -15,8 +16,14 @@ class Main1080{
 
         for(int row = 0; row < yHeight; row++)
             matrixA[row] = processInput(xWidth);
-        for(int row = 0; row < yHeight; row++)
-            matrixB[row] = processInput(xWidth);
+
+        for(int row = 0; row < yHeight; row++){
+            temp = processInput(xWidth);
+
+            for (int col = 0; col < xWidth; col++){
+                matrixB[row][col] = matrixA[row][col] == temp[col] ? 1 : 0;
+            }
+        }
 
 
         bw.write(" ");
