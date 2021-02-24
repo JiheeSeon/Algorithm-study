@@ -31,34 +31,49 @@ class Main19639 {
             validCheck += portions[i].plusPower;
         }
 
-//        Arrays.sort(enemies, Comparator.comparing((Enemy e) -> e.minusPower, reverseOrder()).thenComparing((Enemy e) -> e.order));
-        Arrays.sort(portions, Comparator.comparing((Portion p) -> p.plusPower, reverseOrder()).thenComparing((Portion p) -> p.order));
 
         int enemyIdx = 0, portionIdx = 0;
+        int currPower = initPower;
+        int res = 0;
 
         if (validCheck <= 0) stb.append("0\n");
         else {
             while(enemyIdx < numOfEnemy) {
-                if (initPower + enemies[enemyIdx].minusPower > 0) {
-                    initPower += enemies[enemyIdx].minusPower;
-                    stb.append("-").append(enemies[enemyIdx++].order).append("\n");
-                } else if (portionIdx < portions.length){
-                    initPower += portions[portionIdx].plusPower;
+//                System.out.println("enemyIdx = " + enemyIdx);
+//                System.out.println("portionIdx = " + portionIdx);
+//                System.out.println("currPower = " + currPower);
+//                System.out.println("enemies[enemyIdx] = " + enemies[enemyIdx]);
+//                System.out.println("expected Power for minus = " + (currPower + enemies[enemyIdx].minusPower));
+//                if (portionIdx < portions.length)
+//                    System.out.println("expected Power for plus = " + (currPower + portions[portionIdx].plusPower));
+//                else
+//                    System.out.println("no more portions");
+
+                if (portionIdx < portions.length && (currPower + enemies[enemyIdx].minusPower <= 0 || currPower <= 0.5 * initPower)){
+//                    System.out.println("=============portion=============");
+                    currPower += portions[portionIdx].plusPower;
                     stb.append(portions[portionIdx++].order).append("\n");
-                }
-                else {
-                    stb.delete(0, stb.length());
-                    stb.append("0");
+                } else if(currPower + enemies[enemyIdx].minusPower < 0) {
+//                    System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXX");
+                    res = -1;
+                    break;
+                } else {
+//                    System.out.println("=============fight=============");
+                    currPower += enemies[enemyIdx].minusPower;
+                    stb.append("-").append(enemies[enemyIdx++].order).append("\n");
+//                    System.out.println("enemies[enemyIdx] = " + enemies[enemyIdx - 1]);
                 }
             }
-            if (initPower <= 0){
-                stb.delete(0, stb.length());
-                stb.append("0");
-            }
-            else if (portionIdx != portions.length - 1){
+
+            if (portionIdx != portions.length - 1){
                 while(++portionIdx < portions.length){
                     stb.append(portions[portionIdx]).append("\n");
                 }
+            }
+            if (res == -1){
+                System.out.println("-1");
+                stb.delete(0, stb.length());
+                stb.append("0");
             }
         }
 
@@ -67,20 +82,13 @@ class Main19639 {
         bw.close();
     }
 
-    private static class Enemy implements Comparable<Enemy> {
+    private static class Enemy {
         int order, minusPower;
 
         public Enemy(int order, int minusPower) {
             this.order = order;
             this.minusPower = minusPower;
         }
-
-        @Override
-        public int compareTo(Enemy o) {
-            return Comparator.comparing((Enemy e) -> e.minusPower)
-                    .compare(this, o);
-        }
-
         @Override
         public String toString() {
             return "minusPower=" + minusPower;
