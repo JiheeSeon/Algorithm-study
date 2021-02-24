@@ -14,11 +14,15 @@ class Main19583 {
 
         int i, temp;
         int flag = -1;
+        int maxIdx = 0;
+        int excludeIdx = -1;
 
         for (i = 0; i < N; i++) {
             competition[i] = Pattern.compile(" ").splitAsStream(br.readLine()).mapToInt(Integer::parseInt).toArray();
 
-            if (i == 0) continue;
+            if (i == 0)  continue;
+
+            if (competition[maxIdx][PRICE] < competition[i][PRICE]) maxIdx = i;
 
             temp = i == 1 ? competition[i - 1][PRICE] : accumulator[i - 2] + competition[i - 1][PRICE];
 
@@ -31,14 +35,16 @@ class Main19583 {
                     } else {
                         accumulator[i - 1] = accumulator[i - 2];
                     }
+                    excludeIdx = i - 1;
                     flag++;
-                }
-                else
+                } else {
+//                    accumulator[i] = competition[excludeIdx][PRICE]
                     flag = -2;
+                }
             }
         }
 
-        for(int k : accumulator)
+        for (int k : accumulator)
             System.out.print(k + " ");
 
         if (flag != -2)
