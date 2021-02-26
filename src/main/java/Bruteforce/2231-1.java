@@ -2,7 +2,11 @@ package Bruteforce;
 
 import java.io.*;
 
-class Main2231 {
+/* Review 방심해서 많이 틀린 문제
+* 1. 입력받을 수 있는 범위의 최댓값을 계산하는 것
+* 2. constructor[decomposeSum] 에서 decomposeSum의 index 범위를 체크하지 않은 것
+* */
+class Main2231BruteForce {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int N = Integer.parseInt(br.readLine());
