@@ -1,4 +1,4 @@
-package Bruteforce;
+package Backtrack;
 
 import java.io.*;
 import java.util.Stack;
