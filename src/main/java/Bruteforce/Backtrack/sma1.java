@@ -10,7 +10,6 @@ class sma1 {
     static char[] skills;
     static HashMap<Character, Character> previousSkills = new HashMap<Character, Character>();
 
-
     public static void main(String[] args) throws IOException {
         skills = getInput();
         int N = Integer.parseInt(br.readLine());
