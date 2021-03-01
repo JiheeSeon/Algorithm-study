@@ -1,68 +1,54 @@
 package Bruteforce.Backtrack;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 class sma1 {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static StringBuilder stb = new StringBuilder();
-    static char[] skill;
-    static ArrayList<Integer>[] nextSkill;
-    static boolean [] visited;
 
-    // ver 1. Make arraylist for next skills (1:N)
+    static char[] skills;
+    static HashMap<Character, Character> previousSkills = new HashMap<Character, Character>();
+
+
     public static void main(String[] args) throws IOException {
-        skill = getInput();
-        int numOfRelatedSkills = Integer.parseInt(br.readLine());
-        nextSkill = (ArrayList<Integer>[])new ArrayList[skill.length];
-        visited = new boolean[skill.length];
-
-        int i;
-        for (i = 0; i < numOfRelatedSkills; i++)
-            nextSkill[i] = new ArrayList<>();
+        skills = getInput();
+        int N = Integer.parseInt(br.readLine());
 
         char[] temp;
-        char current, next;
-        int currentSkillIdx, nextSkillIdx;
+        char prevSkillName, currSkillName;
 
-        for (i = 0; i < numOfRelatedSkills; i++) {
+        for (int i = 0; i < N; i++) {
             temp = getInput();
-            current = temp[0]; next = temp[1];
-            currentSkillIdx = convertSkillToIndex(current);
-            nextSkillIdx = convertSkillToIndex(next);
 
-            nextSkill[currentSkillIdx].add(nextSkillIdx);
+            prevSkillName = temp[0];
+            currSkillName = temp[1];
+
+            previousSkills.put(currSkillName, prevSkillName);
         }
 
-        for (i = 0; i < numOfRelatedSkills; i++)
-            dfs(i);
+        for (Map.Entry<Character, Character> entry : previousSkills.entrySet()) {
+            if (!(previousSkills.containsValue(entry.getKey())))
+                dfs(entry.getKey());
+        }
 
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        bw.write("");
+        bw.write(stb.substring(1));
         bw.flush();
         bw.close();
     }
 
     static char[] getInput() throws IOException {
-        return br.readLine().trim().toCharArray();
+        return br.readLine().replace(" ", "").toCharArray();
     }
 
-    static int convertSkillToIndex(char skillName){
-        return Arrays.binarySearch(skill, skillName);
-    }
-
-    static void dfs(int n){
-        if (nextSkill[n].isEmpty()){
-            stb.insert(0, skill[n]);
+    static void dfs(char currentSkill) {
+        if (!previousSkills.containsKey(currentSkill)) {
+            stb.insert(0, currentSkill).insert(0, "\n");
             return;
         }
 
-        int skillIdx;
-        for (int i = 0; i < nextSkill[n].size(); i++){
-            skillIdx = nextSkill[n].get(i);
-            dfs(skillIdx);
-            stb.insert(0, skill[skillIdx] +" ");
-        }
+        stb.insert(0, currentSkill).insert(0, " ");
+        dfs(previousSkills.get(currentSkill));
     }
 }
