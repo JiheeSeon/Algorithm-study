@@ -11,6 +11,7 @@ class sma1 {
     static ArrayList<Integer>[] nextSkill;
     static boolean [] visited;
 
+    // ver 1. Make arraylist for next skills (1:N)
     public static void main(String[] args) throws IOException {
         skill = getInput();
         int numOfRelatedSkills = Integer.parseInt(br.readLine());
