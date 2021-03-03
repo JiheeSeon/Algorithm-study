@@ -9,7 +9,7 @@ class SelectionSort {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         input = Pattern.compile(" ").splitAsStream(br.readLine()).mapToInt(Integer::parseInt).toArray();
-        quickSort();
+        selectionSort();
 
         StringBuilder stb = new StringBuilder();
         for (int i = 0; i < input.length; i++)
@@ -21,7 +21,7 @@ class SelectionSort {
         bw.close();
     }
 
-    static void quickSort(){
+    static void selectionSort(){
         int minIdx, temp;
 
         for(int startPoint = 0; startPoint < input.length - 1; startPoint++){
