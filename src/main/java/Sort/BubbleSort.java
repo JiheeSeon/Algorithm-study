@@ -22,7 +22,7 @@ class BubbleSort{
     }
     static void bubbleSort(){
         int temp;
-        for (int endPoint = input.length - 1; endPoint > 0; endPoint--){
+        for (int endPoint = input.length - 1; endPoint > 0; endPoint--){ // end point 만 조정해주면 됨
             for (int i = 0; i < endPoint; i++){
                 if (input[i] > input[i+1]){ //swap
                     temp = input[i];
