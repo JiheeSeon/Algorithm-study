@@ -10,7 +10,7 @@ class QuickSort {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         input = Pattern.compile(" ").splitAsStream(br.readLine()).mapToInt(Integer::parseInt).toArray();
 
-        quickSort(input, 0, input.length - 1);
+//        quickSort(input, 0, input.length - 1);
 
         StringBuilder stb = new StringBuilder();
         for (int i : input)
@@ -22,48 +22,11 @@ class QuickSort {
         bw.close();
     }
 
-    static void quickSort(int[] list, int left, int right) {
-        int pivotPos;
-
-        if (left < right) {
-            pivotPos = partition(list, left, right);
-
-            quickSort(list, left, pivotPos - 1);
-            quickSort(list, pivotPos + 1, right);
-        }
+    static void quickSort() {
 
     }
 
-    static int partition(int[] list, int left, int right) {
-        int pivot, tempForSwap;
-        int low, high;
+    static void partition(int left, int right) {
 
-        low = left;
-        high = right + 1;
-        pivot = list[left]; // 가장 왼쪽의 원소를 피벗으로
-
-        while (true){
-            if (low >= high) break;
-
-            do{
-                low++;
-            }while(low <= right && list[low] < pivot);
-
-            do{
-                high--;
-            }while(high >= left && list[high] > pivot);
-
-            if (low < high){
-                tempForSwap = list[low];
-                list[low] = list[high];
-                list[high] = tempForSwap;
-            }
-        }
-
-        tempForSwap = list[left];
-        list[left] = list[high];
-        list[high] = tempForSwap;
-
-        return high;
     }
 }
