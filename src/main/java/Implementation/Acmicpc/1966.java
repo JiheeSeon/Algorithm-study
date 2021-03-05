@@ -31,18 +31,31 @@ class Main1966 {
                 elements.add(new Element(j, priority[j]));
             }
 
-            int max;
+            int maxPosition;
+            Element max;
             Element temp;
 
             count = 0;
 
             while (!elements.isEmpty()) {
-                max = Collections.max(elements, Comparator.comparing((Element e) -> e.priority).thenComparing(e -> e.position, Comparator.reverseOrder())).position;
+                max = Collections.max(elements, Comparator.comparing((Element e) -> e.priority).thenComparing(e -> e.position, Comparator.reverseOrder()));
 
-                for (int k = 0; k < max; k++){
+//                System.out.println("elements.indexOf(max) = " + elements.indexOf(max));
+//                System.out.println("max = (" + max.position + ", " + max.priority + ")");
+
+                int idx = elements.indexOf(max);
+
+                for (int k = 0; k < idx; k++){
                     temp = elements.poll();
                     elements.add(temp);
+//                    System.out.println(temp.position);
                 }
+                
+//                System.out.println("====== elements status =======");
+//                for(Element l : elements) {
+//                    System.out.println("(" + l.position + ", " + l.priority + ")");
+//                }
+//                System.out.println("==========================");
 
                 count++;
 
