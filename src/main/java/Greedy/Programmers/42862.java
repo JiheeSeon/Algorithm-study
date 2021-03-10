@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 class Main42862{
     public static void main(String[] args) throws IOException {
-        int[] ar = {1,23,4,5,6};
 
     }
     static int solution(int n, int[] lost, int[] reserve) {
@@ -26,6 +25,9 @@ class Main42862{
         for(i = 1; i < n; i++){
             if(spare[i] == 1 && spare[i + 1] == -1){
                 spare[i]--; spare[i+1]++;
+            }
+            else if(spare[i] == -1 && spare[i + 1] == 1){
+                spare[i]++; spare[i+1]--;
             }
         }
 
