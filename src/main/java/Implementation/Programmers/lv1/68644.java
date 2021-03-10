@@ -1,6 +1,8 @@
 package Implementation.Programmers.lv1;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -32,8 +34,11 @@ class Main68644{
                 set.add(numbers[i] + numbers[j]);
             }
         }
+        ArrayList<Integer> ar = new ArrayList<>(set);
+        Collections.sort(ar);
+        answer = ar.stream().mapToInt(o->o).toArray();
 
-        answer = set.stream().sorted().mapToInt(o->o).toArray();
+//        answer = set.stream().sorted().mapToInt(o->o).toArray();
         return answer;
     }
 }
