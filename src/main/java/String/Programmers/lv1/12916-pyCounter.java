@@ -1,7 +1,6 @@
 package String.Programmers.lv1;
 
 import java.io.*;
-import java.util.Locale;
 
 class Main12916 {
     public static void main(String[] args) throws IOException {
