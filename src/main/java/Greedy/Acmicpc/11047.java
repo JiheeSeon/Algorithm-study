@@ -1,4 +1,4 @@
-package Greedy;
+package Greedy.Acmicpc;
 
 import java.io.*;
 import java.util.regex.Pattern;
