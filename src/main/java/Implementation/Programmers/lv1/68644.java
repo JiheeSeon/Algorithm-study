@@ -1,8 +1,8 @@
 package Implementation.Programmers.lv1;
 
 import java.io.*;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 class Main68644{
@@ -23,18 +23,17 @@ class Main68644{
     }
 
     static int[] solution(int[] numbers) {
-        int[] answer = {};
+        int[] answer;
 
-        Map<Integer, Integer> map = new TreeMap<Integer, Integer>();
+        Set<Integer> set = new HashSet<>();
 
         for(int i = 0; i < numbers.length; i++){
             for(int j = i + 1; j < numbers.length; j++){
-                map.put(numbers[i] + numbers[j], 1);
+                set.add(numbers[i] + numbers[j]);
             }
         }
 
-        answer = map.keySet().stream().mapToInt(o->o).toArray();
-//        answer = (Integer[]) map.keySet().toArray();
+        answer = set.stream().sorted().mapToInt(o->o).toArray();
         return answer;
     }
 }
