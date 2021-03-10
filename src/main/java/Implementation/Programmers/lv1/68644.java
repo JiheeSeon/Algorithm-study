@@ -1,10 +1,7 @@
 package Implementation.Programmers.lv1;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 class Main68644{
@@ -27,18 +24,14 @@ class Main68644{
     static int[] solution(int[] numbers) {
         int[] answer;
 
-        Set<Integer> set = new HashSet<>();
+        Set<Integer> set = new TreeSet<>();
 
         for(int i = 0; i < numbers.length; i++){
             for(int j = i + 1; j < numbers.length; j++){
                 set.add(numbers[i] + numbers[j]);
             }
         }
-        ArrayList<Integer> ar = new ArrayList<>(set);
-        Collections.sort(ar);
-        answer = ar.stream().mapToInt(o->o).toArray();
-
-//        answer = set.stream().sorted().mapToInt(o->o).toArray();
+        answer = set.stream().mapToInt(o->o).toArray();
         return answer;
     }
 }
