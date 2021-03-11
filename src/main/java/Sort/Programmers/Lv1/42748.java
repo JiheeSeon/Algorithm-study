@@ -9,11 +9,12 @@ class Main42748 {
         int k = 0;
 
         for (int[] i : commands) {
-            test = Arrays.copyOf(array, array.length); // O(N)
+            test = Arrays.copyOfRange(array, i[0] - 1,  i[1]);
+            Arrays.sort(test);
+            result[k++] = test[i[2] - 1];
 
-            Arrays.sort(test, i[0] - 1, i[1]); //O(NlogN)
-            result[k++] = test[i[0] + i[2] - 2];
         }
         return result;
+
     }
 }
