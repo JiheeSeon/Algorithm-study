@@ -26,10 +26,11 @@ class Main12930 {
     }
 
     public static void main(String[] args) {
-        System.out.println(solution("   "));
-        String[] ss = "   ".split("(?<= )");
+        String[] lookAhead = " S B C ".split("(?<= )"); //앞의 단어에 뒤쪽에 붙여준다
+        String[] lookBehind = " S B C ".split("(?= )"); //뒤의 단어에 앞쪽에 붙여준다
 
-        for (String s : ss)
-            System.out.println(s + "A");
+        for (int i = 0; i < Math.min(lookAhead.length, lookBehind.length); i++)
+            System.out.println("lookAhead = " + lookAhead[i] + ", lookBehind = " + lookBehind[i]);
+
     }
 }
