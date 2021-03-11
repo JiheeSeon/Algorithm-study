@@ -12,6 +12,9 @@ class Main12933{
         Integer[] ns = (Integer[]) Pattern.compile("").splitAsStream(Long.toString(n)).map(Integer::parseInt).toArray();
         Integer[] ns =  (Integer[]) Pattern.compile("").splitAsStream(Long.toString(n)).mapToInt(Integer::parseInt).mapToObj(o->(Integer)o).toArray();
         * */
+        /* Advanced approach
+        Integer.toString(n).chars().sorted().forEach(c -> res = Character.valueOf((char)c) + res);
+        * */
         int[] ns =  Pattern.compile("").splitAsStream(Long.toString(n)).mapToInt(Integer::parseInt).boxed().sorted(Comparator.reverseOrder()).mapToInt(Integer::valueOf).toArray();
         return Long.parseLong(Arrays.stream(ns).mapToObj(Integer::toString).collect(Collectors.joining()));
     }
