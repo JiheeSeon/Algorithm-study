@@ -31,6 +31,5 @@ class Main12930 {
 
         for (int i = 0; i < Math.min(lookAhead.length, lookBehind.length); i++)
             System.out.println("lookAhead = " + lookAhead[i] + ", lookBehind = " + lookBehind[i]);
-
     }
 }
