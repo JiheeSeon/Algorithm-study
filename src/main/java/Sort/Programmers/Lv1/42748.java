@@ -15,6 +15,5 @@ class Main42748 {
 
         }
         return result;
-
     }
 }
