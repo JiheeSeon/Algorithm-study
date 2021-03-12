@@ -2,7 +2,6 @@ package Implementation.Programmers.lv1;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.OptionalInt;
 import java.util.stream.Collectors;
 
 class Main12935 {
