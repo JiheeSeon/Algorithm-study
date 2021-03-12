@@ -7,9 +7,9 @@ import java.util.stream.Collectors;
 
 class Main12935 {
     public static int[] solution(int[] arr) {
-        OptionalInt min = Arrays.stream(arr).min();
+        int min = Arrays.stream(arr).min().orElse(-1);
         ArrayList<Integer> ar = (ArrayList<Integer>) Arrays.stream(arr).boxed().collect(Collectors.toList());
-        if (min.isPresent()) ar.remove(ar.indexOf(min.getAsInt()));
+        ar.remove(ar.indexOf(min));
         return ar.size() == 0 ? new int[]{-1} : ar.stream().mapToInt(o -> o).toArray();
 
         /*Other solution :: not remove, filter
