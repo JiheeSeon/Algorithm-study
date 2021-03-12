@@ -15,8 +15,8 @@ class Main12933{
         /* Advanced approach
         Integer.toString(n).chars().sorted().forEach(c -> res = Character.valueOf((char)c) + res);
         * */
-        int[] ns =  Pattern.compile("").splitAsStream(Long.toString(n)).mapToInt(Integer::parseInt).boxed().sorted(Comparator.reverseOrder()).mapToInt(Integer::valueOf).toArray();
-        return Long.parseLong(Arrays.stream(ns).mapToObj(Integer::toString).collect(Collectors.joining()));
+        return Long.parseLong(Pattern.compile("").splitAsStream(Long.toString(n)).mapToInt(Integer::parseInt).boxed().sorted(Comparator.reverseOrder()).map(o->Integer.toString(o)).collect(Collectors.joining()));
+
     }
 
     public static void main(String[] args) {
