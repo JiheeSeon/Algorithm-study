@@ -1,43 +1,64 @@
 package String.Programmers.lv1;
 
+import java.util.Stack;
 class Main17682 {
     public static void main(String[] args) {
-        System.out.println(solution("1S2D*3T")); // 1S 2D* 3T
-        System.out.println(solution("1S*2T*3S"));
+        System.out.println(solution("1S2D*3T"));
+        System.out.println();
+        System.out.println(solution("1T2D3D#"));
+        System.out.println();
+        System.out.println(solution("1D2S#10S"));
     }
 
-    static int solution(String s) {
-        int i = 0;
-        int [] score = new int[]{0, 0, 0};
+    public static int solution(String dartResult) {
+        Stack<Integer> stack = new Stack<>();
 
-        String[] ss = s.split("(?<=((S|D|T)(#|(\\*))))");
+        int top, beforeTop;
+        char beforeChar = dartResult.charAt(0);
+        char currentChar;
 
-        for (String sss : ss) {
-            System.out.println(sss);
+        for(int i = 0; i < dartResult.length(); i++){
+            currentChar = dartResult.charAt(i);
+
+            if('0' <= currentChar && currentChar <= '9'){
+                if(i >= 1 && '0' <= beforeChar && beforeChar <= '9') {
+                    int temp = stack.pop();
+                    int toInsert = Integer.parseInt((temp + Character.toString(currentChar)));
+                    stack.push(toInsert);
+                }
+                else
+                    stack.push(dartResult.charAt(i) - '0');
+            }
+            else if(currentChar== 'S')
+                stack.push(calculateSeed(stack.pop(), 1));
+            else if(currentChar== 'D')
+                stack.push(calculateSeed(stack.pop(), 2));
+            else if(currentChar== 'T')
+                stack.push(calculateSeed(stack.pop(), 3));
+            else if(currentChar == '#')
+                stack.push(stack.pop() * -1);
+            else{
+                if (stack.size() == 1)
+                    stack.push(2 * stack.pop());
+                else if(stack.size() >= 2){
+                    top = stack.pop();
+                    beforeTop = stack.pop();
+                    stack.push(beforeTop * 2);
+                    stack.push(top * 2);
+                }
+
+            }
+            beforeChar = currentChar;
         }
 
-        boolean flag1 = false; boolean flag2 = false;
-
-        for (String sss : ss) {
-            System.out.println(sss);
-            if(sss.contains("#"))  flag1 = true;
-            if(sss.contains("*"))  flag2 = true;
-
-            sss = sss.replaceAll("S|D|T|#|(\\*)", "");
-
-            score[i] = (int)Math.pow(Integer.parseInt(sss), i+1);
-
-            if(flag1) score[i] = -score[i];
-            if(flag2) score[i] = score[i] * 2;
-
-            i++;
-
-            flag1 = false; flag2 = false;
+        int result = 0;
+        while(!stack.isEmpty()){
+            result += stack.pop();
         }
-
-        for(int scor : score)
-            System.out.println(scor);
-
-        return score[0] +score[1]+ score[2];
+        return result;
+    }
+    static int calculateSeed(int n, int digit){
+        if(digit == 1) return n;
+        return (int)Math.pow(n, digit);
     }
 }
