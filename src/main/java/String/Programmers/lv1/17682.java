@@ -22,9 +22,8 @@ class Main17682 {
 
             if('0' <= currentChar && currentChar <= '9'){
                 if(i >= 1 && '0' <= beforeChar && beforeChar <= '9') {
-                    int temp = stack.pop();
-                    int toInsert = Integer.parseInt((temp + Character.toString(currentChar)));
-                    stack.push(toInsert);
+                    int toPush = Integer.parseInt((stack.pop() + Character.toString(currentChar)));
+                    stack.push(toPush);
                 }
                 else
                     stack.push(dartResult.charAt(i) - '0');
