@@ -1,4 +1,4 @@
-package Math;
+package Math.Acmicpc;
 
 import java.io.*;
 import java.util.regex.Pattern;

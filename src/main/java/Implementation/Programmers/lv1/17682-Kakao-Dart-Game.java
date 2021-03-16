@@ -1,4 +1,4 @@
-package String.Programmers.lv1;
+package Implementation.Programmers.lv1;
 
 import java.util.Stack;
 class Main17682 {
@@ -45,7 +45,6 @@ class Main17682 {
                     stack.push(beforeTop * 2);
                     stack.push(top * 2);
                 }
-
             }
             beforeChar = currentChar;
         }
