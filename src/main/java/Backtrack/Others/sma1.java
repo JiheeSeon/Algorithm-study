@@ -1,4 +1,4 @@
-package Backtrack;
+package Backtrack.Others;
 
 import java.io.*;
 import java.util.*;
