@@ -5,7 +5,7 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-class Main15657{
+class Main15657_1{
     static int N, maxDigit;
     static int[] numbers;
     static StringBuilder stb = new StringBuilder();
