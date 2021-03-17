@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-class Main15655{
+class Main15655_1 {
     static int numOfInput, maxDigit;
     static int[] numbers;
     static StringBuilder stb = new StringBuilder();
@@ -23,19 +23,21 @@ class Main15655{
         bw.flush();
         bw.close();
     }
-    static void backtrack(int currentDigit, int[] previous){
-        for (int indexOfChoice = 0; indexOfChoice < numOfInput; indexOfChoice++){
+    static void backtrack(int currentDigit, int[] previous) {
+        for (int indexOfChoice = 0; indexOfChoice < numOfInput; indexOfChoice++) {
             if (currentDigit != 1 && numbers[indexOfChoice] <= previous[currentDigit - 2]) continue;
             previous[currentDigit - 1] = numbers[indexOfChoice];
 
-            if (currentDigit == maxDigit)  appendAll(previous);
+            if (currentDigit == maxDigit) appendAll(previous);
             else backtrack(currentDigit + 1, previous);
 
             previous[currentDigit - 1] = 0;
         }
     }
-    static void appendAll(int [] array){
-        for(int i : array){stb.append(i).append(" ");}
+    static void appendAll(int[] array) {
+        for (int i : array) {
+            stb.append(i).append(" ");
+        }
         stb.append("\n");
     }
 }

@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-class Main15654_5 {
+class Main15654 {
     static int numOfInput, maxDigit;
     static int[] numbers;
     static StringBuilder stb = new StringBuilder();

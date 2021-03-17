@@ -3,7 +3,7 @@ package Backtrack.Acmicpc;
 import java.io.*;
 import java.util.regex.Pattern;
 
-class Main15652_4{
+class Main15652{
     static int maxNumber, sequenceLength;
     static StringBuilder stb = new StringBuilder();
 
