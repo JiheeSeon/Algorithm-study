@@ -7,7 +7,7 @@ import java.util.*;
 class Main15663{
     static int N, maxDigit;
     static int[] numbers;
-    static LinkedHashSet<String> linkedHashSet = new LinkedHashSet<>();
+    static LinkedHashSet<String> set = new LinkedHashSet<>();
 
     public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -18,36 +18,40 @@ class Main15663{
         numbers = Pattern.compile(" ").splitAsStream(br.readLine()).mapToInt(Integer::parseInt).toArray();
         Arrays.sort(numbers);
 
-        backtrack(1, new int[maxDigit]);
+        int[] previous = new int[maxDigit];
+        Arrays.fill(previous, -1);
 
-        bw.write("");
+        backtrack(1, previous);
+        StringBuilder stb = new StringBuilder();
+        for (String s: set){ stb.append(s); }
+        bw.write(stb.toString());
         bw.flush();
         bw.close();
     }
 
-    static void backtrack(int currDigit, int[] previous){
-        for (int i = 0; i < N; i++){
-            if (isInArray(numbers[i], previous)) continue;
-            previous[currDigit - 1] = numbers[i];
+    static void backtrack(int currentDigit, int[] previousIndices){
+        for(int i = 0; i < N; i++){
+            if (contains(i, previousIndices)) continue;
 
-            if(currDigit == maxDigit) dealLast(previous);
-            else backtrack(currDigit + 1, previous);
+            previousIndices[currentDigit - 1] = i;
 
-            previous[currDigit - 1] = 0;
+            if (currentDigit == maxDigit) putInSet(previousIndices);
+            else backtrack(currentDigit + 1, previousIndices);
+
+            previousIndices[currentDigit - 1] = -1;
         }
     }
-
-    static void dealLast(int [] array){
-        StringBuilder stb = new StringBuilder();
-        for (int i : array){stb.append(i).append(" ");}
-        stb.append("\n");
-        linkedHashSet.add(stb.toString());
+    static void putInSet(int[] prev){
+        StringBuilder localStb = new StringBuilder();
+        for(int i : prev){
+            localStb.append(numbers[i]).append(" ");
+        }
+        localStb.append("\n");
+        set.add(localStb.toString());
     }
 
-    static boolean isInArray(int n, int[] array){
-        for(int i : array){
-            if(i == n) return true;
-        }
+    static boolean contains(int i, int[] prev){
+        for(int p : prev){ if(i == p) return true;}
         return false;
     }
 }
