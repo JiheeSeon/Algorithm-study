@@ -5,15 +5,13 @@ import java.util.*;
 
 class Main9663{
     static int N;
-    static LinkedList<UnAvailablePoint>[] diagonallyConstricted;
+    static boolean[][][] diagonallyConstricted;
     static int result = 0;
 
     public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
-        diagonallyConstricted = (LinkedList<UnAvailablePoint>[])new LinkedList[N + 1];
-        for(int i = 1; i <= N; i++)
-            diagonallyConstricted[i] = new LinkedList<>();
+        diagonallyConstricted = new boolean[N + 1][N + 1][N + 1]; // [y] [y Who've Recorded] [x(unavailable)]
 
         backtrack(1);
 
@@ -35,26 +33,25 @@ class Main9663{
             else backtrack(y + 1);
 
             // clear
-            for(int j = y + 1; j <= N; j++){
-                LinkedList<UnAvailablePoint> list = diagonallyConstricted[j];
-                list.removeIf(point -> point.markedFrom == y);
+            for(int affectedY = y + 1; affectedY <= N; affectedY++){
+                diagonallyConstricted[affectedY][y] = new boolean[N + 1];
             }
         }
     }
     static void writeUnavailablePoint(int y, int x){
         for(int delta = 1; delta <= N - y; delta++){
-            diagonallyConstricted[y + delta].add(new UnAvailablePoint(x, y));
+            diagonallyConstricted[y + delta][y][x] = true;
 
             if (x + delta <= N)
-                diagonallyConstricted[y + delta].add(new UnAvailablePoint(x + delta, y));
+                diagonallyConstricted[y + delta][y][x + delta] = true;
 
             if (x - delta >= 1)
-                diagonallyConstricted[y + delta].add(new UnAvailablePoint(x - delta, y));
+                diagonallyConstricted[y + delta][y][x - delta] = true;
         }
     }
     static boolean isAvailable(int y, int x){
-        for(UnAvailablePoint point: diagonallyConstricted[y]){
-            if (x == point.x)  return false;
+        for(int i = 1; i <= N; i++){ // who've recorded // unavailable
+            if (diagonallyConstricted[y][i][x]) return false;
         }
         return true;
     }
