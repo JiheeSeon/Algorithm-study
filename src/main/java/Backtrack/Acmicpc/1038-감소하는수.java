@@ -1,63 +1,47 @@
 package Backtrack.Acmicpc;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
-class Main1038 {
+class Main1038{
     static int N;
+    static int currentN = -1;
     static int maxDigit;
-    static long result = 0;
+    static int[] previous;
+    static boolean terminateFlag = false;
+    static String result = null;
 
-    static int[] record;
-    static int currentRank = 9;
-
-    static boolean flagToBreak = false;
-
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        N = Integer.parseInt(br.readLine()); // 0 <= N <= 1,000,000
-        if (N < 10) result = N;
-        else {
-            for (int i = 2; i <= 10; i++) {
-                maxDigit = i;
-                record = new int[maxDigit];
-                backtrack(1);
-                if (result != 0) break;
-            }
+        N = Integer.parseInt(br.readLine());
+        for (int i = 1; i <= 10; i++){
+            maxDigit = i; // change maxDigit (종료조건)
+            previous = new int[maxDigit]; //size of previous
+            recursive(1); // start with first digit
         }
-        if (N != 0 && result == 0) result = -1;
-        System.out.println(result);
+        System.out.println(result == null ? -1 : result);
     }
+    static void recursive(int currDigit){
+        for (int i = 0; i <= (currDigit == 1 ? 9 : previous[currDigit - 2] - 1) ; i++){
+            if (terminateFlag) break;
 
-    static void backtrack(int currDigit) {
-        for (int i = 0; i <= 9; i++) {
-            if(currDigit == 1 && i == 0) continue;
-            if(currDigit != 1 && record[currDigit - 2] <= i) continue;
+            previous[currDigit - 1] = i;
 
-            if (flagToBreak) return;
-
-            record[currDigit - 1] = i;
-
-            if (currDigit == maxDigit) {
-                currentRank++;
-
-                if (currentRank == N) {
+            if(currDigit == maxDigit){
+                currentN++;
+                if(N == currentN){
+                    terminateFlag = true;
                     setResult();
-                    flagToBreak = true;
                 }
-            } else {
-                backtrack(currDigit + 1);
             }
+            else recursive(currDigit + 1);
 
-            record[currDigit - 1] = 0;
+            previous[currDigit - 1] = 0;
         }
     }
-
-    static void setResult() {
+    static void setResult(){
         StringBuilder stb = new StringBuilder();
-        for (int i = 0; i < record.length; i++)
-            stb.append(record[i]);
-        result = Long.parseLong(stb.toString());
+        for (int i = 0; i < previous.length; i++)
+            stb.append(previous[i]);
+        result = stb.toString();
     }
 }
