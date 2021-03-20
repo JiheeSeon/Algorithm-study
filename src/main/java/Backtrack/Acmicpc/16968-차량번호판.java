@@ -22,13 +22,13 @@ class Main16968 {
             current = inputStr.charAt(i);
 
             if (current == 'c') {
-                if (before == current) result *= --defaultC;
+                if (before == current) result *= (defaultC - 1);
                 else{
                     defaultD = 10;
                     result *= defaultC;
                 }
             } else {
-                if (before == current) result *= --defaultD;
+                if (before == current) result *= (defaultD - 1);
                 else{
                     defaultC = 26;
                     result *= defaultD;
