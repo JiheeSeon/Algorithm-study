@@ -9,10 +9,10 @@ class Main1342{
     static char[] previous;
 
     static Map<Character, Integer> map = new TreeMap<>();
-    static Set<String> set = new HashSet<>();
 
     static int result = 0;
 
+    // 사실상 문자별 들어가야 하는 개수 알려주고 아래의 조건 충족시키게
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         input = br.readLine();
