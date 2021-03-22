@@ -4,13 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.LinkedList;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 class Main12101{
     static StringBuilder stb = new StringBuilder();
-//    static Set<String> set = new TreeSet<>();
     static LinkedList<Integer> previous = new LinkedList<>();
 
     static int N, K;
