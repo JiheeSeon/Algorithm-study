@@ -1,7 +1,6 @@
 package Backtrack.Acmicpc;
 
 import java.io.*;
-import java.util.LinkedList;
 import java.util.regex.Pattern;
 
 class Main16987{
@@ -31,64 +30,81 @@ class Main16987{
 
         System.out.println(result);
     }
-    static void backtrack(int currIndex){
-        Egg eggCurrent, eggToBroke;
+    static void backtrack(int attackingIdx){
+        Egg attackingEgg, attackedEgg;
 
-        System.out.println("currIndex = " + currIndex);
-        System.out.println();
-        for (int toBroke = 0; toBroke < eggN; toBroke++){
-            if(flagToBreak) break;
-//            if (currIndex != (eggN - 1)) continue;
+        for (int attackedIdx = 0; attackedIdx < eggN; attackedIdx++){
+            System.out.println();
+            System.out.println("enter " + attackingIdx);
+            System.out.println("attack " + attackedIdx);
+            if (flagToBreak) break;
 
-            System.out.println("currIndex = " + currIndex);
-            System.out.println("toBroke = " + toBroke);
-            System.out.println("localResult = " + localResult);
+            for(boolean b : isBroken) System.out.print(b + " ");
+            System.out.println();
 
-
-            eggCurrent = eggs[currIndex];
-            eggToBroke = eggs[toBroke];
-
-            if(!isBroken[currIndex] && !isBroken[toBroke]) {
-                eggCurrent.updateDurability(-eggToBroke.weight);
-                eggToBroke.updateDurability(-eggCurrent.weight);
-
-                System.out.println("eggCurrent = " + eggCurrent.durability);
-                System.out.println("eggToBroke = " + eggToBroke.durability);
-
-                if (eggCurrent.durability < 0) {
-                    isBroken[currIndex] = true;
-                    localResult++;
-                }
-                if (eggToBroke.durability < 0) {
-                    isBroken[toBroke] = true;
-                    localResult++;
-                }
-                System.out.println("localResult = " + localResult);
-                System.out.println();
+            if(isAllBroken()){
+                result = eggN;
+                flagToBreak = true;
+                break;
             }
 
-            System.out.println("currIndex = " + currIndex);
-            System.out.println("eggN-1 = " + (eggN - 1));
+            if (attackingIdx == attackedIdx && attackingIdx != eggN - 1) {
+                continue;
+            }
+            if (isBroken[attackedIdx]) continue;
+            if (isBroken[attackingIdx]){
+                backtrack(attackingIdx + 1);
+                flagToBreak = true;
+                continue;
+            }
 
-            if (currIndex == eggN - 2){
-                System.out.println("===========last============");
-                result = Math.max(localResult, result);
-                System.out.println();
-            } else backtrack(currIndex + 1);
+            System.out.println("attackingIdx = " + attackingIdx + " => attackedIdx = " + attackedIdx);
 
-            if(!isBroken[currIndex] && !isBroken[toBroke]) {
-                if (eggCurrent.durability < 0){
-                    isBroken[currIndex] = false;
+            for(boolean b : isBroken) System.out.print(b +" ");
+            System.out.println();
+
+            attackingEgg = eggs[attackingIdx];
+            attackedEgg = eggs[attackedIdx];
+
+            if (!(attackingIdx == attackedIdx &&attackingIdx == eggN - 1)) {
+                attackingEgg.updateDurability(-attackedEgg.weight);
+                attackedEgg.updateDurability(-attackingEgg.weight);
+
+                if (attackingEgg.durability <= 0) {
+                    isBroken[attackingIdx] = true;
+                    localResult++;
+                }
+                if (attackedEgg.durability <= 0) {
+                    isBroken[attackedIdx] = true;
+                    localResult++;
+                }
+            }
+
+            if(attackingIdx >= eggN - 1){
+                result += Math.max(result, localResult);
+                break;
+            } else backtrack(attackingIdx + 1);
+
+            if (!(attackingIdx == attackedIdx &&attackingIdx == eggN - 1)) {
+                attackingEgg.updateDurability(attackedEgg.weight);
+                attackedEgg.updateDurability(attackingEgg.weight);
+
+                if (attackingEgg.durability > 0) {
+                    isBroken[attackingIdx] = false;
                     localResult--;
                 }
-                if (eggToBroke.durability < 0) {
-                    isBroken[toBroke] = false;
+                if (attackedEgg.durability > 0) {
+                    isBroken[attackedIdx] = false;
                     localResult--;
                 }
-                eggCurrent.updateDurability(eggToBroke.weight);
-                eggToBroke.updateDurability(eggCurrent.weight);
             }
         }
+    }
+    static boolean isAllBroken(){
+        for(boolean b : isBroken){
+            if (!b) return false;
+        }
+        return true;
     }
     static private class Egg{
         int durability, weight;
