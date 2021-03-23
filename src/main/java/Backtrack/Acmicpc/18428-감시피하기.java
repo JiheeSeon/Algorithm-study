@@ -3,7 +3,6 @@ package Backtrack.Acmicpc;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeSet;
@@ -17,8 +16,8 @@ class Main18428 {
     static LinkedList<Integer> candidateList;
     static int[] previous;
 
-    static boolean[] isSafeY;
-    static boolean[] isSafeX;
+    static boolean[] isSafeColumn;
+    static boolean[] isSafeRow;
 
     static boolean breakFlag = false;
 
@@ -34,7 +33,7 @@ class Main18428 {
 
         setCandidatesByRow();
         setCandidatesByColumn();
-        displayCandidates();
+//        displayCandidates();
         candidateList = new LinkedList<>(candidateSet);
 
         backtrack(1);
@@ -48,12 +47,12 @@ class Main18428 {
              ; i < candidateList.size(); i++) {
 
             if (breakFlag) break;
-            System.out.println("i = " + i);
+//            System.out.println("i = " + i);
 
             previous[currentResourceNumber - 1] = i;
             int realValue = candidateList.get(i);
-            System.out.println("realValue/5 = " + (realValue / 5));
-            System.out.println("realValue%5 = " + (realValue % 5));
+//            System.out.println("realValue/5 = " + (realValue / 5));
+//            System.out.println("realValue%5 = " + (realValue % 5));
             hallway[realValue / N][realValue % N] = 'O';
 
             if (currentResourceNumber == 3){
@@ -76,24 +75,37 @@ class Main18428 {
         System.out.println();
     }
 
+    static void displayIsSafeRow(){
+        for(boolean b : isSafeColumn) System.out.print(b + " ");
+        System.out.println();
+    }
+
+    static void displayIsSafeColumn(){
+        for(boolean b : isSafeRow) System.out.print(b + " ");
+        System.out.println();
+    }
+
     static boolean isBlockedWell(){
-        isSafeY = new boolean[N];
-        isSafeX = new boolean[N];
+        isSafeColumn = new boolean[N];
+        isSafeRow = new boolean[N];
 
-        checkBlockedByColumn();
         checkBlockedByRow();
+        checkBlockedByColumn();
 
-        for(boolean b : isSafeY){
+//        displayIsSafeRow();
+//        displayIsSafeColumn();
+
+        for(boolean b : isSafeRow){
             if(!b) return false;
         }
 
-        for(boolean b : isSafeX){
+        for(boolean b : isSafeColumn){
             if(!b) return false;
         }
         return true;
     }
 
-    static void checkBlockedByColumn(){
+    static void checkBlockedByRow(){
         String yInfo;
 
         for(int y = 0; y < N; y++) {
@@ -102,13 +114,17 @@ class Main18428 {
                     || (yInfo.contains("T") && !yInfo.contains("S")))
                     || (!yInfo.matches("[XOTS]*S[XST]+T[XOTS]*"))
                     && (!yInfo.matches("[XOTS]*T[XST]+S[XOTS]*"))){
-                System.out.println(yInfo);
-                System.out.println("safe for this row");
-                isSafeX[y] = true;
+//                System.out.println(yInfo);
+//                System.out.println("safe for this row");
+                isSafeRow[y] = true;
             }
+//            else{
+//                System.out.println(yInfo);
+//                System.out.println("unsafe for this row");
+//            }
         }
     }
-    static void checkBlockedByRow(){
+    static void checkBlockedByColumn(){
         String xInfo;
         char[] temp = new char[N];
 
@@ -116,16 +132,19 @@ class Main18428 {
             for(int i = 0; i < N; i++) temp[i] = hallway[i][x];
             xInfo = new String(temp);
 
-            System.out.println(xInfo);
+//            System.out.println(xInfo);
 
             if ((!xInfo.contains("T")
                     || (xInfo.contains("T") && !xInfo.contains("S")))
                     || (!xInfo.matches("[XOTS]*S[XST]+T[XOTS]*"))
-                    && (!xInfo.matches("[XOTS]*T[XST]+S[XOTS]*"))){
-                System.out.println("safe for this column");
-                isSafeY[x] = true;
-
+                    && (!xInfo.matches("[XOTS]*T[XST]+S[XOTS]*"))) {
+//                System.out.println("safe for this column");
+                isSafeColumn[x] = true;
             }
+//            }else{
+//                System.out.println(xInfo);
+//                System.out.println("unsafe for this column");
+//            }
         }
     }
 
@@ -148,10 +167,10 @@ class Main18428 {
                         rightS = x;
                         if (rightS - leftT > 1 && rightS != 100 && leftT != 100){
                             for (int k = leftT + 1; k < rightS; k++){
-                                System.out.println("candidates added "+(N*y+k));
+//                                System.out.println("candidates added "+(N*y+k));
                                 candidateSet.add(N * y + k);
                             }
-                            System.out.println("Candidates added by right S");
+//                            System.out.println("Candidates added by right S");
                         }
                         rangeStart = 'T';
                     }
@@ -163,22 +182,22 @@ class Main18428 {
                         rightT = x;
                         if (rightT - leftS > 1 && rightT != 100 && leftS != 100) {
                             for (int k = leftS + 1; k < rightT; k++) {
-                                System.out.println("candidates added "+(N*y+k));
+//                                System.out.println("candidates added "+(N*y+k));
                                 candidateSet.add(N * y + k);
                             }
-                            System.out.println("Candidates added by right T");
+//                            System.out.println("Candidates added by right T");
                         }
                         rangeStart = 'S';
                     }
                 }
 
-                System.out.println("position = " + (y * N + x));
-                System.out.println("leftT = " + leftT);
-                System.out.println("rightS = " + rightS);
-                System.out.println("leftS = " + leftS);
-                System.out.println("rightT = " + rightT);
-                System.out.println("rangeStart = " + rangeStart);
-                System.out.println();
+//                System.out.println("position = " + (y * N + x));
+//                System.out.println("leftT = " + leftT);
+//                System.out.println("rightS = " + rightS);
+//                System.out.println("leftS = " + leftS);
+//                System.out.println("rightT = " + rightT);
+//                System.out.println("rangeStart = " + rangeStart);
+//                System.out.println();
             }
         }
     }
@@ -202,9 +221,9 @@ class Main18428 {
                         if (downS - upT > 1 && downS != 100 && upT != 100){ // T -> S
                             for (int k = upT + 1; k < downS; k++){
                                 candidateSet.add(N * k + x);
-                                System.out.println("candidates added "+(N*k+x));
+//                                System.out.println("candidates added "+(N*k+x));
                             }
-                            System.out.println("candidate added by down S");
+//                            System.out.println("candidate added by down S");
                         }
                         rangeStart = 'T';
                     }
@@ -217,20 +236,20 @@ class Main18428 {
                         if (downT - upS > 1 && downT != 100 && upS != 100) {
                             for (int k = upS + 1; k < downT; k++) {
                                 candidateSet.add(N * k + x);
-                                System.out.println("candidates added "+(N*k+x));
+//                                System.out.println("candidates added "+(N*k+x));
                             }
-                            System.out.println("candidate added by down T");
+//                            System.out.println("candidate added by down T");
                         }
                         rangeStart = 'S';
                     }
                 }
-                System.out.println("position = " + (y * N + x));
-                System.out.println("leftT = " + upT);
-                System.out.println("rightS = " + downS);
-                System.out.println("leftS = " + upS);
-                System.out.println("rightT = " + downT);
-                System.out.println("rangeStart = " + rangeStart);
-                System.out.println();
+//                System.out.println("position = " + (y * N + x));
+//                System.out.println("leftT = " + upT);
+//                System.out.println("rightS = " + downS);
+//                System.out.println("leftS = " + upS);
+//                System.out.println("rightT = " + downT);
+//                System.out.println("rangeStart = " + rangeStart);
+//                System.out.println();
             }
         }
     }
