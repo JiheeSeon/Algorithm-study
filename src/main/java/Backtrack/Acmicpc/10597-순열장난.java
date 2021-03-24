@@ -4,11 +4,15 @@ import java.io.*;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
+//1111112211111111111111
+
 class Main10597{
     static StringBuilder stb =  new StringBuilder();
     static String input;
     static int minN, maxN;
     static boolean flagToBreak = false;
+
+    static int maxValue=0;
 
     static LinkedList<Integer> previous = new LinkedList<>();
 
@@ -17,31 +21,34 @@ class Main10597{
         input = br.readLine();
         setRangeOfN();
 
-        for(int currN = minN; currN <= maxN; currN++){
-            backtrack(0, currN);
-            if (!stb.isEmpty()) break;
-        }
+        backtrack(0);
+
         System.out.println(stb.toString());
     }
-    static void backtrack(int currDigit, int currN){
+    static void backtrack(int currDigit){
         int maxDist = 1; int currCandidate;
-        if (currN >= 10 && currDigit != input.length() -1) maxDist = 2;
+        if (currDigit != input.length() -1) maxDist = 2;
 
         for (int i = 1; i <= maxDist; i++){
             if (flagToBreak) break;
             currCandidate = Integer.parseInt(input.substring(currDigit, currDigit + i));
-            if (currCandidate == 0 || currCandidate > currN) break;
+            if (currCandidate == 0 || currCandidate > maxN) break;
 
+            int existedMax = maxValue;
+            maxValue = Math.max(existedMax, currCandidate);
             previous.add(currCandidate);
 
             if (currDigit + i >= input.length()){
-                if (previous.size() == currN){
+                if (previous.size() == maxValue){
                     stb.append(previous.stream().map(s -> Integer.toString(s)).collect(Collectors.joining(" ")));
+                    System.out.println("maxValue = " + maxValue);
+                    System.out.println("previous.size() = " + previous.size());
                     flagToBreak = true;
                 }
-            } else backtrack(currDigit + i, currN);
+            } else backtrack(currDigit + i);
 
             previous.removeLast();
+            if (existedMax != maxValue) maxValue = existedMax;
         }
     }
     static void setRangeOfN(){
@@ -62,7 +69,7 @@ class Main10597{
         }
         maxN = Math.max(minN, input.length());
 
-//        System.out.println("minN = " + minN);
-//        System.out.println("maxN = " + maxN);
+        System.out.println("minN = " + minN);
+        System.out.println("maxN = " + maxN);
     }
 }
