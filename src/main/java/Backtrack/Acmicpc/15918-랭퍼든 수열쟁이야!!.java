@@ -42,32 +42,31 @@ class Main15918{
 
         if (choice[depth] != 0
                 || depth == (y - 1) || depth == (x - 1)
-                || toFill == 0) backtrack(depth + 1);
+                || toFill == 0) {
+            backtrack(depth + 1);
+            return;
+        }
 
-        else {
-            for (int candidate = 1; candidate <= N; candidate++) {
-                if (spare[candidate] == 0) continue;
+        for (int candidate = 1; candidate <= N; candidate++) {
+            if (spare[candidate] == 0) continue;
 
-                if (depth + candidate + 1 >= choice.length
-                        || choice[depth + candidate + 1] != 0) {
-                    if (toFill == 2) {
-                        return;
-                    }
-                    continue;
-                }
-
-                choice[depth] = candidate;
-                choice[depth + candidate + 1] = candidate;
-                spare[candidate] = 0;
-                toFill -= 2;
-
-                backtrack(depth + 1);
-
-                toFill += 2;
-                spare[candidate] = 2;
-                choice[depth] = 0;
-                choice[depth + candidate + 1] = 0;
+            if (depth + candidate + 1 >= choice.length
+                    || choice[depth + candidate + 1] != 0) {
+                if (toFill == 2) return;
+                continue;
             }
+
+            choice[depth] = candidate;
+            choice[depth + candidate + 1] = candidate;
+            spare[candidate] = 0;
+            toFill -= 2;
+
+            backtrack(depth + 1);
+
+            toFill += 2;
+            spare[candidate] = 2;
+            choice[depth] = 0;
+            choice[depth + candidate + 1] = 0;
         }
     }
 }
