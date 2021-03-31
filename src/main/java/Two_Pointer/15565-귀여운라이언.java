@@ -3,6 +3,7 @@ package Two_Pointer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 class Main15565{
@@ -14,26 +15,18 @@ class Main15565{
         String s = br.readLine().replace(" ","");
 
         int result = Integer.MAX_VALUE;
-        int numOfOne;
-        int setSize;
 
-        for (int start = 0; start < N; start++){
-            if (s.charAt(start) == '2') continue;
-
-            setSize = 0;
-            numOfOne = 0;
-
-            for(int end = start; end < N; end++){
-                if (s.charAt(end) == '1') numOfOne++;
-                setSize++;
-
-                if(numOfOne == K){
-                    result = Math.min(result, setSize);
-                    break;
-                }
-            }
+        ArrayList<Integer> list = new ArrayList<>();
+        for (int i = 0; i < N; i++){
+            if (s.charAt(i) == '1') list.add(i);
         }
 
-        System.out.println(result == Integer.MAX_VALUE ? -1 : result);
+        if(list.size() < K) result = -1;
+        else{
+            for (int i = (K - 1); i < list.size(); i++){
+                result = Math.min(list.get(i) - list.get(i - (K - 1)) + 1, result);
+            }
+        }
+        System.out.println(result);
     }
 }
