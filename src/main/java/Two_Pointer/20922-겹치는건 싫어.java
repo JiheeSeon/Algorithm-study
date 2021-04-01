@@ -13,7 +13,6 @@ class Main20922{
     static int result;
 
     static Map<Integer, Integer> map = new HashMap<>();
-    static int length;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -29,23 +28,26 @@ class Main20922{
         int start = 0, end = 0;
 
         while (true){
-            if (end == N){
-                result = Math.max(length, result);
+            if(end == N){
+                result = Math.max(result, end - start);
                 break;
-            }
-            else if (map.getOrDefault(sequence[end], -1) == K){
-                result = Math.max(length, result);
+            } else if (map.getOrDefault(sequence[end], -1) == K){
+                result = Math.max(result, end - start);
 
-                while (sequence[start] != sequence[end]){
-                    map.put(sequence[start], map.get(sequence[start]) - 1);
-                    start++; length--;
+                while (sequence[start] != sequence[end]) {
+                    map.put(sequence[start], map.get(sequence[start]) - 1); start++;
                 }
-                end++;
-            }
-            else {
+
+                map.put(sequence[start], map.get(sequence[start]) - 1); start++;
+                map.put(sequence[end], map.get(sequence[end]) + 1); end++;
+
+            } else{
                 map.put(sequence[end], map.getOrDefault(sequence[end], 0) + 1);
-                end++; length++;
+                end++;
             }
         }
     }
 }
+
+//12 3
+//1 2 1 1 2 3 2 1 3 2 1 5
