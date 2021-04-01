@@ -7,6 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+// Testcase to use
+//12 3
+//1 2 1 1 2 3 2 1 3 2 1 5
+
 class Main20922{
     static int N, K;
     static int[] sequence;
@@ -35,19 +39,15 @@ class Main20922{
                 result = Math.max(result, end - start);
 
                 while (sequence[start] != sequence[end]) {
-                    map.put(sequence[start], map.get(sequence[start]) - 1); start++;
+                    map.put(sequence[start], map.get(sequence[start++]) - 1);
                 }
 
-                map.put(sequence[start], map.get(sequence[start]) - 1); start++;
-                map.put(sequence[end], map.get(sequence[end]) + 1); end++;
+                map.put(sequence[start], map.get(sequence[start++]) - 1);
+                map.put(sequence[end], map.get(sequence[end++]) + 1);
 
             } else{
-                map.put(sequence[end], map.getOrDefault(sequence[end], 0) + 1);
-                end++;
+                map.put(sequence[end], map.getOrDefault(sequence[end++], 0) + 1);
             }
         }
     }
 }
-
-//12 3
-//1 2 1 1 2 3 2 1 3 2 1 5
