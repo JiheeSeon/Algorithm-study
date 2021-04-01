@@ -41,9 +41,7 @@ class Main20922{
                 while (sequence[start] != sequence[end]) {
                     map.put(sequence[start], map.get(sequence[start++]) - 1);
                 }
-
-                map.put(sequence[start], map.get(sequence[start++]) - 1);
-                map.put(sequence[end], map.get(sequence[end++]) + 1);
+                start++; end++;
 
             } else{
                 map.put(sequence[end], map.getOrDefault(sequence[end++], 0) + 1);
