@@ -5,7 +5,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 import java.util.regex.Pattern;
-
+/*
+* 성공까지 시간을 끌었던 부분, 헷갈린 지점 또는 패착의 원인
+* index가 마지막 인덱스가 되었을 때의 처리 -> 길이와 함께 조건 체크
+* 같은 value가 연속으로 나왔을 때의 처리 -> tmpPointer
+* result 의 타입 long 캐스팅
+* */
 class Main7453{
     static int N;
     static long[][] ABCD;
