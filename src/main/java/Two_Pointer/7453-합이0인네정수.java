@@ -3,19 +3,28 @@ package Two_Pointer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.util.*;
 import java.util.regex.Pattern;
 
 class Main7453{
     static int N;
     static long[][] ABCD;
-    static long[][] pointerValueRange = new long[4][2]; // A->B->C / min -> max
+
+    static long[] cdProcessedSum;
+    static long[] abSum;
+    static long abMinSum;
+    static long abMaxSum;
+
+    static Map<Long, Integer> cdMap = new HashMap<>();
+    static Map<Long, Integer> abMap = new HashMap<>();
     static int result = 0;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
         ABCD = new long[4][N];
+        cdProcessedSum = new long[N*N];
+        abSum = new long[N*N];
 
         int [] temp;
         for(int i = 0; i < N; i++){
@@ -24,49 +33,35 @@ class Main7453{
         }
         for (int i = 0; i < 4; i++) Arrays.sort(ABCD[i]);
 
-        int idx = 3;
-        int tmpMin = 0; int tmpMax = 0;
-
-        while(idx > 0){
-            tmpMin += ABCD[idx][N - 1];
-            tmpMax += ABCD[idx--][0];
-            pointerValueRange[idx][0] = -tmpMin;
-            pointerValueRange[idx][1] = -tmpMax;
+        for(int i = 0; i < N; i++){ //O(N^2)
+            for (int j = 0; j < N; j++){
+                cdProcessedSum[N * i + j] = - ABCD[2][i] - ABCD[3][j];
+            }
         }
-        pointerValueRange[3][0] = (long) -Math.pow(2, 28);
-        pointerValueRange[3][1] = (long) Math.pow(2, 28);
+        abMinSum = ABCD[0][0] + ABCD[1][0]; abMaxSum = ABCD[0][N - 1] + ABCD[1][N - 1];
+        cdProcessedSum = Arrays.stream(cdProcessedSum).sorted().filter(s -> s >= abMinSum && s <= abMaxSum).toArray();
 
-        solution();
+        for(long l : cdProcessedSum){ //O(N)
+            cdMap.put(l, cdMap.getOrDefault(l, 0) + 1);
+        }
+
+        for(int i = 0; i < N; i++){ //O(N^2)
+            for (int j = 0; j < N; j++){
+                abMap.put(ABCD[0][i] + ABCD[1][j], abMap.getOrDefault(ABCD[0][i] + ABCD[1][j], 0) + 1);
+            }
+        }
+
+        abMap.keySet().retainAll(cdMap.keySet());
+        for(long l : abMap.keySet()){ //O(N^2)
+            result += abMap.get(l) * cdMap.get(l);
+        }
 
         System.out.println(result);
     }
-    static void solution(){
-        pick(0, 0);
-    }
-    static void pick(int depth, long accumulated){
-        if(depth == 3){
-            for (int i = 0; i < N; i++){
-                if (-accumulated == ABCD[depth][i]){
-                    result++;
-                }
-            }
-            return;
-        }
-        for (int i = 0; i < N; i++){
-            if (accumulated + ABCD[depth][i] < pointerValueRange[depth][0]) continue;
-            if (accumulated + ABCD[depth][i] > pointerValueRange[depth][1]) break;
 
-            pick(depth + 1, accumulated + ABCD[depth][i]);
-        }
-    }
-    static void display(long[][] array){
+    static void display(long[] ar){
+        for(int i = 0; i < ar.length; i++)
+            System.out.print(ar[i] + " ");
         System.out.println();
-
-        for(int i = 0; i < array.length; i++){
-            for(int j = 0; j < array[i].length; j++){
-                System.out.print(array[i][j] + " ");
-            }
-            System.out.println();
-        }
     }
 }
