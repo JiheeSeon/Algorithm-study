@@ -10,7 +10,7 @@ class Main7453{
     static int N;
     static long[][] ABCD;
 
-    static long[] cdProcessedSum;
+    static long[] cdSumWithSignChange;
     static long[] abSum;
     static long abMinSum, abMaxSum;
     static long cdMinSum, cdMaxSum;
@@ -21,7 +21,7 @@ class Main7453{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
         ABCD = new long[4][N];
-        cdProcessedSum = new long[N*N];
+        cdSumWithSignChange = new long[N*N];
         abSum = new long[N*N];
 
         int [] temp;
@@ -33,7 +33,7 @@ class Main7453{
 
         for(int i = 0; i < N; i++){ //O(N^2)
             for (int j = 0; j < N; j++){
-                cdProcessedSum[N * i + j] = - ABCD[2][i] - ABCD[3][j];
+                cdSumWithSignChange[N * i + j] = - ABCD[2][i] - ABCD[3][j];
             }
         }
         for(int i = 0; i < N; i++){ //O(N^2)
@@ -43,33 +43,26 @@ class Main7453{
         }
 
         abMinSum = ABCD[0][0] + ABCD[1][0]; abMaxSum = ABCD[0][N - 1] + ABCD[1][N - 1];
-        cdProcessedSum = Arrays.stream(cdProcessedSum).sorted().filter(s -> s >= abMinSum && s <= abMaxSum).toArray();
+        cdSumWithSignChange = Arrays.stream(cdSumWithSignChange).sorted().filter(s -> s >= abMinSum && s <= abMaxSum).toArray();
 
-        cdMinSum = cdProcessedSum[0]; cdMaxSum = cdProcessedSum[cdProcessedSum.length - 1];
+        cdMinSum = cdSumWithSignChange[0]; cdMaxSum = cdSumWithSignChange[cdSumWithSignChange.length - 1];
         abSum = Arrays.stream(abSum).sorted().filter(s -> s >= cdMinSum && s <= cdMaxSum).toArray();
-
-//        cdProcessedSum = new long[]{-72, -71, -67, -56, -52, -40, -40, -25, -8, 3, 5, 6, 6, 8, 10, 10, 10, 11, 13};
-//        abSum = new long[]{-80, -73, -72, -69, -56, -51, -43, -41, -40, -40, 5, 6, 6, 8, 10, 10, 11, 12};
-//         -72, -56, -40(4), 5, 6(4), 8, 10 (6) -> 19
 
         int cdPointer = 0, abPointer = 0;
         while(true){
-            if(cdPointer >= cdProcessedSum.length || abPointer >= abSum.length) break;
+            if(cdPointer >= cdSumWithSignChange.length || abPointer >= abSum.length) break;
 
             int tmpCdPointer, tmpAbPointer;
 
-            if (cdProcessedSum[cdPointer] == abSum[abPointer]){
+            if (cdSumWithSignChange[cdPointer] == abSum[abPointer]){
                 tmpCdPointer = cdPointer++; tmpAbPointer = abPointer++;
 
-                while(cdPointer < cdProcessedSum.length && cdProcessedSum[cdPointer] == abSum[tmpAbPointer]) cdPointer++;
-                while(abPointer < abSum.length && cdProcessedSum[tmpCdPointer] == abSum[abPointer]) abPointer++;
+                while(cdPointer < cdSumWithSignChange.length && cdSumWithSignChange[cdPointer] == abSum[tmpAbPointer]) cdPointer++;
+                while(abPointer < abSum.length && cdSumWithSignChange[tmpCdPointer] == abSum[abPointer]) abPointer++;
 
-                result += (abPointer - tmpAbPointer) * (cdPointer - tmpCdPointer);
-
-//                System.out.println("SAME value = " + abSum[tmpAbPointer]);
-//                System.out.println("result = " + result + " added = "+ (abPointer - tmpAbPointer) * (cdPointer - tmpCdPointer));
+                result += (long)(abPointer - tmpAbPointer) * (cdPointer - tmpCdPointer);
             }
-            else if (cdProcessedSum[cdPointer] > abSum[abPointer]) abPointer++;
+            else if (cdSumWithSignChange[cdPointer] > abSum[abPointer]) abPointer++;
             else cdPointer++;
         }
 
