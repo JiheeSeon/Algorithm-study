@@ -40,31 +40,29 @@ class Main2467 {
         int leftPointer = 0, rightPointer= features.length - 1;
         int mainPointer; int counterPointer;
         int toAdd; int tmpSum;
-        boolean mainFlag;
-        final boolean LEFT_CHOSEN = true;
-        final boolean RIGHT_CHOSEN = false;
+        boolean leftIsChosen;
 
         while (leftPointer < rightPointer) {
 
             if (Math.abs(features[leftPointer]) < Math.abs(features[rightPointer])) {
-                mainFlag = RIGHT_CHOSEN;
+                leftIsChosen = false;
                 mainPointer = rightPointer;
                 counterPointer = leftPointer;
                 toAdd = -1;
             } else {
-                mainFlag = LEFT_CHOSEN;
+                leftIsChosen = true;
                 mainPointer = leftPointer;
                 counterPointer = rightPointer;
                 toAdd = 1;
             }
 
-            while (((mainFlag && mainPointer < counterPointer)
-                    || (!mainFlag && counterPointer < mainPointer))
+            while (((leftIsChosen && mainPointer < counterPointer)
+                    || (!leftIsChosen && counterPointer < mainPointer))
                     && Math.abs(features[mainPointer]) >= Math.abs(features[counterPointer])) {
                 mainPointer += toAdd;
             }
 
-            if (mainFlag) leftPointer = mainPointer;
+            if (leftIsChosen) leftPointer = mainPointer;
             else rightPointer = mainPointer;
 
             tmpSum = features[mainPointer - toAdd] + features[counterPointer];
@@ -72,11 +70,13 @@ class Main2467 {
 //            System.out.print("features[mainPointer] = " + features[mainPointer - toAdd]);
 //            System.out.println(" features[counterPointer] = " + features[counterPointer]);
 //            System.out.println("tmpSum = " + tmpSum);
+//            System.out.println("leftPointer = " + leftPointer);
+//            System.out.println("rightPointer = " + rightPointer);
 
             if (Math.abs(tmpSum) < minSum) {
                 minSum = Math.abs(tmpSum);
 
-                if (mainFlag) {
+                if (leftIsChosen) {
                     leftRes = features[mainPointer - toAdd];
                     rightRes = features[counterPointer];
                 } else {
