@@ -3,6 +3,7 @@ package Two_Pointer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 // TestCase 1
@@ -31,6 +32,7 @@ class Main2467 {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
         features = Pattern.compile(" ").splitAsStream(br.readLine()).mapToInt(Integer::parseInt).toArray();
+        Arrays.sort(features);
         System.out.println(solution());
     }
 
