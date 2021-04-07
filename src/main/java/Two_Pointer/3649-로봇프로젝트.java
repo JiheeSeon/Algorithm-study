@@ -12,17 +12,19 @@ class Main3649{
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        x = Integer.parseInt(br.readLine()) * 10000000;
-        legoN = Integer.parseInt(br.readLine());
-        lenOfLegos = new int[legoN];
+        String xStr;
+        while((xStr = br.readLine()) != null) {
+            x = Integer.parseInt(xStr) * 10000000;
+            legoN = Integer.parseInt(br.readLine());
+            lenOfLegos = new int[legoN];
 
-        for(int i = 0; i < legoN; i++){
-            lenOfLegos[i] = Integer.parseInt(br.readLine());
+            for (int i = 0; i < legoN; i++) {
+                lenOfLegos[i] = Integer.parseInt(br.readLine());
+            }
+            Arrays.sort(lenOfLegos);
+
+            System.out.println(solution());
         }
-        Arrays.sort(lenOfLegos);
-
-        System.out.println(solution());
-
     }
     static String solution(){
         StringBuilder stb = new StringBuilder();
@@ -31,12 +33,12 @@ class Main3649{
         int start = 0, end = lenOfLegos.length - 1;
 
         while(true){
-            if(lenOfLegos[start] + lenOfLegos[end] <= x){
+            if(start >= end) break;
+            else if(lenOfLegos[start] + lenOfLegos[end] <= x){
                 if(lenOfLegos[start] + lenOfLegos[end] == x)
                     legoCombs.add(new LegoComb(lenOfLegos[start], lenOfLegos[end]));
                 start++;
             }
-            else if(start >= end) break;
             else end--;
         }
         if(legoCombs.isEmpty()) return stb.append("danger").toString();
