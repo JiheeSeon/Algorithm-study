@@ -27,17 +27,16 @@ class Main2230{
     static long solution() {
         long result = Long.MAX_VALUE;
 
-        int start = 0, end = N - 1;
+        int start = 0, end = 1;
+
         while(true){
-            if(start == N - 1) break;
+            if (end == N) break;
             else if(A[end] - A[start] == minOfDifference) return minOfDifference;
-            else if(A[end] - A[start] < minOfDifference){
-                end = N - 1; start++;
-            } else{
+            else if(A[end] - A[start] > minOfDifference){
                 if(result > A[end] - A[start])
                     result = A[end] - A[start];
-                end--;
-            }
+                start++; end = start + 1;
+            }else end++;
         }
 
         return result;
@@ -50,3 +49,39 @@ class Main2230{
 //8
 //7
 //5
+
+//8 4
+//1
+//150
+//160
+//165
+//166
+//169
+//170
+//172
+
+//7 4
+//1
+//100
+//210
+//250
+//300
+//400
+//450
+
+//5 0
+//6
+//10
+//15
+//17
+//18
+
+//8 2
+//150
+//1
+//2
+//90
+//70
+//69
+//60
+//141
