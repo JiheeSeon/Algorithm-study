@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.stream.IntStream;
 
 public class ExampleWithArray {
-    static int[] parent; // 자신의 부모를 넣은 배열
+    static int[] parent; // 자신의 부모 Idx를 넣은 배열
 
     public static void main(String[] args) throws IOException{
         parent = IntStream.range(0, 10).toArray();
@@ -66,14 +66,14 @@ public class ExampleWithArray {
 
     // node1이 속한 집합과 node2가 속한 집합을 합친다.
     static void union(int n1Idx, int n2Idx){
-        int parent1 = find(n1Idx);
-        int parent2 = find(n2Idx);
+        int parent1Idx= find(n1Idx);
+        int parent2Idx = find(n2Idx);
 
-        if(parent1 == parent2) return;
+        if(parent1Idx == parent2Idx) return;
 
         // 부모를 더 작은 값으로 설정
-        if(parent1 > parent2) parent[parent1] = parent2;
-        else parent[parent2] = parent1;
+        if(parent1Idx > parent2Idx) parent[parent1Idx] = parent2Idx;
+        else parent[parent2Idx] = parent1Idx;
     }
 
     // 해당하는 노드의 최종 부모를 찾음

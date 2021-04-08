@@ -30,6 +30,9 @@ class Solution {
 
     long find(long node){
         parent.putIfAbsent(node, node);
+
+        // 부모가 자기자신인 방은 들어갈 수 있다
+        // b/c 이미 건든 애들은 union 되어서 다른 애를 가리킬 것
         if(node == parent.get(node)) return node;
         else{
             parent.put(node, find(parent.get(node)));
