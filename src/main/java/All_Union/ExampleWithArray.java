@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
-public class BasicExample {
+public class ExampleWithArray {
     static int[] parent; // 자신의 부모를 넣은 배열
 
     public static void main(String[] args) throws IOException{
