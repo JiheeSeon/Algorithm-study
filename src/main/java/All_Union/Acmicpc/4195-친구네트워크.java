@@ -44,12 +44,12 @@ class Main4195 {
 
         if (pS1.equals(pS2)) return;
 
-        if (pS1.compareTo(pS2) < 0){
+        if (pS1.compareTo(pS2) < 0){ //pS1 가 root
             parent.put(pS2, pS1);
             setN.put(pS1, setN.getOrDefault(pS2, 1) + setN.getOrDefault(pS1, 1));
             setN.remove(pS2);
         }
-        else{
+        else{ //pS2 가 root
             parent.put(pS1, pS2);
             setN.put(pS2, setN.getOrDefault(pS1, 1) + setN.getOrDefault(pS2, 1));
             setN.remove(pS1);
