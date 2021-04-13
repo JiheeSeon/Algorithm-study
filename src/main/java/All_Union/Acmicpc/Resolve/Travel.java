@@ -6,6 +6,11 @@ import java.io.InputStreamReader;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
+/*
+문제
+다른 도시를 경유해서 갈 수 있는지 없는지
+-> 연결되어있는지 여부만 체크하면 됨. 같은 set인가?
+* */
 public class Travel {
     static int[] parent;
 
