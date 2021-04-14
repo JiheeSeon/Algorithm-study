@@ -8,9 +8,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
-/*
-*  왜 Union find?
-* */
+
 class Main10216{
     static Map<Circle, Circle> parent = new HashMap<>();
     static Circle[] circles;
@@ -44,6 +42,10 @@ class Main10216{
 
         for(int i = 0; i < N; i++){
             for(int j = i + 1; j < N; j++){
+                if ((circles[j].x - circles[i].x)*(circles[j].x - circles[i].x)
+                        + (circles[j].y - circles[i].y)*(circles[j].y - circles[i].y)
+                        > (circles[i].r + circles[j].r) * (circles[i].r + circles[j].r)) continue;
+
                 union(circles[i], circles[j]);
             }
         }
@@ -51,18 +53,13 @@ class Main10216{
         Map<Circle, Integer> map = new HashMap<>();
 
         for(Circle c : circles) {
-            map.put(find(parent.get(c)), map.getOrDefault(find(parent.get(c)), 0) + 1);
+            map.put(find(parent.getOrDefault(c, c)), map.getOrDefault(find(parent.getOrDefault(c, c)), 0) + 1);
         }
 
         return map.size();
     }
 
     static void union(Circle c1, Circle c2) {
-        if(!parent.containsKey(c1)) parent.put(c1, c1);
-        if(!parent.containsKey(c2)) parent.put(c2, c2);
-
-        if ((c2.x - c1.x)*(c2.x - c1.x) + (c2.y - c1.y)*(c2.y - c1.y) > (c1.r + c2.r) * (c1.r + c2.r)) return;
-
         Circle pC1 = find(c1);
         Circle pC2 = find(c2);
 
@@ -73,10 +70,10 @@ class Main10216{
     }
 
     static Circle find(Circle circle) {
-        if(circle == parent.get(circle))
+        if(circle == parent.getOrDefault(circle, circle))
             return circle;
         else{
-            Circle toPut = find(parent.get(circle));
+            Circle toPut = find(parent.getOrDefault(circle, circle));
             parent.put(circle, toPut);
             return toPut;
         }
@@ -105,3 +102,22 @@ class Main10216{
         }
     }
 }
+/*
+
+1
+4
+0 0 1
+0 4 1
+0 1 1
+0 3 1
+
+2
+4
+0 0 1
+0 1 1
+1 0 1
+10 0 1
+2
+0 0 10
+0 0 1
+*/
