@@ -25,23 +25,23 @@ class Main3108{
         }
 
         Arrays.sort(rectangles);
-        System.out.println(Arrays.toString(rectangles));
 
         for (int i = 0; i < rectangleN; i++) {
             for (int j = i + 1; j < rectangleN; j++){
-//                System.out.println(rectangles[i] + " & " +rectangles[j] + " : " + toUnion(rectangles[i], rectangles[j]));
-
-                if(!check[i] || !check[j] && toUnion(rectangles[i], rectangles[j])){
+                if((!check[i] || !check[j]) && toUnion(rectangles[i], rectangles[j])){
                     check[i] = true; check[j] = true;
                     union(rectangles[i], rectangles[j]);
-
                 }
-//                else break;
             }
         }
 
+        for (Rectangle r : parent.keySet()) find(r);
+
 //        System.out.println(Arrays.toString(parent.values().toArray()));
         Set<Rectangle> set = new HashSet<>(parent.values());
+//        for (Rectangle r : set) {
+//            System.out.println(r);
+//        }
         System.out.println(set.size());
     }
 
@@ -50,12 +50,20 @@ class Main3108{
     }
 
     static boolean toUnion(Rectangle r1, Rectangle r2) {
-        if((r1.endX < r2.startX || r1.endY < r2.startY)) return false;
-        else if(r1.endX == r2.startX && ((r2.startY < r1.endY) || (r1.startY < r2.endY))) return false;
-        else if(r1.endY == r2.startY && ((r2.startX < r1.endX) || (r1.startX < r2.endX))) return false;
+        boolean b1 = (r1.startX <= r2.startX && r2.startX <= r1.endX);
+        boolean b2 = (r1.startX <= r2.endX && r2.endX <= r1.endX);
+        boolean b3 = (r1.startY <= r2.startY && r2.startY <= r1.endY);
+        boolean b4 = (r1.startY <= r2.endY && r2.endY <= r1.endY);
 
-        return !((r1.startX < r2.startX && r2.endX < r1.endX)
-                && (r1.startY < r2.startY && r2.endY < r1.endY));
+        boolean bex1 = (r1.startX < r2.startX && r2.startX < r1.endX);
+        boolean bex2 = (r1.startX < r2.endX && r2.endX < r1.endX);
+        boolean bex3 = (r1.startY < r2.startY && r2.startY < r1.endY);
+        boolean bex4 = (r1.startY < r2.endY && r2.endY < r1.endY);
+
+        boolean exclude = bex1 && bex2 && bex3 && bex4;
+
+        if(exclude) return false;
+        return (b1 || b2) && (b3 || b4);
     }
 
     static void union(Rectangle r1, Rectangle r2){
@@ -85,20 +93,6 @@ class Main3108{
             this.endX = arr[2]; this.endY = arr[3];
         }
 
-//        @Override
-//        public int compareTo(Rectangle o) {
-//            if(this.startX > o.startX) return 4;
-//            else if(this.startY > o.startY) return 3;
-//            else if(this.endX > o.endX) return 2;
-//            else if(this.endY > o.endY) return 1;
-//            else return -1;
-
-//            if(this.startX < o.startX) return -1;
-//            else if(this.startY < o.startY) return 0;
-//            else if(this.endX < o.endX) return 1;
-//            else if(this.endY < o.endY) return 2;
-//            else return 3;
-//        }
         @Override
         public int compareTo(Rectangle o) {
             if(this.startX == o.startX){
@@ -117,6 +111,7 @@ class Main3108{
         }
     }
 }
+
 /*
 5
 5 0 8 3
@@ -124,4 +119,13 @@ class Main3108{
 3 3 6 6
 4 4 5 5
 1 1 4 4
+
+7
+1 1 2 2
+2 3 3 5
+3 5 7 8
+5 7 9 9
+7 3 10 5
+11 9 16 12
+13 10 15 11
 */
