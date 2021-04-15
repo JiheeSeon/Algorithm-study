@@ -23,7 +23,6 @@ class Main3780{
 
         long distance;
 
-
         for (int i = 0; i < T; i++) {
             N = Integer.parseInt(br.readLine());
             parent = new HashMap<>();
@@ -35,22 +34,13 @@ class Main3780{
             }
 
             input = br.readLine();
-            distance = 0;
 
             while(input.charAt(0) != 'O'){
                 tmp = input.split(" ");
                 existed = enterprises[Integer.parseInt(tmp[1])];
 
                 if (tmp[0].equals("E")){
-                    if(root == null) root = existed;
-
-                    next = existed;
-                    distance = next.distance;
-
-                    while(!((next = parent.get(next)).equals(root))){
-                        distance += next.distance;
-                    }
-                    stb.append(distance).append("\n");
+                    stb.append(existed.distance).append("\n");
                 }
                 else{
                     toConnect = enterprises[Integer.parseInt(tmp[2])];
@@ -58,6 +48,10 @@ class Main3780{
 
                     existed.setDistance(Math.abs(Integer.parseInt(tmp[2]) - Integer.parseInt(tmp[1])) % 1000);
                     union(existed, toConnect);
+
+                    for(Map.Entry<Enterprise, Enterprise> e: parent.entrySet()){
+                        if(!e.getKey().equals(e.getValue())) find(e.getKey());
+                    }
                 }
                 input = br.readLine();
             }
@@ -93,10 +87,18 @@ class Main3780{
         Enterprise pE1 = find(e1);
         Enterprise pE2 = find(e2);
 
+        if(pE1.equals(pE2)) return;
+
         parent.put(pE1, pE2);
     }
 
     static Enterprise find(Enterprise e) {
-        return parent.get(e);
+        if(e.equals(parent.get(e))) return e;
+        else{
+            e.distance += parent.get(e).distance;
+            Enterprise pE = find(parent.get(e));
+            parent.put(e, pE);
+            return pE;
+        }
     }
 }
