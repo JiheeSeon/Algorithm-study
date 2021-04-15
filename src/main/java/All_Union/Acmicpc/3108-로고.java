@@ -25,6 +25,7 @@ class Main3108{
         }
 
         Arrays.sort(rectangles);
+        System.out.println(Arrays.toString(rectangles));
 
         for (int i = 0; i < rectangleN; i++) {
             for (int j = i + 1; j < rectangleN; j++){
@@ -63,8 +64,8 @@ class Main3108{
 
         if(pR1.equals(pR2)) return;
 
-        if(pR1.compareTo(pR2) >= 3) parent.put(pR1, pR2);
-        else parent.put(pR2, pR1);
+        if(pR1.compareTo(pR2) < 0) parent.put(pR2, pR1);
+        else parent.put(pR1, pR2);
     }
 
     static Rectangle find(Rectangle rectangle) {
@@ -91,14 +92,23 @@ class Main3108{
 //            else if(this.endX > o.endX) return 2;
 //            else if(this.endY > o.endY) return 1;
 //            else return -1;
+
+//            if(this.startX < o.startX) return -1;
+//            else if(this.startY < o.startY) return 0;
+//            else if(this.endX < o.endX) return 1;
+//            else if(this.endY < o.endY) return 2;
+//            else return 3;
 //        }
         @Override
         public int compareTo(Rectangle o) {
-            if(this.startX < o.startX) return -1;
-            else if(this.startY < o.startY) return 0;
-            else if(this.endX < o.endX) return 1;
-            else if(this.endY < o.endY) return 2;
-            else return 3;
+            if(this.startX == o.startX){
+                if(this.startY == o.startY){
+                    if(this.endX == o.endX){
+                        if(this.endY == o.endY) return 0;
+                        else return Integer.compare(this.endY, o.endY);
+                    } else return Integer.compare(this.endX, o.endX);
+                } else return Integer.compare(this.startY, o.startY);
+            } else return Integer.compare(this.startX, o.startX);
         }
 
         @Override
@@ -107,3 +117,11 @@ class Main3108{
         }
     }
 }
+/*
+5
+5 0 8 3
+6 1 7 2
+3 3 6 6
+4 4 5 5
+1 1 4 4
+*/
