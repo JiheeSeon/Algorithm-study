@@ -40,8 +40,12 @@ class Main3780{
             while(!input[0].equals("O")) {
                 if(input[0].equals("E")){
                     arbitraryIdx = Integer.parseInt(input[1]);
+                    System.out.println(arbitraryIdx + " : " + enterprises[arbitraryIdx].dst);
                     find(arbitraryIdx, enterprises[arbitraryIdx].dst);
                     enterprises[arbitraryIdx].dst = tmp;
+                    System.out.println(Arrays.toString(enterprises));
+                    System.out.println();
+
                     stb.append(tmp).append("\n");
                 } else{
                     centerIdx = Integer.parseInt(input[1]);
@@ -60,18 +64,22 @@ class Main3780{
 
         if(!pA.equals(pB)){ // pB가 무조건 PA를 흡수
             parent.put(pA, pB);
-            pA.dst += (enterprises[b].dst + Math.abs(a - b) % 1000); // 거리 update
+            pA.dst += ((enterprises[b].dst + Math.abs(a - b) % 1000) % 1000); // 거리 update
         }
     }
 
     static Enterprise find(int x, Integer x_updatedD) {
         if(enterprises[x].equals(parent.get(enterprises[x]))) {
             tmp = x_updatedD;
+            System.out.println();
             return enterprises[x];
         }
         else{
             // x의 distance에 자신의 부모까지의 거리를 추가
-            x_updatedD += parent.get(enterprises[x]).dst;
+            x_updatedD += parent.get(enterprises[x]).dst % 1000;
+            x_updatedD %= 1000;
+            System.out.print(parent.get(enterprises[x]).idx + "  " +parent.get(enterprises[x]) + " -> ");
+            System.out.println(x_updatedD);
             Enterprise pE = find(parent.get(enterprises[x]).idx, x_updatedD);
             parent.put(enterprises[x], pE);
             return pE;
@@ -93,7 +101,7 @@ class Main3780{
     }
 }
 /*
-1
+2
 13
 I 1 2
 E 2
@@ -109,5 +117,71 @@ E 13
 I 2 10
 E 5
 E 4
+O
+//next
+1
+20
+I 16 1
+I 15 9
+I 8 6
+I 5 19
+I 1 17
+I 14 13
+I 9 20
+I 13 19
+I 10 13
+I 20 17
+E 20
+I 19 6
+I 18 12
+I 17 2
+I 4 2
+I 6 17
+E 16
+E 2
+E 4
+E 17
+I 2 18
+E 13
+E 2
+E 6
+E 20
+E 4
+I 3 14
+I 7 10
+E 5
+O
+//
+1
+20
+I 16 1
+I 15 9
+I 8 6
+I 5 19
+I 1 17
+I 14 13
+I 9 20
+I 13 19
+I 10 13
+I 20 17
+E 20
+I 19 6
+I 18 12
+I 17 2
+I 4 2
+I 6 17
+E 16
+E 2
+E 4 -> 0
+E 17 -> 2
+I 2 18 -> 15
+E 13 -> 67
+E 2 -> 22
+E 6 -> 48 <-> 26
+E 20 -> 40
+E 4 -> 24
+I 3 14
+I 7 10
+E 5 -> 75 <-> 27
 O
 */
