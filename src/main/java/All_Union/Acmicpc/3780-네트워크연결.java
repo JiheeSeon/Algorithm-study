@@ -15,6 +15,7 @@ class Main3780{
     static Integer tmp = 0;
     static Map<Enterprise, Enterprise> parent;
     static Enterprise[] enterprises;
+    static int ttmp;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -40,63 +41,81 @@ class Main3780{
             while(!input[0].equals("O")) {
                 if(input[0].equals("E")){
                     arbitraryIdx = Integer.parseInt(input[1]);
-                    System.out.println(arbitraryIdx + " : " + enterprises[arbitraryIdx].dst);
-                    find(arbitraryIdx, enterprises[arbitraryIdx].dst);
-                    enterprises[arbitraryIdx].dst = tmp;
-                    System.out.println(Arrays.toString(enterprises));
-                    System.out.println();
-
-                    stb.append(tmp).append("\n");
+                    find(enterprises[arbitraryIdx]);
+                    stb.append(enterprises[arbitraryIdx].getDst()).append("\n");
                 } else{
                     centerIdx = Integer.parseInt(input[1]);
                     arbitraryIdx = Integer.parseInt(input[2]);
                     union(centerIdx, arbitraryIdx);
+                    System.out.println(Arrays.toString(enterprises));
                 }
+
                 input = br.readLine().split(" ");
+
             }
         }
         System.out.println(stb);
     }
 
     static void union(int a, int b) {
-        Enterprise pA = find(a, enterprises[a].dst);
-        Enterprise pB = find(b, enterprises[b].dst);
+        Enterprise pA = find(enterprises[a]);
+        Enterprise pB = find(enterprises[b]);
 
         if(!pA.equals(pB)){ // pB가 무조건 PA를 흡수
             parent.put(pA, pB);
-            pA.dst += ((enterprises[b].dst + Math.abs(a - b) % 1000) % 1000); // 거리 update
+            pA.setDst((enterprises[b].getDst() + Math.abs(a - b) % 1000) % 1000); // 거리 update
         }
     }
 
-    static Enterprise find(int x, Integer x_updatedD) {
-        if(enterprises[x].equals(parent.get(enterprises[x]))) {
-            tmp = x_updatedD;
-            System.out.println();
-            return enterprises[x];
-        }
-        else{
+    static Enterprise find(Enterprise x) {
+        if(x.equals(parent.get(x))) {
+            return x;
+        } else{
             // x의 distance에 자신의 부모까지의 거리를 추가
-            x_updatedD += parent.get(enterprises[x]).dst % 1000;
-            x_updatedD %= 1000;
-            System.out.print(parent.get(enterprises[x]).idx + "  " +parent.get(enterprises[x]) + " -> ");
-            System.out.println(x_updatedD);
-            Enterprise pE = find(parent.get(enterprises[x]).idx, x_updatedD);
-            parent.put(enterprises[x], pE);
+            x.dst.setD(x.getDst() + parent.get(x).getDst() % 1000);
+            Enterprise pE = find(parent.get(x));
+            parent.put(x, pE);
             return pE;
         }
     }
 
     static private class Enterprise{
-        Integer dst = 0;
+        PassedDistance dst;
         final int idx;
 
         public Enterprise(int idx) {
+            dst = new PassedDistance(0);
             this.idx = idx;
         }
 
         @Override
         public String toString() {
-            return dst+" ";
+            return "(" + idx+" "+dst + ")";
+        }
+
+        public void setDst(int d){
+            dst.setD(d);
+        }
+
+        public int getDst() {
+            return dst.d;
+        }
+    }
+
+    static private class PassedDistance{
+        int d;
+
+        public PassedDistance(int d) {
+            this.d = d;
+        }
+
+        public void setD(int d) {
+            this.d = d;
+        }
+
+        @Override
+        public String toString() {
+            return d+"";
         }
     }
 }
@@ -164,7 +183,7 @@ I 9 20
 I 13 19
 I 10 13
 I 20 17
-E 20
+E 20 -> 3
 I 19 6
 I 18 12
 I 17 2
