@@ -41,7 +41,7 @@ class Main3780{
             while(!input[0].equals("O")) {
                 if(input[0].equals("E")){
                     arbitraryIdx = Integer.parseInt(input[1]);
-                    find(enterprises[arbitraryIdx]);
+                    find(enterprises[arbitraryIdx], enterprises[arbitraryIdx].dst);
                     stb.append(enterprises[arbitraryIdx].getDst()).append("\n");
                 } else{
                     centerIdx = Integer.parseInt(input[1]);
@@ -58,8 +58,8 @@ class Main3780{
     }
 
     static void union(int a, int b) {
-        Enterprise pA = find(enterprises[a]);
-        Enterprise pB = find(enterprises[b]);
+        Enterprise pA = find(enterprises[a], enterprises[a].dst);
+        Enterprise pB = find(enterprises[b], enterprises[b].dst);
 
         if(!pA.equals(pB)){ // pB가 무조건 PA를 흡수
             parent.put(pA, pB);
@@ -67,14 +67,14 @@ class Main3780{
         }
     }
 
-    static Enterprise find(Enterprise x) {
+    static Enterprise find(Enterprise x, PassedDistance firstD) {
         if(x.equals(parent.get(x))) {
             return x;
         } else{
             // x의 distance에 자신의 부모까지의 거리를 추가
-            x.dst.setD(x.getDst() + parent.get(x).getDst() % 1000);
-            Enterprise pE = find(parent.get(x));
-            parent.put(x, pE);
+            firstD.setD(firstD.d + parent.get(x).getDst() % 1000);
+            Enterprise pE = find(parent.get(x), firstD);
+//            parent.put(x, pE);
             return pE;
         }
     }
@@ -145,6 +145,36 @@ I 15 9
 I 8 6
 I 5 19
 I 1 17
+I 16 1
+I 15 9
+I 8 6
+I 5 19
+I 1 17
+I 14 13
+I 9 20
+I 13 19
+I 10 13
+I 20 17
+E 20
+I 19 6
+I 18 12
+I 17 2
+I 4 2
+I 6 17
+E 16
+E 2
+E 4
+E 17
+I 2 18
+E 13
+E 2
+E 6
+E 20
+E 4
+I 3 14
+I 7 10
+E 5
+O
 I 14 13
 I 9 20
 I 13 19
