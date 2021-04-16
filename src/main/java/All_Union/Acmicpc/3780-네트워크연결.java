@@ -12,10 +12,8 @@ class Main3780{
     A의 루트 노드를 B 트리의 자식 or 루트 노드의 자식으로 넣어버리기 (B에 A 흡수)
     */
 
-    static Integer tmp = 0;
     static Map<Enterprise, Enterprise> parent;
     static Enterprise[] enterprises;
-    static int ttmp;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -41,13 +39,12 @@ class Main3780{
             while(!input[0].equals("O")) {
                 if(input[0].equals("E")){
                     arbitraryIdx = Integer.parseInt(input[1]);
-                    find(enterprises[arbitraryIdx], enterprises[arbitraryIdx].dst);
+                    find(enterprises[arbitraryIdx], enterprises[arbitraryIdx]);
                     stb.append(enterprises[arbitraryIdx].getDst()).append("\n");
                 } else{
                     centerIdx = Integer.parseInt(input[1]);
                     arbitraryIdx = Integer.parseInt(input[2]);
                     union(centerIdx, arbitraryIdx);
-                    System.out.println(Arrays.toString(enterprises));
                 }
 
                 input = br.readLine().split(" ");
@@ -58,23 +55,26 @@ class Main3780{
     }
 
     static void union(int a, int b) {
-        Enterprise pA = find(enterprises[a], enterprises[a].dst);
-        Enterprise pB = find(enterprises[b], enterprises[b].dst);
+        Enterprise pA = find(enterprises[a], enterprises[a]);
+        Enterprise pB = find(enterprises[b], enterprises[b]);
 
         if(!pA.equals(pB)){ // pB가 무조건 PA를 흡수
             parent.put(pA, pB);
-            pA.setDst((enterprises[b].getDst() + Math.abs(a - b) % 1000) % 1000); // 거리 update
+            pA.setDst((enterprises[b].getDst() + Math.abs(a - b) % 1000)); // 거리 update
         }
     }
 
-    static Enterprise find(Enterprise x, PassedDistance firstD) {
+    static Enterprise find(Enterprise x, Enterprise first) {
         if(x.equals(parent.get(x))) {
             return x;
         } else{
             // x의 distance에 자신의 부모까지의 거리를 추가
-            firstD.setD(firstD.d + parent.get(x).getDst() % 1000);
-            Enterprise pE = find(parent.get(x), firstD);
-//            parent.put(x, pE);
+            first.setDst((first.getDst() + parent.get(x).getDst()));
+            Enterprise pE = find(parent.get(x), first);
+
+            if(first.equals(x))
+                parent.put(x, pE);
+
             return pE;
         }
     }
@@ -115,7 +115,7 @@ class Main3780{
 
         @Override
         public String toString() {
-            return d+"";
+            return d+ "";
         }
     }
 }
@@ -175,6 +175,14 @@ I 3 14
 I 7 10
 E 5
 O
+//
+1
+20
+I 16 1
+I 15 9
+I 8 6
+I 5 19
+I 1 17
 I 14 13
 I 9 20
 I 13 19
@@ -199,38 +207,47 @@ E 4
 I 3 14
 I 7 10
 E 5
-O
-//
-1
-20
-I 16 1
-I 15 9
-I 8 6
-I 5 19
-I 1 17
-I 14 13
-I 9 20
-I 13 19
-I 10 13
-I 20 17
-E 20 -> 3
-I 19 6
-I 18 12
-I 17 2
-I 4 2
-I 6 17
-E 16
+E 12
+E 12
+I 11 10
+E 3
+E 19
 E 2
-E 4 -> 0
-E 17 -> 2
-I 2 18 -> 15
-E 13 -> 67
-E 2 -> 22
-E 6 -> 48 <-> 26
-E 20 -> 40
-E 4 -> 24
-I 3 14
-I 7 10
-E 5 -> 75 <-> 27
+E 11
+E 8
+E 1
+E 4
+E 13
+E 15
+E 15
+E 8
+E 6
+E 19
+E 14
+E 18
+E 11
+E 15
+E 12
+E 8
+E 1
+E 5
+E 5
+E 14
+E 12
+E 11
+E 6
+E 14
+E 15
+E 4
+E 17
+E 16
+E 5
+E 11
+E 13
+E 6
+E 15
+E 15
+E 13
+E 20
 O
 */
