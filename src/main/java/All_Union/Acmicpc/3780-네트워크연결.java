@@ -7,98 +7,67 @@ import java.util.HashMap;
 import java.util.Map;
 
 class Main3780{
+    static Map<Enterprise, Enterprise> parent = new HashMap<>();
     static Enterprise[] enterprises;
-    static Map<Enterprise, Enterprise> parent;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int T = Integer.parseInt(br.readLine());
-        StringBuilder stb = new StringBuilder();
 
-        String input; String[] tmp;
         int N;
-
-        Enterprise existed, toConnect;
-        Enterprise next, root = null;
-
-        long distance;
+        String[] input;
+        int arbitraryIdx, centerIdx;
 
         for (int i = 0; i < T; i++) {
             N = Integer.parseInt(br.readLine());
-            parent = new HashMap<>();
-            enterprises = new Enterprise[N + 1];
+            input = br.readLine().split(" ");
 
-            for (int j = 1; j < N + 1; j++){
-                enterprises[j] = new Enterprise(j);
-                parent.put(enterprises[j], enterprises[j]);
-            }
+            while(!input[0].equals("O")) {
+                if(input[0].equals("E")){
+                    arbitraryIdx = Integer.parseInt(input[1]);
+                    System.out.println(find(arbitraryIdx, enterprises[arbitraryIdx].dst));
 
-            input = br.readLine();
-
-            while(input.charAt(0) != 'O'){
-                tmp = input.split(" ");
-                existed = enterprises[Integer.parseInt(tmp[1])];
-
-                if (tmp[0].equals("E")){
-                    stb.append(existed.distance).append("\n");
+                } else{
+                    centerIdx = Integer.parseInt(input[1]);
+                    arbitraryIdx = Integer.parseInt(input[2]);
+                    union(centerIdx, arbitraryIdx);
                 }
-                else{
-                    toConnect = enterprises[Integer.parseInt(tmp[2])];
-                    root = toConnect;
-
-                    existed.setDistance(Math.abs(Integer.parseInt(tmp[2]) - Integer.parseInt(tmp[1])) % 1000);
-                    union(existed, toConnect);
-
-                    for(Map.Entry<Enterprise, Enterprise> e: parent.entrySet()){
-                        if(!e.getKey().equals(e.getValue())) find(e.getKey());
-                    }
-                }
-                input = br.readLine();
+                input = br.readLine().split(" ");
             }
         }
-
-        System.out.println(stb);
     }
 
-    static private class Enterprise implements Comparable<Enterprise>{
-        private final int idx;
-        private int distance = 0;
+    static void union(int a, int b) {
+        if(!parent.containsKey(enterprises[a])) parent.put(enterprises[a], enterprises[a]);
+        if(!parent.containsKey(enterprises[b])) parent.put(enterprises[b], enterprises[b]);
+
+        Enterprise pA = find(a, enterprises[a].dst);
+        Enterprise pB = find(b, enterprises[b].dst);
+
+        if(!pA.equals(pB)){
+            parent.put(pA, pB);
+            pA.dst += Math.abs(a - b) % 1000; // 거리 update
+        }
+    }
+
+    static Enterprise find(int a, Integer updatedD) {
+        if(enterprises[a].equals(parent.get(enterprises[a])))
+            return enterprises[a];
+        else{
+            updatedD += parent.get(enterprises[a]).dst;
+            Enterprise pE = find(parent.get(enterprises[a]).idx, updatedD);
+            parent.put(enterprises[a], pE);
+            enterprises[a].dst = updatedD; // 거리 업데이트
+            return pE;
+        }
+    }
+
+    static private class Enterprise{
+        int dst = 0; // 나의 직속 부모와의 거리
+        final int idx;
 
         public Enterprise(int idx) {
             this.idx = idx;
-        }
-
-        public void setDistance(int distance) {
-            this.distance = distance;
-        }
-
-        @Override
-        public int compareTo(Enterprise o) {
-            return Integer.compare(idx, o.idx);
-        }
-
-        @Override
-        public String toString() {
-            return "Enterprise(" + "idx=" + idx + ", distance=" + distance + ')';
-        }
-    }
-
-    static void union(Enterprise e1, Enterprise e2) {
-        Enterprise pE1 = find(e1);
-        Enterprise pE2 = find(e2);
-
-        if(pE1.equals(pE2)) return;
-
-        parent.put(pE1, pE2);
-    }
-
-    static Enterprise find(Enterprise e) {
-        if(e.equals(parent.get(e))) return e;
-        else{
-            e.distance += parent.get(e).distance;
-            Enterprise pE = find(parent.get(e));
-            parent.put(e, pE);
-            return pE;
         }
     }
 }
