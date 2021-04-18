@@ -25,7 +25,7 @@ class Main17090{
         modColN = colN + 2;
         modRowN = rowN + 2;
 
-        maze = new char[modColN*modRowN];
+        maze = new char[modColN * modRowN];
 
         String tmpS;
         for (int y = 1; y < modColN - 1; y++) {
@@ -36,28 +36,14 @@ class Main17090{
         }
 
         parent = IntStream.rangeClosed(0, modColN * modRowN).toArray();
-        int[] parentSpare;
-
-        int tmpIdx; int parentIdx = 0;
-
-        for (int y = 0; y < modColN; y++) {
-            for (int x = 0; x < modRowN; x++) {
-                tmpIdx = y * modRowN + x;
-
-                if(maze[tmpIdx] == 0) {
-                    union(0, tmpIdx);
-                }
-            }
-        }
-
-        parentSpare = parent.clone();
 
         int start, next;
         int curr;
 
         for (int y = 1; y < modColN - 1; y++) {
             for(int x = 1; x < modRowN - 1; x++) {
-                parent = parentSpare.clone();
+                parent = IntStream.rangeClosed(0, modColN * modRowN).toArray();
+
                 start = y * modRowN + x;
                 curr = start;
 
@@ -66,6 +52,7 @@ class Main17090{
 
                 while (true) {
                     next = nextIdx(curr, maze[curr]);
+
                     if (next == -1) {
                         ans++;
                         break;
@@ -93,6 +80,10 @@ class Main17090{
     }
 
     static void union(int a, int b) {
+        if(maze[a] == 0 || maze[b] == 0){
+            outOfBoundFlag = true;
+            return;
+        }
         int pA = find(a);
         int pB = find(b);
 
