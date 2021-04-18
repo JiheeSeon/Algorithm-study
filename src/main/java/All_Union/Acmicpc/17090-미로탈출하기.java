@@ -10,6 +10,7 @@ import java.util.stream.IntStream;
 class Main17090{
     static Map<Point, Point> parent = new HashMap<>();
     static Set<Point> cycles = new HashSet<>();
+    static Set<Point> notCycles = new HashSet<>();
     static char[][] maze;
     static Point[][] points;
     static boolean[][] check;
@@ -49,25 +50,15 @@ class Main17090{
             if(!cycles.contains(ancestor)) ans++;
         }
 
-        for (Point p : cycles)
-            System.out.println(p);
-
-        displayParent();
         System.out.println(ans);
     }
 
     static void dfs(Point curr, Point prev) {
         if(check[curr.y][curr.x]){
             if(prev != curr) {
-                System.out.println("!");
-                System.out.println(prev);
-                System.out.println(curr);
-                System.out.println(find(curr));
-                System.out.println(find(prev));
-//                union(prev, curr);
-                displayParent();
-                System.out.println("!");
-                cycles.add(find(prev));
+                union(prev, curr);
+                if(!notCycles.contains(find(curr)))
+                    cycles.add(find(prev));
             }
             return;
         }
@@ -97,7 +88,9 @@ class Main17090{
             }
         }
 
-        if (!(nextY < 0 || nextY >= colN || nextX < 0 || nextX >= rowN))
+        if (nextY < 0 || nextY >= colN || nextX < 0 || nextX >= rowN)
+            notCycles.add(find(curr));
+        else
             dfs(points[nextY][nextX], curr);
     }
 
