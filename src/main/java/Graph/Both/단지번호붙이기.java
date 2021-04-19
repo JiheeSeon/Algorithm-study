@@ -22,14 +22,16 @@ public class 단지번호붙이기 {
 
         check = new int[N][N];
 
+        int apt = 1;
         for (int y = 0; y < N; y++) {
             for (int x = 0; x < N; x++) {
-                if(graph[y][x] == 1 && check[y][x] == 0) bfs(new Point(y, x));
+                if(graph[y][x] == 1 && check[y][x] == 0)
+                    dfs(new Point(y, x), apt++);
             }
         }
 
         StringBuilder stb = new StringBuilder();
-        stb.append(aptNum).append("\n");
+        stb.append(apt - 1).append("\n");
         aptStatus.values().stream().sorted().forEach(x -> stb.append(x.intValue()).append("\n"));
         System.out.print(stb);
     }
@@ -58,6 +60,23 @@ public class 단지번호붙이기 {
                 q.add(new Point(nextY, nextX));
                 aptStatus.put(aptNum, aptStatus.get(aptNum) + 1);
             }
+        }
+    }
+
+    static void dfs(Point now, int apt) {
+        if(now.y < 0 || now.x < 0 || now.y >= N || now.x >= N
+                || check[now.y][now.x] != 0 || graph[now.y][now.x] == 0) return;
+
+        check[now.y][now.x] = apt;
+        aptStatus.put(apt, aptStatus.getOrDefault(apt, 0) + 1);
+
+        int nextY, nextX;
+
+        for (int i = 0; i < 4; i++) {
+            nextY = now.y + dy[i];
+            nextX = now.x + dx[i];
+
+            dfs(new Point(nextY, nextX), apt);
         }
     }
 
