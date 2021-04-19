@@ -3,15 +3,14 @@ package All_Union.Acmicpc;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 class Main17619{
     static Log[] logs;
     static int[] idxMap;
     static Map<Log, Log> parent = new HashMap<>();
+    static boolean[] check;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -20,6 +19,7 @@ class Main17619{
 
         logs = new Log[N];
         idxMap = new int[N];
+        check = new boolean[N];
 
         for (int i = 0; i < N; i++) {
             tmp = strToIntArray(br.readLine());
@@ -29,22 +29,44 @@ class Main17619{
 
         Arrays.sort(logs);
         for (int i = 0; i < N; i++) {
-            idxMap[logs[i].num] = i;
+            idxMap[logs[i].num - 1] = i; // original number -> new Idx
         }
 
         // union
-        for (int e = 1; e < N; e++) {
-            if(logs[e - 1].x1 <= logs[e].x1 && logs[e].x1 <= logs[e - 1].x2)
-                union(logs[e - 1], logs[e]);
+        for (int i = 0; i < N; i++) {
+            bfs(logs[i], i);
         }
 
         // find
         StringBuilder stb = new StringBuilder();
         for (int q = 0; q < Q; q++) {
             tmp = strToIntArray(br.readLine());
-            stb.append(find(logs[tmp[0] - 1]).equals(find(logs[tmp[1] - 1])) ? 1 : 0).append("\n");
+            stb.append(find(logs[idxMap[tmp[0] - 1]]).equals(find(logs[idxMap[tmp[1] - 1]])) ? 1 : 0).append("\n");
         }
         System.out.println(stb);
+    }
+
+    static void bfs(Log start, int idx) {
+        Queue<Log> q = new LinkedList<>();
+        q.add(start);
+        check[idx] = true;
+
+        Log now; int i = idx;
+
+        while (!q.isEmpty()) {
+            now = q.poll();
+
+            while (++i < logs.length) {
+                if(check[i]
+                        ||!(((logs[i].x1 <= now.x1 && now.x2 <= logs[i].x2)
+                        || (now.x1 <= logs[i].x1 && logs[i].x2 <= now.x2))
+                        ||(now.x1 <= logs[i].x1 && logs[i].x1 <= now.x2))) continue;
+
+                union(now, logs[i]);
+                q.add(logs[i]);
+                check[i] = true;
+            }
+        }
     }
 
     static void union(Log l1, Log l2) {
@@ -53,7 +75,7 @@ class Main17619{
 
         if(pL1.equals(pL2)) return;
 
-        if(pL1.compareTo(pL2) < 0) parent.put(pL2, pL1);
+        if(pL1.num < pL2.num) parent.put(pL2, pL1);
         else parent.put(pL1, pL2);
     }
 
@@ -91,3 +113,20 @@ class Main17619{
         }
     }
 }
+/*Test case
+8 6
+2 8 2
+8 10 7
+21 25 22
+17 20 20
+3 5 5
+6 7 4
+14 17 25
+8 14 10
+1 3
+1 2
+1 5
+1 8
+1 4
+1 6
+*/
