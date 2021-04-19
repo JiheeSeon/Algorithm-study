@@ -29,51 +29,39 @@ class Main17619{
 
         Arrays.sort(logs);
         for (int i = 0; i < N; i++) {
+            logs[i].sortedIdx = i;
             idxMap[logs[i].num - 1] = i; // original number -> new Idx
         }
 
-        // union
-        for (int i = 0; i < N; i++) {
-            if(!check[i]) bfs(logs[i], i);
-        }
+        // union with bfs
+        bfs(logs[0]);
 
         // find
         StringBuilder stb = new StringBuilder();
         for (int q = 0; q < Q; q++) {
             tmp = strToIntArray(br.readLine());
-            System.out.println(find(logs[idxMap[tmp[0] - 1]]));
-            System.out.println(find(logs[idxMap[tmp[1] - 1]]));
             stb.append(find(logs[idxMap[tmp[0] - 1]]).equals(find(logs[idxMap[tmp[1] - 1]])) ? 1 : 0).append("\n");
         }
         System.out.println(stb);
     }
 
-    static void bfs(Log start, int idx) {
+    static void bfs(Log start) {
         Queue<Log> q = new LinkedList<>();
         q.add(start);
-        check[idx] = true;
+        check[start.sortedIdx] = true;
 
-        Log now; int i = idx;
+        Log now; int i;
 
         while (!q.isEmpty()) {
             now = q.poll();
+            i = now.sortedIdx;
 
             while (++i < logs.length) {
-//                System.out.println(logs[i] +" sorted idx = " + i);
-                System.out.println();
-                System.out.println("now = " + now);
-                System.out.println((((logs[i].x1 <= now.x1 && now.x2 <= logs[i].x2)
-                        || (now.x1 <= logs[i].x1 && logs[i].x2 <= now.x2))
-                        ||(now.x1 <= logs[i].x1 && logs[i].x1 <= now.x2)));
-                System.out.println("check array");
-                System.out.println(Arrays.toString(check));
-
                 if(check[i]
                         ||!(((logs[i].x1 <= now.x1 && now.x2 <= logs[i].x2)
                         || (now.x1 <= logs[i].x1 && logs[i].x2 <= now.x2))
                         ||(now.x1 <= logs[i].x1 && logs[i].x1 <= now.x2))) continue;
 
-                System.out.println("adding " + logs[i] +" sorted idx = " + i);
                 union(now, logs[i]);
                 q.add(logs[i]);
                 check[i] = true;
