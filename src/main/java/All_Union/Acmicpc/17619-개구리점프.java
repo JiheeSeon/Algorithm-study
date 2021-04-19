@@ -34,13 +34,15 @@ class Main17619{
 
         // union
         for (int i = 0; i < N; i++) {
-            bfs(logs[i], i);
+            if(!check[i]) bfs(logs[i], i);
         }
 
         // find
         StringBuilder stb = new StringBuilder();
         for (int q = 0; q < Q; q++) {
             tmp = strToIntArray(br.readLine());
+            System.out.println(find(logs[idxMap[tmp[0] - 1]]));
+            System.out.println(find(logs[idxMap[tmp[1] - 1]]));
             stb.append(find(logs[idxMap[tmp[0] - 1]]).equals(find(logs[idxMap[tmp[1] - 1]])) ? 1 : 0).append("\n");
         }
         System.out.println(stb);
@@ -57,11 +59,21 @@ class Main17619{
             now = q.poll();
 
             while (++i < logs.length) {
+//                System.out.println(logs[i] +" sorted idx = " + i);
+                System.out.println();
+                System.out.println("now = " + now);
+                System.out.println((((logs[i].x1 <= now.x1 && now.x2 <= logs[i].x2)
+                        || (now.x1 <= logs[i].x1 && logs[i].x2 <= now.x2))
+                        ||(now.x1 <= logs[i].x1 && logs[i].x1 <= now.x2)));
+                System.out.println("check array");
+                System.out.println(Arrays.toString(check));
+
                 if(check[i]
                         ||!(((logs[i].x1 <= now.x1 && now.x2 <= logs[i].x2)
                         || (now.x1 <= logs[i].x1 && logs[i].x2 <= now.x2))
                         ||(now.x1 <= logs[i].x1 && logs[i].x1 <= now.x2))) continue;
 
+                System.out.println("adding " + logs[i] +" sorted idx = " + i);
                 union(now, logs[i]);
                 q.add(logs[i]);
                 check[i] = true;
@@ -94,7 +106,7 @@ class Main17619{
     }
 
     static private class Log implements Comparable<Log>{
-        private int x1, x2, y, num;
+        private int x1, x2, y, num, sortedIdx;
 
         public Log(int[] coordinateInfo, int num) {
             x1 = coordinateInfo[0];
@@ -111,8 +123,14 @@ class Main17619{
                 } else return Integer.compare(x2, o.x2);
             } else return Integer.compare(x1, o.x1);
         }
+
+        @Override
+        public String toString() {
+            return "Log (x1 = " + x1 + ", x2 = " + x2 + ", num=" + num + ')';
+        }
     }
 }
+
 /*Test case
 8 6
 2 8 2
