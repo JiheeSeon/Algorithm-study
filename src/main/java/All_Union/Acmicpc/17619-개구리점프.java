@@ -7,8 +7,9 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /*구상한 풀이방법
-*
-*
+* 교차해서 점프하면 안되지만 잘 정렬하면 갈 수 있다고 생각
+* -> bfs 로 탐색하면서 조건에 맞으면 union, queue에 넣어서 bfs 탐색의 대상이 되도록
+* -> check 되지 않은 애들에 한해 bfs start point로 넣어서 잡아줌
 * */
 class Main17619{
     static Log[] logs;
@@ -62,9 +63,9 @@ class Main17619{
 
             while (++i < logs.length) {
                 if(check[i]
-                        ||!(((logs[i].x1 <= now.x1 && now.x2 <= logs[i].x2)
-                        || (now.x1 <= logs[i].x1 && logs[i].x2 <= now.x2))
-                        ||(now.x1 <= logs[i].x1 && logs[i].x1 <= now.x2))) continue;
+                        ||!(((logs[i].left <= now.left && now.right <= logs[i].right)
+                        || (now.left <= logs[i].left && logs[i].right <= now.right))
+                        ||(now.left <= logs[i].left && logs[i].left <= now.right))) continue;
 
                 union(now, logs[i]);
                 q.add(logs[i]);
@@ -98,27 +99,25 @@ class Main17619{
     }
 
     static private class Log implements Comparable<Log>{
-        private int x1, x2, y, num, sortedIdx;
+        private int left, right, y, num, sortedIdx;
 
         public Log(int[] coordinateInfo, int num) {
-            x1 = coordinateInfo[0];
-            x2 = coordinateInfo[1];
+            left = coordinateInfo[0];
+            right = coordinateInfo[1];
             y = coordinateInfo[2];
             this.num = num;
         }
 
         @Override
         public int compareTo(Log o) {
-            if(x1 == o.x1){
-                if (x2 == o.x2) {
-                    return Integer.compare(y, o.y);
-                } else return Integer.compare(x2, o.x2);
-            } else return Integer.compare(x1, o.x1);
+            return right == o.right
+                    ? Integer.compare(o.left, left)
+                    : Integer.compare(right, o.right);
         }
 
         @Override
         public String toString() {
-            return "Log (x1 = " + x1 + ", x2 = " + x2 + ", num=" + num + ')';
+            return "Log (x1 = " + left + ", x2 = " + right + ", num=" + num + ')';
         }
     }
 }
