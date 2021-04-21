@@ -1,11 +1,10 @@
-package Graph.Both;
+package Graph.Multiple;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /*
 생각 정리
