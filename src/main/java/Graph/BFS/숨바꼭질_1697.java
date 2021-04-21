@@ -35,7 +35,7 @@ class 숨바꼭질_1697 {
 
             for (int i = 0; i < 3; i++) {
                 next = now + candidate[i];
-                if(next < 0 || next >= 100000 || (check[next] != 0 && check[next] <= check[now] + 1)) continue;
+                if(next < 0 || next > 100000 || (check[next] != 0 && check[next] < check[now] + 1)) continue;
 
                 q.add(next);
                 check[next] = check[now] + 1;
@@ -71,4 +71,7 @@ class 숨바꼭질_1697 {
 
 0 0
 2
+
+0 99999
+23
 */
