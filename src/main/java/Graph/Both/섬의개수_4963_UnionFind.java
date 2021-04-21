@@ -7,6 +7,20 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/*
+생각 정리
+Q.
+y가 달라질 때마다 한줄씩 받는다고 할 때
+인접한 x가 1이면 붙이고, 위로 인접한 애가 1이면 또 union하도록 하는 것은 불가한가?
+Union find를 적용할 때에도 꼭 DFS로 탐색해야 할까?
+A.
+답은 꼭 DFS로 탐색해야 할 듯. 왜냐하면 대각체크를 하기 어려움.
+그를 고려해 구현하다보면 사실상 DFS의 효과를 내야 할 듯.
+
+실수했던 부분
+testcase가 여러개일 때 parent hashmap 을 초기화시키지 않아 누적됨.
+*/
+
 class 섬의개수_4963_UnionFind {
     static int[][] graph;
     static boolean[][] check;
