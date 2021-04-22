@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 class 토마토_7569 {
     static int zHeight, yLength, xWidth;
 
-    static int[][][] graph; // zHeight
+    static int[][][] graph;
     static int[][][] check;
 
     static int[] dy = {-1, 1, 0, 0};
