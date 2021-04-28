@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
+// 노드가 N개인 트리 -> N - 1개의 간선
 class 상근이의여행_9372 {
     static boolean[] check;
     static ArrayList<Integer>[] graph;
@@ -35,7 +36,8 @@ class 상근이의여행_9372 {
                 graph[tmp[1]].add(tmp[0]);
             }
 
-            stb.append(makeTree(1, 0)).append("\n");
+            stb.append(nationN - 1).append("\n");
+//            stb.append(makeTree(1, 0)).append("\n");
         }
         System.out.println(stb);
     }
