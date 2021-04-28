@@ -36,7 +36,6 @@ class 상근이의여행_9372 {
             }
 
             stb.append(makeTree(1, 0)).append("\n");
-            System.out.println();
         }
         System.out.println(stb);
     }
@@ -44,15 +43,12 @@ class 상근이의여행_9372 {
     static int makeTree(int curr, int ans) {
         if(check[curr]) return ans;
 
-        check[curr] = true; ans++;
+        check[curr] = true;
 
         ArrayList<Integer> g = graph[curr];
 
         for(int next : g){
-            if(!check[next])
-                ans = makeTree(next, ans);
-
-//            System.out.println("next = " + next +", ans = " + ans);
+            if(!check[next]) ans = makeTree(next, ans + 1);
         }
         return ans;
     }
