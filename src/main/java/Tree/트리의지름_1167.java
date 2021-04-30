@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 class 트리의지름_1167 {
     static ArrayList<Edge>[] graph;
     static boolean[] check;
-    static Set<String> path = new HashSet<>();
+    static int last = -1;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -32,12 +32,6 @@ class 트리의지름_1167 {
             }
         }
 
-//        for (int i = 1; i < graph.length; i++) {
-//            for (Edge e : graph[i]) {
-//                System.out.println(i + " -> " + e.vertex + " ( " + e.weight + " )");
-//            }
-//        }
-
         Set<Integer> leaf = new HashSet<>();
         for(int i = 1; i <= N; i++){
             if(graph[i].size() == 1) leaf.add(i);
@@ -47,26 +41,27 @@ class 트리의지름_1167 {
 
         for (int lf : leaf) {
             check = new boolean[N + 1];
-            max = Math.max(max, dfs(lf, 0, new StringBuilder()));
+            max = Math.max(max, dfs(lf, 0));
+            break;
         }
+        check = new boolean[N + 1];
+        max = Math.max(max, dfs(last, 0));
+
         System.out.println(max);
     }
 
-    static int dfs(int curr, int weight, StringBuilder stb) {
+    static int dfs(int curr, int weight) {
         if(check[curr]) return weight;
 
         check[curr] = true;
-        stb.append(curr);
 
         int max = -1;
         for(Edge e : graph[curr]){
             if(!check[e.vertex]) {
-                if(path.contains(stb.toString().concat(String.valueOf(e.vertex)))) continue;
-                max = Math.max(max, dfs(e.vertex, weight + e.weight, stb));
+                max = Math.max(max, dfs(e.vertex, weight + e.weight));
             }
         }
-
-        if(max == -1) path.add(stb.reverse().toString());
+        if(max == -1) last = curr;
         return max == -1 ? weight : max;
     }
 
