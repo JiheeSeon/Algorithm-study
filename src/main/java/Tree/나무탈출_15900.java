@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -13,6 +14,8 @@ import java.util.stream.IntStream;
 class 나무탈출_15900 {
     static int[] parent;
     static ArrayList<Integer>[] graph;
+    static Set<Integer> alreadyRegistered = new HashSet<>();
+    static LinkedList<Integer> leafLength = new LinkedList<>();
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -30,32 +33,41 @@ class 나무탈출_15900 {
             graph[tmp[1]].add(tmp[0]);
         }
 
-        setParent(1, 1);
+        setParent(1, 1, 0);
+        System.out.println((leafLength.stream().mapToInt(x -> (int) x).sum())% 2 == 0 ? "No": "Yes");
 
-        Set<Integer> leaf = IntStream.rangeClosed(1, N).boxed().collect(Collectors.toCollection(HashSet::new));
-        for(int i = 1; i <= N; i++){
-            leaf.remove(parent[i]);
-        }
+//        Set<Integer> leaf = IntStream.rangeClosed(1, N).boxed().collect(Collectors.toCollection(HashSet::new));
+//        for(int i = 1; i <= N; i++){
+//            leaf.remove(parent[i]);
+//        }
+//
+//        int totalLength = 0;
+//        for(int i : leaf)
+//            totalLength += getPathLength(i, 0);
 
-        int totalLength = 0;
-        for(int i : leaf)
-            totalLength += getPathLength(i, 0);
-
-        System.out.println(totalLength % 2 == 0 ? "No" : "Yes");
+//        System.out.println(leafLength);
+//        System.out.println(totalLength % 2 == 0 ? "No" : "Yes");
     }
 
     static int[] strToIntArray(String s) {
         return Pattern.compile(" ").splitAsStream(s).mapToInt(Integer::parseInt).toArray();
     }
 
-    static void setParent(int now, int prev){
-        if(parent[now] != 0) return;
+    static void setParent(int now, int prev, int len){
+//        if(parent[now] != 0) return;
 
         parent[now] = prev;
+        alreadyRegistered.add(now);
 
-        for(int i : graph[now]){
-            setParent(i, now);
+        int validLoop = 0;
+        for (int i : graph[now]) {
+            if(!alreadyRegistered.contains(i)){
+                setParent(i, now, len + 1);
+                validLoop++;
+            }
         }
+
+        if(validLoop == 0) leafLength.add(len);
     }
 
     static int getPathLength(int now, int len){
