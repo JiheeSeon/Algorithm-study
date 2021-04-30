@@ -32,6 +32,12 @@ class 트리의지름_1167 {
             }
         }
 
+//        for (int i = 1; i < graph.length; i++) {
+//            for (Edge e : graph[i]) {
+//                System.out.println(i + " -> " + e.vertex + " ( " + e.weight + " )");
+//            }
+//        }
+
         Set<Integer> leaf = new HashSet<>();
         for(int i = 1; i <= N; i++){
             if(graph[i].size() == 1) leaf.add(i);
@@ -41,22 +47,26 @@ class 트리의지름_1167 {
 
         for (int lf : leaf) {
             check = new boolean[N + 1];
-            max = Math.max(max, dfs(lf, 0));
+            max = Math.max(max, dfs(lf, 0, new StringBuilder()));
         }
         System.out.println(max);
     }
 
-    static int dfs(int curr, int weight) {
+    static int dfs(int curr, int weight, StringBuilder stb) {
         if(check[curr]) return weight;
 
         check[curr] = true;
+        stb.append(curr);
 
         int max = -1;
         for(Edge e : graph[curr]){
-            if(!check[e.vertex])
-                max = Math.max(max, dfs(e.vertex, weight + e.weight));
+            if(!check[e.vertex]) {
+                if(path.contains(stb.toString().concat(String.valueOf(e.vertex)))) continue;
+                max = Math.max(max, dfs(e.vertex, weight + e.weight, stb));
+            }
         }
 
+        if(max == -1) path.add(stb.reverse().toString());
         return max == -1 ? weight : max;
     }
 
