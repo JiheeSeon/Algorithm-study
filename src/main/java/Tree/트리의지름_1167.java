@@ -12,6 +12,7 @@ class 트리의지름_1167 {
     static ArrayList<Edge>[] graph;
     static boolean[] check;
     static int last = -1;
+    static int maxx = -1;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -32,20 +33,12 @@ class 트리의지름_1167 {
             }
         }
 
-        Set<Integer> leaf = new HashSet<>();
-        for(int i = 1; i <= N; i++){
-            if(graph[i].size() == 1) leaf.add(i);
-        }
+        int max;
 
-        int max = -1;
-
-        for (int lf : leaf) {
-            check = new boolean[N + 1];
-            max = Math.max(max, dfs(lf, 0));
-            break;
-        }
         check = new boolean[N + 1];
-        max = Math.max(max, dfs(last, 0));
+        max = dfs(1, 0);
+        check = new boolean[N + 1];
+        max = Math.max(dfs(last, 0), max);
 
         System.out.println(max);
     }
@@ -61,7 +54,12 @@ class 트리의지름_1167 {
                 max = Math.max(max, dfs(e.vertex, weight + e.weight));
             }
         }
-        if(max == -1) last = curr;
+        if(max == -1){
+            if(maxx < weight){
+                maxx = weight;
+                last = curr;
+            }
+        }
         return max == -1 ? weight : max;
     }
 
