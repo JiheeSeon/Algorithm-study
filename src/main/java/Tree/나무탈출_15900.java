@@ -6,18 +6,28 @@ import java.io.InputStreamReader;
 import java.util.*;
 import java.util.regex.Pattern;
 
-/*Idea -> depth 를 더한다*/
+/*Idea -> depth 를 더한다
+ leaf에서 root로부터의 거리를 다 더하는 문제
+
+ approach 1. parent + leaf traverse
+ 1. 각 노드의 상하관계 = parent 세팅
+ 2. leaf 를 구해서 leaf 로부터의 level 더하기
+
+ approach 2. DFS
+ parent는 check 배열과 같은 기능을 하고
+ 그냥 dfs 돌리고 아무데도 갈 수 없는 상황(리프)에서 depth 더해줌
+*/
 class 나무탈출_15900 {
-    static Integer[] parent;
+    static int[] parent;
     static ArrayList<Integer>[] graph;
-    static Set<Integer> alreadyRegistered = new HashSet<>();
-    static ArrayList<LeafInfo> lf = new ArrayList<>();
+    static int depthSum = 0;
+
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int N = Integer.parseInt(br.readLine());
 
-        parent = new Integer[N + 1];
+        parent = new int[N + 1];
         graph = new ArrayList[N +1];
         for (int i = 0; i < N + 1; i++) {
             graph[i] = new ArrayList<>();
@@ -30,13 +40,7 @@ class 나무탈출_15900 {
             graph[tmp[1]].add(tmp[0]);
         }
         setParent(1, 1, 0);
-
-        int res = 0;
-        for(LeafInfo linfo : lf){
-            res += linfo.depth;
-        }
-//        System.out.println(res);
-        System.out.println(res % 2 == 0 ? "No" : "Yes");
+        System.out.println(depthSum % 2 == 0 ? "No" : "Yes");
     }
 
     static int[] strToIntArray(String s) {
@@ -44,20 +48,18 @@ class 나무탈출_15900 {
     }
 
     static void setParent(int now, int prev, int depth){
-//        if(parent[now] != 0) return;
+        if(parent[now] != 0) return;
 
         parent[now] = prev;
-        alreadyRegistered.add(now);
 
         int validLoop = 0;
         for (int i : graph[now]) {
-            if(!alreadyRegistered.contains(i)){
+            if(parent[i] == 0) {
                 setParent(i, now, depth + 1);
                 validLoop++;
             }
         }
-
-        if(validLoop == 0) lf.add(new LeafInfo(depth, now));
+        if(validLoop == 0) depthSum += depth;
     }
 
     static int getPathLength(int now, int len){
