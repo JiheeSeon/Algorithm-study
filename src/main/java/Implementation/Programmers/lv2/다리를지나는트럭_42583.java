@@ -22,54 +22,58 @@ import java.util.*;
 -> 한 트럭이 움직이고나서 벗어날 초와 뺄 하중을 큐에 넣어놓음
 -> 큐에서 하나씩 뺄 때마다 현재 하중을 제거하고, 더 올릴 수 있는 트럭만큼 올리기
 
+복장 및 인성이 터진 부분
+nowT에 출발하는 트럭이 이미 있는 경우를 생각하지 못
+-> nowT 이후에 가장 빨리 출발할 수 있는 시점을 포착해야 함.
+   :: last 로 저장해놓기
 */
 class 다리를지나는트럭_42583 {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println(new Solution().solution(5, 5, new int[]{2, 2, 2, 2, 1, 1, 1, 1, 1}));
+        System.out.println(new Solution42583().solution(5, 5, new int[]{2, 2, 2, 2, 1, 1, 1, 1, 1}));
     }
 }
 
-class Solution {
+class Solution42583 {
     public int solution(int bridge_length, int weight, int[] truck_weights) {
         int idx = 0;
         int sum = 0;
-        int nowT = 0;
+        int nowT = 1;
 
         Queue<TruckRecord> truckRec = new LinkedList<>();
 
         TruckRecord tr;
+        TruckRecord last = null;
         boolean flag = false;
 
-        Set<Integer> set = new HashSet<>();
-
-        while(!flag || !truckRec.isEmpty()){
-            if(flag){
+        while (!flag || !truckRec.isEmpty()) {
+            if (flag) {
                 tr = truckRec.poll();
                 sum -= tr.weight;
                 nowT = tr.outSec;
-
-            } else{
-                nowT = 0; sum = 0; flag = true;
+            } else {
+                nowT = 1;
+                sum = 0;
+                flag = true;
             }
 
-            while(idx < truck_weights.length && sum + truck_weights[idx] <= weight){
-                if(set.contains(nowT + bridge_length)) continue;
-                else set.add(nowT + bridge_length);
-
-                truckRec.add(new TruckRecord(truck_weights[idx], nowT + bridge_length));
+            TruckRecord t;
+            while (idx < truck_weights.length && sum + truck_weights[idx] <= weight) {
+                while (last != null && last.outSec - bridge_length >= nowT) nowT++;
+                last = new TruckRecord(truck_weights[idx], nowT + bridge_length);
+                truckRec.add(last);
                 sum += truck_weights[idx];
                 nowT++; idx++;
             }
         }
-        return nowT + 1;
+        return nowT;
     }
 
-    private class TruckRecord{
+    private class TruckRecord {
         int outSec;
         int weight;
 
-        public TruckRecord(int weight, int outSec){
+        public TruckRecord(int weight, int outSec) {
             this.weight = weight;
             this.outSec = outSec;
         }
