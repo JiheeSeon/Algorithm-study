@@ -79,3 +79,47 @@ class Solution42583 {
         }
     }
 }
+class Solution_ver2 {
+    public int solution(int bridge_length, int weight, int[] truck_weights) {
+        int idx = 0;
+        int sum = 0;
+        int nowT = 0;
+
+        Queue<TruckRecord> truckRec = new LinkedList<>();
+
+        TruckRecord tr;
+        boolean flag = false;
+
+        while(!flag || !truckRec.isEmpty()){
+            nowT++;
+            if(flag){
+                tr = truckRec.peek();
+                if(nowT == tr.end) {
+                    truckRec.poll();
+                    sum -= truck_weights[tr.idx];
+                }
+            } else {
+                flag = true;
+            }
+
+            if(idx < truck_weights.length && sum + truck_weights[idx] <= weight) {
+                truckRec.add(new TruckRecord(idx, truck_weights[idx], nowT, nowT + bridge_length));
+                sum += truck_weights[idx++];
+            }
+
+        }
+        return nowT;
+    }
+
+    private class TruckRecord{
+        int start, end;
+        int idx; int weight;
+
+        public TruckRecord(int idx, int weight, int start, int end){
+            this.idx = idx;
+            this.weight = weight;
+            this.start = start;
+            this.end = end;
+        }
+    }
+}
