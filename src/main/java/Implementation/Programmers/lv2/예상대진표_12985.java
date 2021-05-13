@@ -10,23 +10,14 @@ class 예상대진표_12985 {
         int min = n - 1 + Math.min(a, b);
         int max = n - 1 + Math.max(a, b);
 
-        ArrayList<Integer> aPath = new ArrayList<>();
-        while(min != 0){
-            aPath.add(min);
-            min /= 2;
+        int cnt = 0;
+        while(min != 0 && max != 0){
+            if(min == max) break;
+            cnt++;
+            min /= 2; max /= 2;
         }
 
-        ArrayList<Integer> bPath = new ArrayList<>();
-        while(max != 0){
-            bPath.add(max);
-            max /= 2;
-        }
-
-        int currIdx = aPath.size();
-        while(--currIdx >= 0)
-            if(!aPath.get(currIdx).equals(bPath.get(currIdx))) break;
-
-        return currIdx + 1;
+        return cnt;
     }
 
     public int solution_other(int n, int a, int b){
