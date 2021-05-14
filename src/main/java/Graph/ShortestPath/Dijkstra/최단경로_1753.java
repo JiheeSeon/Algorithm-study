@@ -13,11 +13,11 @@ import java.util.regex.Pattern;
 class 최단경로_1753 {
     int vertexN;
     int startV;
-    ArrayList<Edge>[] graph;
+    ArrayList<MainA1753.Edge>[] graph;
 
     int[] distance;
 
-    public 최단경로_1753(int vertexN, int startV, ArrayList<Edge>[] graph) {
+    public 최단경로_1753(int vertexN, int startV, ArrayList<MainA1753.Edge>[] graph) {
         this.vertexN = vertexN;
         this.startV = startV;
         this.graph = graph;
@@ -28,17 +28,17 @@ class 최단경로_1753 {
     }
 
     int[] solution(){
-        PriorityQueue<Edge> pq = new PriorityQueue<>();
-        pq.offer(new Edge(startV, 0));
+        PriorityQueue<MainA1753.Edge> pq = new PriorityQueue<>();
+        pq.offer(new MainA1753.Edge(startV, 0));
 
-        Edge now;
+        MainA1753.Edge now;
         while (!pq.isEmpty()) {
             now = pq.poll();
 
-            for(Edge next: graph[now.vertex]){
+            for(MainA1753.Edge next: graph[now.vertex]){
                 if(distance[next.vertex] > distance[now.vertex] + next.weight){
                     distance[next.vertex] = distance[now.vertex]  + next.weight;
-                    pq.add(new Edge(next.vertex, distance[next.vertex]));
+                    pq.add(new MainA1753.Edge(next.vertex, distance[next.vertex]));
                 }
             }
         }
@@ -46,21 +46,6 @@ class 최단경로_1753 {
     }
 }
 
-class Edge implements Comparable<Edge>{
-    int vertex, weight;
-
-    public Edge(int vertex, int weight) {
-        this.vertex = vertex;
-        this.weight = weight;
-    }
-
-    @Override
-    public int compareTo(Edge o) {
-        return weight == o.weight
-                ? Integer.compare(vertex, o.vertex)
-                : Integer.compare(weight, o.weight);
-    }
-}
 
 class MainA1753{
     public static void main(String[] args) throws IOException {
@@ -90,5 +75,21 @@ class MainA1753{
 
     static int[] processIntoIntArray(String s) {
         return Pattern.compile(" ").splitAsStream(s).mapToInt(Integer::parseInt).toArray();
+    }
+
+    static class Edge implements Comparable<Edge>{
+        int vertex, weight;
+
+        public Edge(int vertex, int weight) {
+            this.vertex = vertex;
+            this.weight = weight;
+        }
+
+        @Override
+        public int compareTo(Edge o) {
+            return weight == o.weight
+                    ? Integer.compare(vertex, o.vertex)
+                    : Integer.compare(weight, o.weight);
+        }
     }
 }
