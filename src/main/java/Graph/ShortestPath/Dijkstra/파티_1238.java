@@ -10,21 +10,23 @@ import java.util.*;
 class Solution {
     ArrayList<Main.Edge>[] graph;
     int endV, vertexN;
-    int[] dist;
+    int[] gDist;
+    int[] comingCost;
 
     public Solution(ArrayList<Main.Edge>[] graph, int endV, int vertexN){
         this.graph = graph;
         this.endV = endV;
         this.vertexN = vertexN;
+        setComingCost();
     }
 
     int solution(int startV){
         PriorityQueue<Main.Edge> pq = new PriorityQueue<>();
         pq.offer(new Main.Edge(startV, 0));
 
-        dist = new int[vertexN + 1];
-        Arrays.fill(dist, Integer.MAX_VALUE);
-        dist[startV] = 0;
+        gDist = new int[vertexN + 1];
+        Arrays.fill(gDist, Integer.MAX_VALUE);
+        gDist[startV] = 0;
 
         Main.Edge now;
 
@@ -32,36 +34,37 @@ class Solution {
         while(!pq.isEmpty()){
             now = pq.poll();
             for(Main.Edge next : graph[now.vertex]){
-                if(dist[next.vertex] > dist[now.vertex] + next.weight){
-                    dist[next.vertex] = dist[now.vertex] + next.weight;
-                    pq.add(new Main.Edge(next.vertex, dist[next.vertex]));
+                if(gDist[next.vertex] > gDist[now.vertex] + next.weight){
+                    gDist[next.vertex] = gDist[now.vertex] + next.weight;
+                    pq.add(new Main.Edge(next.vertex, gDist[next.vertex]));
                 }
             }
         }
 
-        int shortestToGo = dist[endV];
+        return gDist[endV] + comingCost[startV];
+    }
 
-        dist = new int[vertexN + 1];
-        Arrays.fill(dist, Integer.MAX_VALUE);
-        dist[endV] = 0;
+    void setComingCost(){
+        int[] cDist = new int[vertexN + 1];
+        Arrays.fill(cDist, Integer.MAX_VALUE);
+        cDist[endV] = 0;
 
-        pq.add(new Main.Edge(endV, 0));
+        PriorityQueue<Main.Edge> pq = new PriorityQueue<>();
+        pq.offer(new Main.Edge(endV, 0));
 
         // 파티장소에서 시작점으로 귀환하는 데 까지의 최단경로
+        Main.Edge now;
         while(!pq.isEmpty()){
             now = pq.poll();
 
             for(Main.Edge next : graph[now.vertex]){
-                if(dist[next.vertex] > dist[now.vertex] + next.weight){
-                    dist[next.vertex] = dist[now.vertex] + next.weight;
-                    pq.add(new Main.Edge(next.vertex, dist[next.vertex]));
+                if(cDist[next.vertex] > cDist[now.vertex] + next.weight){
+                    cDist[next.vertex] = cDist[now.vertex] + next.weight;
+                    pq.add(new Main.Edge(next.vertex, cDist[next.vertex]));
                 }
             }
         }
-
-        int shortestToCome = dist[endV];
-
-        return shortestToGo + shortestToCome;
+        this.comingCost = cDist;
     }
 }
 
