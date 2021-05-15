@@ -30,8 +30,6 @@ class 최소비용구하기2_11779 {
 
     String solution() {
         StringBuilder stb = new StringBuilder();
-        int cityN;
-
         PriorityQueue<EdgeA11779> pq = new PriorityQueue<>();
         pq.offer(new EdgeA11779(startV, 0));
         dist[startV] = 0;
