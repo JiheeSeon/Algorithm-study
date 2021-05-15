@@ -67,7 +67,7 @@ class 특정최단경로_1504 {
     }
 }
 
-class Main1504{
+class MainA1504{
     public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int[] tmp = splitIntoIntArray(br.readLine());

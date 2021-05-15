@@ -37,7 +37,7 @@ class 최단경로_1753 {
 
             for(MainA1753.Edge next: graph[now.vertex]){
                 if(distance[next.vertex] > distance[now.vertex] + next.weight){
-                    distance[next.vertex] = distance[now.vertex]  + next.weight;
+                    distance[next.vertex] = distance[now.vertex] + next.weight;
                     pq.add(new MainA1753.Edge(next.vertex, distance[next.vertex]));
                 }
             }
