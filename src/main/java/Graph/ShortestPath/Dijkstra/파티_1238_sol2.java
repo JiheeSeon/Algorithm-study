@@ -8,6 +8,13 @@ import java.util.Arrays;
 import java.util.PriorityQueue;
 import java.util.regex.Pattern;
 
+/*
+Dijkstra -> one to All
+즉 하나의 시작점에서 모든 점에 대한 최단경로를 구하는 방식
+
+1, 3, 4 에서 2로 갈 때 모든 최단경로를 구하는 것보다는 간선을 반대로 저장해서
+한번만 할 수 있도록!
+*/
 class 파티_1238_sol2 {
     ArrayList<Edge1238>[] revGraph, graph;
     int[] distToParty, distFromParty;
