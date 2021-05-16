@@ -3,10 +3,7 @@ package Graph.ShortestPath.Dijkstra;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.PriorityQueue;
+import java.util.*;
 import java.util.regex.Pattern;
 
 class K번째최단경로찾기_1854 {
@@ -29,22 +26,38 @@ class K번째최단경로찾기_1854 {
 
     void dijkstra() {
         PriorityQueue<EdgeA1854> pq = new PriorityQueue<>();
-        pq.offer(new EdgeA1854(1, 0));
+        Set<EdgeA1854> set = new HashSet<>();
+        set.add(new EdgeA1854(1, 1, 0));
+        pq.offer(new EdgeA1854(1, 1, 0));
 
         EdgeA1854 now;
+        int[] ks = new int[V + 1];
+
+        ArrayList<Integer> path;
+
         while (!pq.isEmpty()) {
             now = pq.poll();
 
-            for(EdgeA1854 next: graph[now.vertex]){
+            for(EdgeA1854 next: graph[now.endV]){
+                record[next.endV].add(dst[now.endV] + next.weight);
 
-                record[next.vertex].add(dst[now.vertex] + next.weight);
+                if(dst[next.endV] > dst[now.endV] + next.weight){
+                    dst[next.endV] = dst[now.endV] + next.weight;
+                    ks[next.endV]++;
+                }
+//                ks[next.endV]++;
 
-                if(dst[next.vertex] > dst[now.vertex] + next.weight){
-                    dst[next.vertex] = dst[now.vertex] + next.weight;
-                    pq.add(new EdgeA1854(next.vertex, dst[next.vertex]));
+                EdgeA1854 edgeA1854;
+                if(ks[next.endV] < K) {
+                    edgeA1854 = new EdgeA1854(now.endV, next.endV, dst[now.endV] + next.weight);
+                    if(!set.contains(edgeA1854)) {
+                        pq.add(edgeA1854);
+                        set.add(edgeA1854);
+                    }
                 }
             }
         }
+
         for (int i = 1; i <= V; i++) {
             Collections.sort(record[i]);
             System.out.print(i + " : ");
@@ -64,7 +77,7 @@ class MainA1854{
 
         for (int e = 0; e < E; e++) {
             tmp = splitIntoIntArray(br.readLine());
-            graph[tmp[0]].add(new EdgeA1854(tmp[1], tmp[2]));
+            graph[tmp[0]].add(new EdgeA1854(tmp[0], tmp[1], tmp[2]));
         }
 
         new K번째최단경로찾기_1854(V, K, graph).dijkstra();
@@ -74,16 +87,32 @@ class MainA1854{
         return Pattern.compile(" ").splitAsStream(s).mapToInt(Integer::parseInt).toArray();
     }
 }
-class EdgeA1854 implements Comparable<EdgeA1854>{
-    int vertex, weight;
 
-    public EdgeA1854(int vertex, int weight) {
-        this.vertex = vertex;
+class EdgeA1854 implements Comparable<EdgeA1854>{
+    int startV, endV;
+    int weight;
+
+    public EdgeA1854(int startV, int endV, int weight) {
+        this.startV = startV;
+        this.endV = endV;
         this.weight = weight;
     }
 
     @Override
     public int compareTo(EdgeA1854 o) {
         return Integer.compare(weight, o.weight);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EdgeA1854 edgeA1854 = (EdgeA1854) o;
+        return startV == edgeA1854.startV && endV == edgeA1854.endV && weight == edgeA1854.weight;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(startV, endV, weight);
     }
 }
