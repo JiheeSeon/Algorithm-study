@@ -8,56 +8,56 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 // 여러 최단경로 중 G, H를 경유하는 경로로 책정될 수도, 아닐 수도
+// -> G H 또는 H G 순으로 지나는 애들 중에 최단 경로의 weight와 같은지 체크해서 넣어야
+
 class 미확인도착지_9370 {
     int V, S, G, H, gToH;
     int[] ends;
     ArrayList<EdgeA9370>[] graph;
-    int[] dist;
-    int[] prev;
 
-    public 미확인도착지_9370(int v, int s, int g, int h, int[] ends, ArrayList<EdgeA9370>[] graph) {
+    public 미확인도착지_9370(int v, int s, int g, int h, int gToH, int[] ends, ArrayList<EdgeA9370>[] graph) {
         V = v; S = s; G = g; H = h;
+        this.gToH = gToH;
         this.ends = ends;
         this.graph = graph;
-
-        prev = new int[V + 1];
-        dist = new int[V + 1];
-        Arrays.fill(dist, Integer.MAX_VALUE);
-        dist[S] = 0;
     }
 
     String solution() {
-        dijkstra();
+        int[] dist = new int[V + 1];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        dist[S] = 0;
+        dijkstra(S, dist);
 
-        System.out.println(Arrays.toString(dist));
-        System.out.println(Arrays.toString(prev));
+        int[] distH = new int[V + 1];
+        Arrays.fill(distH, Integer.MAX_VALUE);
+        distH[H] = 0;
+        dijkstra(H, distH);
+
+        int[] distG = new int[V + 1];
+        Arrays.fill(distG, Integer.MAX_VALUE);
+        distG[G] = 0;
+        dijkstra(G, distG);
+
         LinkedList<Integer> res = new LinkedList<>();
         int node;
 
         for (int end : ends) {
             if(dist[end] == Integer.MAX_VALUE) continue;
 
-            Stack<Integer> stack = new Stack<>();
-            node = end;
-
-            while(node != S){
-                if(node != end && ((stack.peek() == H && node == G) || (stack.peek() == G && node == H))){
-                    res.add(end);
-                    break;
-                }
-                stack.push(node);
-                node = prev[node];
+            if(dist[G] != Integer.MAX_VALUE && distH[end] != Integer.MAX_VALUE){
+                if(dist[end] == (dist[G] + gToH + distH[end])) res.add(end);
             }
-            stack.push(S);
-            if((stack.peek() == H && S == G) || (stack.peek() == G && S == H)) res.add(end);
+            if(dist[H] != Integer.MAX_VALUE && distG[end] != Integer.MAX_VALUE){
+                if(dist[end] == (dist[H] + gToH + distG[end])) res.add(end);
+            }
         }
 
         return res.stream().sorted().map(String::valueOf).collect(Collectors.joining(" "));
     }
 
-    void dijkstra() {
+    int[] dijkstra(int startV, int[] dist) {
         PriorityQueue<EdgeA9370> pq = new PriorityQueue<>();
-        pq.offer(new EdgeA9370(S, 0));
+        pq.offer(new EdgeA9370(startV, 0));
 
         EdgeA9370 now;
         while (!pq.isEmpty()) {
@@ -67,10 +67,11 @@ class 미확인도착지_9370 {
                 if (dist[next.vertex] > dist[now.vertex] + next.weight) {
                     dist[next.vertex] = dist[now.vertex] + next.weight;
                     pq.add(new EdgeA9370(next.vertex, next.weight));
-                    prev[next.vertex] = now.vertex;
                 }
             }
         }
+
+        return dist;
     }
 
 
@@ -104,6 +105,9 @@ class MainA9370{
 
             for (int e = 0; e < E; e++) {
                 tmp = splitIntoIntArray(br.readLine());
+                if((tmp[0] == G && tmp[1] == H) || (tmp[1] == G && tmp[0] == H)) {
+                    gToH = tmp[2];
+                }
                 graph[tmp[0]].add(new EdgeA9370(tmp[1], tmp[2]));
                 graph[tmp[1]].add(new EdgeA9370(tmp[0], tmp[2]));
             }
@@ -111,7 +115,7 @@ class MainA9370{
             for (int i = 0; i < endCandidateN; i++)
                 ends[i] = Integer.parseInt(br.readLine());
 
-            stb.append(new 미확인도착지_9370(V, S, G, H, ends, graph).solution()).append("\n");
+            stb.append(new 미확인도착지_9370(V, S, G, H, gToH, ends, graph).solution()).append("\n");
         }
 
         System.out.print(stb);
