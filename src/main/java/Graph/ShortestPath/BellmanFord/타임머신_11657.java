@@ -8,6 +8,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.regex.Pattern;
 
+/*유의할 점
+1. 계속 음수로 빼다보면 int 범위를 넘어설 수 있음
+-> INF를 Long으로 지정해주어야 함.
+2. 기존에 무한대였던 애에 값을 더해서 비교하는 일이 없도록 함.
+-> 다익스트라에서 신경쓰지 않았던 부분
+   왜냐하면 다익스트라는 시작정점을 받아서 그로부터 시작하므로
+   dist값이 0이어서 무한대에 무언가를 더하는 일이 없음.
+   즉, 벨만포드는 EdgeList를 토대로 돌기 때문에 start 정점 관련 간선이 나오리라는 보장이 없음.
+-> 처음엔 sort를 했지만 이 역시 정점이 1이 아닌 경우 커버하기 어려움.
+*/
 class 타임머신_11657 {
     static final long INF = Long.MAX_VALUE; // long으로 지정
 
