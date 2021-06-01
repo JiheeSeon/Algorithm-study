@@ -64,7 +64,7 @@ class 토마토_7576 {
     boolean hasUnreachablePoint(){
         for(int y = 0; y < yHeight; y++){
             for(int x = 0; x < xWidth; x++){
-                if(check[y][x] == 0 && graph[y][x] == 0) return true;
+                if(check[y][x] == 0 && graph[y][x] == 0) return true; // 쉽게 하는 실수 :: graph value check X
             }
         }
         return false;
