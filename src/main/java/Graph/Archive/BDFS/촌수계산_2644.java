@@ -97,6 +97,47 @@ class 촌수계산_2644_DFS_1 {
     }
 }
 
+class 촌수계산_2644_DFS_2 {
+    int V, E, S, D;
+    ArrayList<Integer>[] graph;
+    int ans = -1;
+    boolean[] check;
+
+    public 촌수계산_2644_DFS_2(int V, int E, int S, int D, int[][] connection){
+        this.V = V;
+        this.E = E;
+        this.S = S;
+        this.D = D;
+
+        check = new boolean[V];
+
+        graph = new ArrayList[V];
+        for(int v = 0; v < V; v++)
+            graph[v] = new ArrayList<>();
+
+        for(int e = 0; e < E; e++){
+            graph[connection[e][0] - 1].add(connection[e][1] - 1);
+            graph[connection[e][1] - 1].add(connection[e][0] - 1);
+        }
+    }
+
+    void dfs(int now, int dist){
+        if(check[now]) return;
+
+        check[now] = true;
+
+        if(now == D){
+            ans = dist;
+            return;
+        }
+
+        for(int next: graph[now]) dfs(next, dist + 1);
+    }
+
+    int getAns(){
+        return ans;
+    }
+}
 
 class MainA2644 {
     public static void main(String[] args) throws IOException{
@@ -120,6 +161,10 @@ class MainA2644 {
         촌수계산_2644_DFS_1 s_dfs_1 = new 촌수계산_2644_DFS_1(V, E, S, D, connection, new int[V]);
         s_dfs_1.dfs(S, -1);
         System.out.println(s_dfs_1.getAns());
+
+        촌수계산_2644_DFS_2 s_dfs_2 = new 촌수계산_2644_DFS_2(V, E, S, D, connection);
+        s_dfs_2.dfs(S, 0);
+        System.out.println(s_dfs_2.getAns());
     }
 
     static int[] strToIntArr(String s){
