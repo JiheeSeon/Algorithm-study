@@ -4,10 +4,10 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
-class Solution{
+class 로봇_1726 {
     int yHeight, xWidth;
     int[][] graph;
-    int[][][] check;
+    boolean[][][] check;
     int[] src, dst;
 
     int[] dy = {-2, 0, 0, 1, -1};
@@ -22,11 +22,11 @@ class Solution{
     final static int SOUTH = 3;
     final static int NORTH = 4;
 
-    public Solution(int yHeight, int xWidth, int[][] graph, int[] src, int[] dst){
+    public 로봇_1726(int yHeight, int xWidth, int[][] graph, int[] src, int[] dst){
         this.yHeight = yHeight;
         this.xWidth = xWidth;
         this.graph = graph;
-        check = new int[yHeight][xWidth][5];
+        check = new boolean[yHeight][xWidth][5];
 
         this.src = new int[3];
         for(int i = 0; i < 2; i++){
@@ -42,55 +42,63 @@ class Solution{
     }
 
     int getAns(){
-        bfs();
-        return check[dst[Y]][dst[X]][dst[D]] - 1;
-    }
+        Queue<Vector> q = new LinkedList<>();
+        q.add(new Vector(src[0], src[1], src[2], 1));
+        check[src[0]][src[1]][src[2]] = true;
 
-    void bfs(){
-        Queue<int[]> q = new LinkedList<>();
-        q.add(src);
-        check[src[0]][src[1]][src[2]] = 1;
-
-        int[] now;
+        Vector now;
         int nextY, nextX;
 
         while(!q.isEmpty()){
             now = q.poll();
 
-            // 명령 1. 방향 전환
-            for(int d = 1; d <= 4; d++){
-                if(d == now[D]) continue;
+            if(now.y == dst[0] && now.x == dst[1] && now.d == dst[2])
+                return now.distance - 1;
 
-                int toAdd = ((d == EAST && now[D] == WEST) || (d == WEST && now[D] == EAST)
-                        || (d == SOUTH && now[D] == NORTH) || (d == NORTH && now[D] == SOUTH))
+            // 명령 1. 방향 전환
+            for(int newD = 1; newD <= 4; newD++){
+                if(newD == now.d) continue;
+
+                int toAdd
+                        = ((newD == EAST && now.d == WEST) || (newD == WEST && now.d == EAST)
+                        || (newD == SOUTH && now.d  == NORTH) || (newD == NORTH && now.d == SOUTH))
                         ? 2 : 1;
 
-                if((check[now[Y]][now[X]][d] != 0 && check[now[Y]][now[X]][d] < check[now[Y]][now[X]][now[D]] + toAdd))
-                    continue;
+                if(check[now.y][now.x][newD]) continue;
 
-                check[now[Y]][now[X]][d] = check[now[Y]][now[X]][now[D]] + toAdd;
-                q.add(new int[]{now[Y], now[X], d});
+                check[now.y][now.x][newD] = true;
+                q.add(new Vector(now.y, now.x, newD, now.distance + toAdd));
             }
 
             // 명령 2. 같은 방향으로 1-3만큼 갈 수 있다.
             for(int i = 1; i <= 3; i++){
-                nextY = now[Y] + dy[now[D]] * i;
-                nextX = now[X] + dx[now[D]] * i;
+                nextY = now.y + dy[now.d] * i;
+                nextX = now.x + dx[now.d] * i;
 
-                if(nextY < 0 || nextX < 0 || nextY >= yHeight || nextX >= xWidth
-                        || (check[nextY][nextX][now[D]] != 0 && check[nextY][nextX][now[D]] < check[now[Y]][now[X]][now[D]] + 1))
-                    continue;
-
+                if(nextY < 0 || nextX < 0 || nextY >= yHeight || nextX >= xWidth) continue;
                 if(graph[nextY][nextX] == 1) break;
+                if(check[nextY][nextX][now.d]) continue;
 
-                check[nextY][nextX][now[D]] = check[now[Y]][now[X]][now[D]] + 1;
-                q.add(new int[]{nextY, nextX, now[D]});
+                check[nextY][nextX][now.d] = true;
+                q.add(new Vector(nextY, nextX, now.d, now.distance + 1));
             }
+        }
+        return -1;
+    }
+
+    private class Vector{
+        int y, x, d, distance;
+
+        public Vector(int y, int x, int d, int distance) {
+            this.y = y;
+            this.x = x;
+            this.d = d;
+            this.distance = distance;
         }
     }
 }
 
-class Main{
+class MainA1726 {
     public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int[] tmp = strToIntArr(br.readLine());
@@ -103,7 +111,7 @@ class Main{
         int[] src = strToIntArr(br.readLine());
         int[] dst = strToIntArr(br.readLine());
 
-        System.out.println(new Solution(yHeight, xWidth, graph, src, dst).getAns());
+        System.out.println(new 로봇_1726(yHeight, xWidth, graph, src, dst).getAns());
     }
     static int[] strToIntArr(String s){
         return Pattern.compile(" ").splitAsStream(s).mapToInt(Integer::parseInt).toArray();
