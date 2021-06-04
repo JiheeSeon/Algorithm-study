@@ -7,12 +7,18 @@ import java.util.regex.Pattern;
 /*
 1937 욕심쟁이 판다
 - 최장경로 : backtrack vs dfs
+
+timeout solution
+- check 배열의 용도 : 몇번째로 왔다는 것을 기록
+
+right solution
+- dist 배열의 용도 : dp, 최장거리 기록
 */
 
 class 욕심쟁이판다_1937 {
     int N;
     int[][] graph;
-    int[][] check; // 몇 번째로 왔는지를 기록
+    int[][] dist; // 여기서 시작해서 최대 얼마나 갈 수 있는지
     int ans = 0;
 
     int[] dy = {-1, 1, 0, 0};
@@ -21,40 +27,37 @@ class 욕심쟁이판다_1937 {
     public 욕심쟁이판다_1937(int N, int[][] graph){
         this.N = N;
         this.graph = graph;
-        check = new int[N][N];
+        dist = new int[N][N];
     }
 
     int getAns(){
         for(int y = 0; y < N; y++){
             for(int x = 0; x < N; x++){
-                if(check[y][x] == 0) {
-                    ans = Math.max(ans, dfs(y, x, -1, 1));
-//                    display();
-//                    System.out.println();
+                if(dist[y][x] == 0) {
+                    ans = Math.max(ans, dfs(y, x, -1));
+//                    display(); System.out.println();
                 }
             }
         }
-        return ans - 1;
+        return ans;
     }
 
-    int dfs(int y, int x, int prevVal, int depth){
-        if(y < 0 || x < 0 || y >= N || x >= N || graph[y][x] <= prevVal || check[y][x] >= depth + 1) return depth;
+    int dfs(int y, int x, int prevVal){
+        if(y < 0 || x < 0 || y >= N || x >= N || graph[y][x] <= prevVal) return 0;
+        if(dist[y][x] != 0) return dist[y][x];
 
-        depth++;
-        check[y][x] = depth;
+        dist[y][x] = 1;
 
-
-        int max = depth;
         for(int i = 0; i < 4; i++) {
-            max = Math.max(max, dfs(y + dy[i], x + dx[i], graph[y][x], depth));
+            dist[y][x] = Math.max(dist[y][x], dfs(y + dy[i], x + dx[i], graph[y][x]) + 1);
         }
 
-        return max;
+        return dist[y][x];
     }
 
     void display(){
         for(int y = 0; y < N; y++)
-            System.out.println(Arrays.toString(check[y]));
+            System.out.println(Arrays.toString(dist[y]));
     }
 }
 
