@@ -1,6 +1,7 @@
 package Graph.Archive.BDFS;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 /*
@@ -11,7 +12,7 @@ import java.util.regex.Pattern;
 class 욕심쟁이판다_1937 {
     int N;
     int[][] graph;
-    int[][] check;
+    int[][] check; // 몇 번째로 왔는지를 기록
     int ans = 0;
 
     int[] dy = {-1, 1, 0, 0};
@@ -26,25 +27,34 @@ class 욕심쟁이판다_1937 {
     int getAns(){
         for(int y = 0; y < N; y++){
             for(int x = 0; x < N; x++){
-                if(check[y][x] == 0)
-                    ans = Math.max(ans, dfs(y, x, 0, 1));
+                if(check[y][x] == 0) {
+                    ans = Math.max(ans, dfs(y, x, -1, 1));
+//                    display();
+//                    System.out.println();
+                }
             }
         }
-        return ans;
+        return ans - 1;
     }
 
     int dfs(int y, int x, int prevVal, int depth){
-        if(y < 0 || x < 0 || y >= N || x >= N
-                || graph[y][x] <= prevVal || check[y][x] >= depth) return depth;
+        if(y < 0 || x < 0 || y >= N || x >= N || graph[y][x] <= prevVal || check[y][x] >= depth + 1) return depth;
 
         depth++;
         check[y][x] = depth;
 
+
         int max = depth;
-        for(int i = 0; i < 4; i++)
+        for(int i = 0; i < 4; i++) {
             max = Math.max(max, dfs(y + dy[i], x + dx[i], graph[y][x], depth));
+        }
 
         return max;
+    }
+
+    void display(){
+        for(int y = 0; y < N; y++)
+            System.out.println(Arrays.toString(check[y]));
     }
 }
 
@@ -58,3 +68,9 @@ class MainA1937 {
         System.out.println(new 욕심쟁이판다_1937(N, graph).getAns());
     }
 }
+
+/*
+2
+2 2
+2 2
+*/
