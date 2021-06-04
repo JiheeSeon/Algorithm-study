@@ -12,11 +12,14 @@ class 재귀함수가뭔가요_17478 {
     }
 
     String getAns(){
-        StringBuilder stb = new StringBuilder();
-        stb.append("어느 한 컴퓨터공학과 학생이 유명한 교수님을 찾아가 물었다.").append("\n");
-        solution_1(0, stb);
+        return solution_2(0);
 
-        return stb.toString();
+//        // solution_1 사용 시
+//        StringBuilder stb = new StringBuilder();
+//        stb.append("어느 한 컴퓨터공학과 학생이 유명한 교수님을 찾아가 물었다.").append("\n");
+//        solution_1(0, stb);
+//
+//        return stb.toString();
     }
 
     /*
@@ -28,7 +31,6 @@ class 재귀함수가뭔가요_17478 {
 
     private void solution_1(int depth, StringBuilder stb){
         String introStr = "";
-
         // introStr를 세팅하기 위한 과정
         if(depth >= 1){
             localS = new StringBuilder();
@@ -53,7 +55,45 @@ class 재귀함수가뭔가요_17478 {
         // 마무리
         stb.append(introStr).append("라고 답변하였지.\n");
     }
+
+    /*
+    solution 2
+    String을 return 값으로 해서 return 된 것에 계속 append하는 방식
+    참고로, 메모리는 Solution 1보다 많이 잡아먹음
+    b/c 단계마다 객체를 만들기 때문.
+    but 외부에 StringBuilder를 노출하는 게 더 좋은 풀이인지는 모르겠다.
+    */
+
+    private String solution_2(int depth){
+        String introStr = "";
+        StringBuilder stb = new StringBuilder();
+
+        // introStr를 세팅하기 위한 과정
+        if(depth >= 1){
+            localS = new StringBuilder();
+            localS.append(String.valueOf(introS).repeat(depth));
+            introStr = localS.toString();
+        } else{
+            stb.append("어느 한 컴퓨터공학과 학생이 유명한 교수님을 찾아가 물었다.\n");
+        }
+
+        if(depth == maxDepth){
+            stb.append(introStr).append("\"재귀함수가 뭔가요?\"\n");
+            stb.append(introStr).append("\"재귀함수는 자기 자신을 호출하는 함수라네\"\n");
+            stb.append(introStr).append("라고 답변하였지.\n");
+            return stb.toString();
+        }
+
+        // 해당 단계에서 필요한 string을 append하기
+        stb.append(introStr).append("\"재귀함수가 뭔가요?\"\n");
+        stb.append(introStr).append("\"잘 들어보게. 옛날옛날 한 산 꼭대기에 이세상 모든 지식을 통달한 선인이 있었어.\n").append(introStr).append("마을 사람들은 모두 그 선인에게 수많은 질문을 했고, 모두 지혜롭게 대답해 주었지.\n").append(introStr).append("그의 답은 대부분 옳았다고 하네. 그런데 어느 날, 그 선인에게 한 선비가 찾아와서 물었어.\"\n");
+
+        // 다음 단계 호출 -> 자신의 작업을 완료하고 append한 상태의 stringbuilder를 넘겨줌.
+        // 마무리
+        return stb.append(solution_2(depth + 1)).append(introStr).append("라고 답변하였지.\n").toString();
+    }
 }
+
 class MainA17478 {
     public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
