@@ -6,13 +6,12 @@ import java.util.regex.Pattern;
 /*
 1937 욕심쟁이 판다
 - 최장경로 : backtrack vs dfs
-- 현재 값을 기준으로 유동적으로
 */
 
 class 욕심쟁이판다_1937 {
     int N;
     int[][] graph;
-    boolean[][] check;
+    int[][] check;
     int ans = 0;
 
     int[] dy = {-1, 1, 0, 0};
@@ -21,30 +20,29 @@ class 욕심쟁이판다_1937 {
     public 욕심쟁이판다_1937(int N, int[][] graph){
         this.N = N;
         this.graph = graph;
-//        check = new boolean[N][N];
+        check = new int[N][N];
     }
 
     int getAns(){
         for(int y = 0; y < N; y++){
             for(int x = 0; x < N; x++){
-//                if(!check[y][x])
-                check = new boolean[N][N];
-                ans = Math.max(ans, dfs(y, x, 0, 0));
+                if(check[y][x] == 0)
+                    ans = Math.max(ans, dfs(y, x, 0, 1));
             }
         }
         return ans;
     }
 
-    int dfs(int y, int x, int prevVal, int cnt){
+    int dfs(int y, int x, int prevVal, int depth){
         if(y < 0 || x < 0 || y >= N || x >= N
-                || graph[y][x] <= prevVal || check[y][x]) return cnt;
+                || graph[y][x] <= prevVal || check[y][x] >= depth) return depth;
 
-        check[y][x] = true;
-        cnt++;
+        depth++;
+        check[y][x] = depth;
 
-        int max = cnt;
+        int max = depth;
         for(int i = 0; i < 4; i++)
-            max = Math.max(max, dfs(y + dy[i], x + dx[i], graph[y][x], cnt));
+            max = Math.max(max, dfs(y + dy[i], x + dx[i], graph[y][x], depth));
 
         return max;
     }
