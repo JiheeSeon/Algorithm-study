@@ -55,33 +55,36 @@ class 로봇_1726 {
             if(now.y == dst[0] && now.x == dst[1] && now.d == dst[2])
                 return now.distance - 1;
 
-            // 명령 1. 방향 전환
-            for(int newD = 1; newD <= 4; newD++){
-                if(newD == now.d) continue;
-
-                int toAdd
-                        = ((newD == EAST && now.d == WEST) || (newD == WEST && now.d == EAST)
-                        || (newD == SOUTH && now.d  == NORTH) || (newD == NORTH && now.d == SOUTH))
-                        ? 2 : 1;
-
-                if(check[now.y][now.x][newD]) continue;
-
-                check[now.y][now.x][newD] = true;
-                q.add(new Vector(now.y, now.x, newD, now.distance + toAdd));
-            }
-
-            // 명령 2. 같은 방향으로 1-3만큼 갈 수 있다.
+            // 명령 1. 가는 방향으로 직진
             for(int i = 1; i <= 3; i++){
                 nextY = now.y + dy[now.d] * i;
                 nextX = now.x + dx[now.d] * i;
 
-                if(nextY < 0 || nextX < 0 || nextY >= yHeight || nextX >= xWidth) continue;
+                if(nextY < 0 || nextX < 0 || nextY >= yHeight || nextX >= xWidth || check[nextY][nextX][now.d])
+                    continue;
                 if(graph[nextY][nextX] == 1) break;
-                if(check[nextY][nextX][now.d]) continue;
 
                 check[nextY][nextX][now.d] = true;
                 q.add(new Vector(nextY, nextX, now.d, now.distance + 1));
             }
+
+            // 명령 2. 방향 전환
+            for(int d = 1; d <= 4; d++){
+                if(d == now.d) continue;
+
+                int toAdd
+                        = ((d == EAST && now.d == WEST) || (d == WEST && now.d == EAST)
+                        || (d == SOUTH && now.d  == NORTH) || (d == NORTH && now.d == SOUTH))
+                        ? 2 : 1;
+
+                if(check[now.y][now.x][d]) continue;
+
+                check[now.y][now.x][d] = true;
+                q.add(new Vector(now.y, now.x, d, now.distance + toAdd));
+            }
+
+            // 명령 2. 같은 방향으로 1-3만큼 갈 수 있다.
+
         }
         return -1;
     }
@@ -117,3 +120,10 @@ class MainA1726 {
         return Pattern.compile(" ").splitAsStream(s).mapToInt(Integer::parseInt).toArray();
     }
 }
+/*
+1 1
+0
+1 1 1
+1 1 3
+1
+*/
