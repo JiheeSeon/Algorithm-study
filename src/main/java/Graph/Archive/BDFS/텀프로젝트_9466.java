@@ -8,52 +8,56 @@ import java.util.stream.IntStream;
 
 /*
 9466 텀프로젝트
-혼자 할 수도 있음.
 */
+
 class 텀프로젝트_9466 {
-    int N; int[] wanted;
-    int[] check;
-    TreeSet<Integer> leafs;
-    Set<Integer> team = new HashSet<>();
+    int N;
+    int[] graph;
+    boolean[] visited;
+    boolean[] check;
 
-    public 텀프로젝트_9466(int N, int[] wanted){
+    TreeSet<Integer> solos = new TreeSet<>();
+
+    public 텀프로젝트_9466(int N, int[] graph){
         this.N = N;
-        this.wanted = wanted;
+        this.graph = new int[N + 1];
+        this.visited = new boolean[N + 1];
+        this.check = new boolean[N + 1];
 
-        check = new int[N + 1];
-        leafs = IntStream.rangeClosed(1, N).boxed().collect(Collectors.toCollection(TreeSet::new));
-
-        for(int i = 0; i < N; i++){
-            if(i + 1 == wanted[i]){
-                check[i] = i + 1;
-                team.add(i + 1);
+        for(int i = 1; i <= N; i++) {
+            this.graph[i] = graph[i - 1];
+            if(i == this.graph[i]){
+                solos.add(i);
+                visited[i] = true;
+                check[i] = true;
             }
-            leafs.remove(wanted[i]);
         }
     }
 
     int getAns(){
-        for(int i : leafs){
-            dfs(i);
+        for(int i = 1; i <= N; i++){
+            if(!visited[i]) {
+                dfs(i, false);
+            }
         }
 
-        for (int i : team) {
-            System.out.print(i + " ");
+        int cnt = 0;
+        for(int i = 1; i <= N; i++){
+            if(check[i]){
+                if(solos.contains(i)) continue;
+                cnt++;
+            }
         }
-        System.out.println();
-        return team.size();
+        return cnt;
     }
 
-    int dfs(int now){
-        if(now == wanted[now - 1]) return -1;
+    boolean dfs(int now, boolean flag) {
+        if(visited[now]) return check[now];
 
-        int parent = dfs(wanted[now]);
-        System.out.println("parent = " + parent);
-        if(parent != -1){
-            team.add(parent);
-        }
+        visited[now] = true;
+//        if(solos.contains(now)) flag = true;
 
-        return parent;
+        return check[now] = dfs(graph[now], flag);
     }
 }
 
@@ -75,3 +79,9 @@ class Main{
         return Pattern.compile(" ").splitAsStream(s).mapToInt(Integer::parseInt).toArray();
     }
 }
+/*
+1
+5
+3 3 1 2 1
+0
+*/
