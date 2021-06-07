@@ -18,7 +18,6 @@ class 치즈_2638 {
     public 치즈_2638(int yHeight, int xWidth, int[][] graph){
         this.yHeight = yHeight;
         this.xWidth = xWidth;
-        check = new boolean[yHeight][xWidth];
 
         nextGraph = new int[yHeight][xWidth];
         for(int y = 0; y < yHeight; y++){
@@ -29,24 +28,64 @@ class 치즈_2638 {
         this.graph = new int[yHeight][xWidth];
     }
 
-    boolean dfsForInsideCheeseSpace(int y, int x, boolean[][] ck){
-        if(y < 0 || x < 0 || y >= yHeight || x >= xWidth) return false;
-        if(ck[y][x]) return graph[y][x] == 2;
-        if(nextGraph[y][x] == 1) return true;
+    int getAns(){
+        boolean stopFlag;
+        int t = 0;
 
-        ck[y][x] = true;
+        while(true){
+            if(backupGraph()) return t;
+
+            check = new boolean[yHeight][xWidth];
+
+            System.out.println();
+            display(nextGraph);
+            for(int y = 0; y < yHeight; y++){
+                for(int x = 0; x < xWidth; x++){
+                    if(graph[y][x] == 1){
+                        dfsForMeltingCheese(y, x);
+                    }
+                }
+            }
+            t++;
+        }
+    }
+
+    boolean backupGraph(){
+        boolean stopFlag = true;
+
+        int[][] chk = new int[yHeight][xWidth];
+        for(int y = 0; y < yHeight; y++){
+            for(int x = 0; x < xWidth; x++){
+                if(nextGraph[y][x] == 1) stopFlag = false;
+                else if(nextGraph[y][x] == 0 && chk[y][x] == 0)
+                    dfsForInsideCheeseSpace(y, x, chk);
+
+                graph[y][x] = nextGraph[y][x];
+            }
+        }
+
+        return stopFlag;
+    }
+
+    int dfsForInsideCheeseSpace(int y, int x, int[][] ck){
+        if(y < 0 || x < 0 || y >= yHeight || x >= xWidth) return -1;
+        if(ck[y][x] != 0) return ck[y][x];
+        if(nextGraph[y][x] == 1) return 10001;
+
+        ck[y][x] = y * xWidth + x; // 방문했다
 
         boolean flag = true;
+
         for(int i = 0; i < 4; i++){
-            if(!dfsForInsideCheeseSpace(y + dy[i], x + dx[i], ck)) flag = false;
-            if(!flag) break;
+            ck[y][x] = dfsForInsideCheeseSpace(y + dy[i], x + dx[i], ck);
+            System.out.println("y = " + y + " x = " + x + " -> " + "ck[y][x] = " + ck[y][x]);
+            if(ck[y][x] == -1) flag = false;
         }
 
         if(flag) nextGraph[y][x] = 2;
 
-        return flag;
+        return ck[y][x];
     }
-
 
     boolean dfsForMeltingCheese(int y, int x){
         // 굳이 cnt 변수를 안 둔건 아래의 콜스택 결과들을 다 합쳐서 해야 할 것이 아니기 때문
@@ -64,41 +103,6 @@ class 치즈_2638 {
         return false;
     }
 
-    int getAns(){
-        boolean stopFlag;
-        int t = 0;
-
-        while(true){
-            if(backupGraph()) return t;
-
-            check = new boolean[yHeight][xWidth];
-            for(int y = 0; y < yHeight; y++){
-                for(int x = 0; x < xWidth; x++){
-                    if(graph[y][x] == 1){
-                        dfsForMeltingCheese(y, x);
-                    }
-                }
-            }
-            t++;
-        }
-    }
-
-    boolean backupGraph(){
-        boolean stopFlag = true;
-
-        for(int y = 0; y < yHeight; y++){
-            for(int x = 0; x < xWidth; x++){
-                if(nextGraph[y][x] == 1) stopFlag = false;
-                else if(nextGraph[y][x] == 0)
-                    dfsForInsideCheeseSpace(y, x, new boolean[yHeight][xWidth]);
-
-                graph[y][x] = nextGraph[y][x];
-            }
-        }
-
-        return stopFlag;
-    }
-
     void display(int[][] graph){
         for(int y= 0; y < yHeight; y++){
             for(int x = 0; x < xWidth; x++)
@@ -106,7 +110,6 @@ class 치즈_2638 {
             System.out.println();
         }
     }
-
 }
 
 class MainA2638 {
@@ -148,4 +151,16 @@ class MainA2638 {
 0 0 0 0 0 0 0 0 0
 0 0 0 0 0 0 0 0 0
 4
+
+9 9
+0 0 0 0 0 0 0 0 0
+0 1 1 1 1 1 1 1 0
+0 1 0 0 0 0 0 1 0
+0 1 0 0 1 0 0 1 0
+0 1 0 1 0 1 0 1 0
+0 1 0 0 1 0 0 1 0
+0 1 0 0 0 0 0 1 0
+0 1 1 1 1 1 1 1 0
+0 0 0 0 0 0 0 0 0
+3
 */
