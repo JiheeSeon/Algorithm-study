@@ -1,6 +1,7 @@
 package Graph.Archive.BDFS;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 /*
@@ -39,6 +40,7 @@ class 치즈_2638 {
 
             System.out.println();
             display(nextGraph);
+
             for(int y = 0; y < yHeight; y++){
                 for(int x = 0; x < xWidth; x++){
                     if(graph[y][x] == 1){
@@ -53,12 +55,14 @@ class 치즈_2638 {
     boolean backupGraph(){
         boolean stopFlag = true;
 
-        int[][] chk = new int[yHeight][xWidth];
+        boolean[][] chk = new boolean[yHeight][xWidth];
+        ArrayList<int[]> points = new ArrayList<>();
+
         for(int y = 0; y < yHeight; y++){
             for(int x = 0; x < xWidth; x++){
                 if(nextGraph[y][x] == 1) stopFlag = false;
-                else if(nextGraph[y][x] == 0 && chk[y][x] == 0)
-                    dfsForInsideCheeseSpace(y, x, chk);
+                else if(nextGraph[y][x] == 0 && !chk[y][x])
+                    dfsForInsideCheeseSpace(y, x, 0, chk, points);
 
                 graph[y][x] = nextGraph[y][x];
             }
@@ -67,24 +71,28 @@ class 치즈_2638 {
         return stopFlag;
     }
 
-    int dfsForInsideCheeseSpace(int y, int x, int[][] ck){
+    int dfsForInsideCheeseSpace(int y, int x, int depth, boolean[][] chk, ArrayList<int[]> points){
         if(y < 0 || x < 0 || y >= yHeight || x >= xWidth) return -1;
-        if(ck[y][x] != 0) return ck[y][x];
-        if(nextGraph[y][x] == 1) return 10001;
+        if(chk[y][x]) return -2;
+        if(graph[y][x] == 1) return 1;
 
-        ck[y][x] = y * xWidth + x; // 방문했다
+        chk[y][x] = true;
+        points.add(new int[]{y, x});
 
         boolean flag = true;
-
+        int res;
         for(int i = 0; i < 4; i++){
-            ck[y][x] = dfsForInsideCheeseSpace(y + dy[i], x + dx[i], ck);
-            System.out.println("y = " + y + " x = " + x + " -> " + "ck[y][x] = " + ck[y][x]);
-            if(ck[y][x] == -1) flag = false;
+            res = dfsForInsideCheeseSpace(y + dy[i], x + dx[i], depth + 1, chk, points);
+            if(res == -1) flag = false;
         }
 
-        if(flag) nextGraph[y][x] = 2;
+        if(flag && depth == 0){
+            for(int[] point: points){
+                nextGraph[point[0]][point[1]] = 2;
+            }
+        }
 
-        return ck[y][x];
+        return flag ? 1 : -1;
     }
 
     boolean dfsForMeltingCheese(int y, int x){
