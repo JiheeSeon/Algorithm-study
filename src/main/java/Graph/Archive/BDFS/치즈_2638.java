@@ -29,6 +29,41 @@ class 치즈_2638 {
         this.graph = new int[yHeight][xWidth];
     }
 
+    boolean dfsForInsideCheeseSpace(int y, int x, boolean[][] ck){
+        if(y < 0 || x < 0 || y >= yHeight || x >= xWidth) return false;
+        if(ck[y][x]) return graph[y][x] == 2;
+        if(nextGraph[y][x] == 1) return true;
+
+        ck[y][x] = true;
+
+        boolean flag = true;
+        for(int i = 0; i < 4; i++){
+            if(!dfsForInsideCheeseSpace(y + dy[i], x + dx[i], ck)) flag = false;
+            if(!flag) break;
+        }
+
+        if(flag) nextGraph[y][x] = 2;
+
+        return flag;
+    }
+
+
+    boolean dfsForMeltingCheese(int y, int x){
+        // 굳이 cnt 변수를 안 둔건 아래의 콜스택 결과들을 다 합쳐서 해야 할 것이 아니기 때문
+        if(y < 0 || y >= yHeight || x < 0 || x >= xWidth || check[y][x]) return false;
+        if(graph[y][x] == 0) return true;
+
+        check[y][x] = true;
+        int cnt = 0;
+        for(int i = 0; i < 4; i++){
+            if(dfsForMeltingCheese(y + dy[i], x + dx[i])) cnt++;
+        }
+
+        if(cnt >= 2) nextGraph[y][x] = 0;
+
+        return false;
+    }
+
     int getAns(){
         boolean stopFlag;
         int t = 0;
@@ -40,12 +75,28 @@ class 치즈_2638 {
             for(int y = 0; y < yHeight; y++){
                 for(int x = 0; x < xWidth; x++){
                     if(graph[y][x] == 1){
-                        dfs(y, x);
+                        dfsForMeltingCheese(y, x);
                     }
                 }
             }
             t++;
         }
+    }
+
+    boolean backupGraph(){
+        boolean stopFlag = true;
+
+        for(int y = 0; y < yHeight; y++){
+            for(int x = 0; x < xWidth; x++){
+                if(nextGraph[y][x] == 1) stopFlag = false;
+                else if(nextGraph[y][x] == 0)
+                    dfsForInsideCheeseSpace(y, x, new boolean[yHeight][xWidth]);
+
+                graph[y][x] = nextGraph[y][x];
+            }
+        }
+
+        return stopFlag;
     }
 
     void display(int[][] graph){
@@ -56,33 +107,6 @@ class 치즈_2638 {
         }
     }
 
-    boolean backupGraph(){
-        boolean stopFlag = true;
-
-        for(int y = 0; y < yHeight; y++){
-            for(int x = 0; x < xWidth; x++){
-                if(nextGraph[y][x] == 1) stopFlag = false;
-                graph[y][x] = nextGraph[y][x];
-            }
-        }
-        return stopFlag;
-    }
-
-    boolean dfs(int y, int x){
-        // 굳이 cnt 변수를 안 둔건 아래의 콜스택 결과들을 다 합쳐서 해야 할 것이 아니기 때문
-        if(y < 0 || y >= yHeight || x < 0 || x >= xWidth || check[y][x]) return false;
-        if(graph[y][x] == 0) return true;
-
-        check[y][x] = true;
-        int cnt = 0;
-        for(int i = 0; i < 4; i++){
-            if(dfs(y + dy[i], x + dx[i])) cnt++;
-        }
-
-        if(cnt >= 2) nextGraph[y][x] = 0;
-
-        return false;
-    }
 }
 
 class MainA2638 {
@@ -112,4 +136,16 @@ class MainA2638 {
 0 1 0 1 1 1 0 1 0
 0 1 1 0 0 0 1 1 0
 0 0 0 0 0 0 0 0 0
+2
+
+8 9
+0 0 0 0 0 0 0 0 0
+0 0 0 1 1 0 0 0 0
+0 0 0 1 1 0 1 1 0
+0 0 1 1 1 1 1 1 0
+0 0 1 1 1 1 1 0 0
+0 0 1 1 0 1 1 0 0
+0 0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0
+4
 */
