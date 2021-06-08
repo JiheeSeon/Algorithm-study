@@ -10,25 +10,26 @@ class Solution{
     int[] dy = {0, 0, 1, 1};
     int[] dx = {0, 1, 0, 1};
     int[][] graph;
+    int ans = -1;
 
     public Solution(int[] info){
         N = info[0];
         Y = info[1];
         X = info[2];
-        graph = new int[(int)Math.pow(2, N)][(int)Math.pow(2, N)];
     }
 
     int recursion(int n, int y, int x, int val){
         if(n == 1){
             for(int i = 0; i < 4; i++){
-                graph[y + dy[i]][x + dx[i]] = val++;
+                if(y + dy[i] == Y && x + dx[i] == X) ans = val;
+                val++;
             }
             return val;
         }
 
         for(int i = 0; i < 4; i++){
             val = recursion(n - 1, y + dy[i] * ((int)Math.pow(2, (n-1))), x + dx[i] * ((int)Math.pow(2, (n-1))), val);
-            if(graph[Y][X] != 0) return graph[Y][X];
+            if(ans != -1) return ans;
         }
 
         return val;
