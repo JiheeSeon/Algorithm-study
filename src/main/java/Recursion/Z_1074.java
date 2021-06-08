@@ -1,60 +1,39 @@
 package Recursion;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.regex.Pattern;
 
-class Solution{
+class Z_1074 {
     int N, Y, X;
-    int[] dy = {0, 0, 1, 1};
-    int[] dx = {0, 1, 0, 1};
-    int[][] graph;
-    int ans = -1;
 
-    public Solution(int[] info){
-        N = info[0];
-        Y = info[1];
-        X = info[2];
+    public Z_1074(int[] info){
+        N = info[0]; Y = info[1]; X = info[2];
     }
 
-    int recursion(int n, int y, int x, int val){
+    int find(int n, int base, int sY, int sX, int eY, int eX){
         if(n == 1){
-            for(int i = 0; i < 4; i++){
-                if(y + dy[i] == Y && x + dx[i] == X) ans = val;
-                val++;
-            }
-            return val;
+            if(Y == sY && X == sX) return base;
+            else if(Y == sY && X == eX) return base + 1;
+            else if(Y == eY && X == sX) return base + 2;
+            else return base + 3;
         }
+        boolean yIsInFirstHalf = (sY <= Y && Y <= (sY + eY) / 2);
+        boolean xIsInFirstHalf = (sX <= X && X <= (sX + eX) / 2);
 
-        for(int i = 0; i < 4; i++){
-            val = recursion(n - 1, y + dy[i] * ((int)Math.pow(2, (n-1))), x + dx[i] * ((int)Math.pow(2, (n-1))), val);
-            if(ans != -1) return ans;
-        }
-
-        return val;
+        if(yIsInFirstHalf && xIsInFirstHalf) return find(n - 1, base, sY, sX, (sY + eY) / 2, (sX + eX) / 2);
+        else if(yIsInFirstHalf && !xIsInFirstHalf) return find(n - 1, base + (int)Math.pow(2, 2*(n - 1)), sY, (sX + eX) / 2 + 1, (sY + eY) / 2, eX);
+        else if(!yIsInFirstHalf && xIsInFirstHalf) return find(n - 1, base + (int)Math.pow(2,  2*(n - 1)) * 2, (sY + eY) / 2 + 1, sX, eY, (sX + eX) / 2);
+        else return find(n - 1, base + (int)Math.pow(2,  2*(n - 1)) * 3, (sY + eY) / 2 + 1, (sX + eX) / 2 + 1, eY, eX);
     }
 
     int getAns(){
-        return recursion(N, 0, 0, 0);
-    }
-
-    void display(){
-        System.out.println();
-        for(int y = 0; y < graph.length; y++){
-            for(int x = 0; x < graph[y].length; x++){
-                System.out.print(graph[y][x] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
+        return find(N, 0, 0, 0, (int)Math.pow(2, N) - 1, (int)Math.pow(2, N) - 1);
     }
 }
-
 class MainA1074 {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int[] info = Pattern.compile(" ").splitAsStream(br.readLine()).mapToInt(Integer::parseInt).toArray();
-        System.out.println(new Solution(info).getAns());
+        System.out.println(new Z_1074(info).getAns());
     }
 }
