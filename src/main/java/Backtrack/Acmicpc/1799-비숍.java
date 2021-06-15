@@ -3,6 +3,7 @@ package Backtrack.Acmicpc;
 import java.io.*;
 import java.util.regex.Pattern;
 
+/*N Queen 과 유사한 문제*/
 class 비숍_1799 {
     int N;
     int[][] graph;
@@ -14,23 +15,32 @@ class 비숍_1799 {
         check = new boolean[N][N];
     }
 
-    int backtrack(int nowYX, int cnt) {
-        if (nowYX == N * N) return cnt;
+    int backtrack(int nowYX, int cnt, boolean startsFromZero) {
+        if (nowYX >= N * N) return cnt;
 
         int nowY = nowYX / N;
         int nowX = nowYX % N;
 
-        if (!isAvailable(nowY, nowX)) return backtrack(nowYX + 1, cnt);
+        int nextYX = nowYX + 2;
+        if(N % 2 == 0 && (nextYX / N - nowY == 1)){
+            if(startsFromZero){
+                nextYX = nowY % 2 == 0 ? nowYX + 3 : nowYX + 1;
+            }else{
+                nextYX = nowY % 2 == 0 ? nowYX + 1 : nowYX + 3;
+            }
+        }
+
+        if (!isAvailable(nowY, nowX)) return backtrack(nextYX, cnt, startsFromZero);
+
 
         int ret;
-
         if (graph[nowY][nowX] == 1){
             check[nowY][nowX] = true;
-            ret = Math.max(cnt + 1, backtrack(nowYX + 1, cnt + 1));
+            ret = Math.max(cnt + 1, backtrack(nowYX + 2, cnt + 1, startsFromZero));
             check[nowY][nowX] = false;
-            ret = Math.max(ret, backtrack(nowYX + 1, cnt));
+            ret = Math.max(ret, backtrack(nowYX + 2, cnt, startsFromZero));
         } else{
-            ret = Math.max(cnt, backtrack(nowYX + 1, cnt));
+            ret = Math.max(cnt, backtrack(nowYX + 2, cnt, startsFromZero));
         }
 
         return ret;
@@ -54,7 +64,7 @@ class 비숍_1799 {
     }
 
     int getAns() {
-        return backtrack(0, 0);
+        return backtrack(0, 0, true) + backtrack(1, 0, false);
     }
 }
 
