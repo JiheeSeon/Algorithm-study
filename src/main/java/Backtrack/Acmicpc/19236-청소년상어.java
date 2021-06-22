@@ -7,157 +7,193 @@ import java.util.regex.Pattern;
 /*
 19236 청소년 상어
 backtracking
+stage : 한
 */
+
 class 청소년상어_19236 {
+    final static int yHeight = 4;
+    final static int xWidth = 8;
+
     final static int Y = 0;
     final static int X = 1;
     final static int D = 2;
 
-    int[][] vect;
-    int firstEatenFish, sharkD;
-
     final static int BLANK = -1;
+    final static int directionN = 8;
 
-    // 동쪽부터 반시계 45도 회전시켰을 때
-    int[] dy = new int[]{-1, -1, 0, 1, 1, 1, 0, -1};
-    int[] dx = new int[]{0, -1, -1, -1, 0, 1, 1, 1};
-    int[] sign = {-1, 1};
+    // 북쪽부터 반시계 45도 회전시켰을 때
+    final static int[] dy = new int[]{-1, -1, 0, 1, 1, 1, 0, -1};
+    final static int[] dx = new int[]{0, -1, -1, -1, 0, 1, 1, 1};
 
-    int[][] fishLocation = new int[17][3];
+    int[][] vector; // input으로 받은 물고기의 초기 vector 배열
 
-    public 청소년상어_19236(int[][] vect){
+    /*
+    i : fish number j : Y/X/D
+    해당 물고기가 잡아먹히면 null로 체크
+    moveFish로 위치 또는 vector가 바뀌면 반영
+    */
+    int[][] fishLocationAfterMove = new int[17][3];
+
+    int firstEatenFish, firstFishDirection;
+
+    public 청소년상어_19236(int[][] vector) {
         // after first shark comes
-        this.vect = new int[vect.length][vect[0].length];
-        for(int y = 0; y < 4; y++){
-            for(int x = 0; x < 8; x += 2){
-                fishLocation[vect[y][x]] = new int[]{y, x, vect[y][x + 1] - 1};
-                this.vect[y][x] = vect[y][x];
-                this.vect[y][x + 1] = vect[y][x + 1] - 1;
+        this.vector = new int[yHeight][xWidth];
+        for (int y = 0; y < yHeight; y++) {
+            for (int x = 0; x < xWidth; x += 2) {
+                this.vector[y][x] = vector[y][x];
+                this.vector[y][x + 1] = vector[y][x + 1] - 1; // 0 시작으로 맞춤
+                fishLocationAfterMove[this.vector[y][x]] = new int[]{y, x, this.vector[y][x + 1]};
             }
         }
 
-        // get shark info
-        firstEatenFish = this.vect[0][0];
-        sharkD = this.vect[0][1];
+        // get first shark info
+        firstEatenFish = this.vector[0][0];
+        firstFishDirection = this.vector[0][1];
     }
 
-    int getAns(){
+    int getAns() {
         // shark eats fish
-        vect[0][0] = BLANK;
-        vect[0][1] = BLANK;
-        fishLocation[firstEatenFish] = null;
-        return moveShark(0, 0, 0, sharkD, 0);
+        vector[0][0] = BLANK;
+        vector[0][1] = BLANK;
+        fishLocationAfterMove[firstEatenFish] = null;
+        return moveShark(0, 0, 0, firstFishDirection, firstEatenFish);
     }
 
-    int moveShark(int depth, int sharkY, int sharkX, int sharkDir, int cnt){
-        if(depth != 0 && vect[sharkY][sharkX] == BLANK){
-            return cnt;
-        }
-
+    int moveShark(int depth, int sharkY, int sharkX, int sharkDir, int acc) {
+        // 잡아먹을 물고기 후보 관련 변수
         int candidateFishNo;
         int candidateFishD;
         int[] candidateFishInfo;
 
-        //move fish
+        int[][] vectorBack = new int[yHeight][xWidth];
+        int[][] fishLocationBeforeMove = new int[17][3]; // for backup
+
+        // 물고기 이동하기 전에 원상복구할 수 있도록 백업
+        for (int y = 0; y < yHeight; y++)
+            vectorBack[y] = vector[y].clone();
+
+        for (int f = 1; f <= 16; f++)
+            fishLocationBeforeMove[f] = (fishLocationAfterMove[f] == null) ? null : fishLocationAfterMove[f].clone();
+
+        System.out.println("\ndepth = " + depth);
+        // 물고기 이동
         moveFish(sharkY, sharkX);
-//        System.out.println("sharkY = " + sharkY + " sharkX = " + sharkX  + "(" + depth + ")");
-//        displayVect();
+        displayVector();
 
+        // 상어가 잡아먹을 수 있는 모든 물고기에 대한 simulation
         int nextSharkY, nextSharkX;
-        int max = cnt + 1;
+        int max = acc;
 
-        int idx = 2;
-        while(--idx >= 0){
-            for (int i = 1; i <= 3; i++) {
-                nextSharkY = sharkY + dy[sharkDir] * sign[idx] * i;
-                nextSharkX = sharkX + dx[sharkDir] * sign[idx] * 2 * i;
+        for (int i = 1; i <= 3; i++) {
+            nextSharkY = sharkY + dy[sharkDir] * i;
+            nextSharkX = sharkX + dx[sharkDir] * 2 * i;
 
-                if(nextSharkY < 0 || nextSharkX < 0 || nextSharkY >= 4 || nextSharkX >= 8) break;
-                if(vect[nextSharkY][nextSharkX] == BLANK) continue;
+            if (nextSharkY < 0 || nextSharkX < 0 || nextSharkY >= yHeight || nextSharkX >= xWidth) break;
+            if (vector[nextSharkY][nextSharkX] == BLANK) continue; // 이미 비어있는 자리로는 갈 수 없음.
 
-                candidateFishNo = vect[nextSharkY][nextSharkX];
-                candidateFishD = vect[nextSharkY][nextSharkX + 1];
-                candidateFishInfo = fishLocation[candidateFishNo];
+            // backup
+            candidateFishNo = vector[nextSharkY][nextSharkX];
+            candidateFishD = vector[nextSharkY][nextSharkX + 1];
+            candidateFishInfo = fishLocationAfterMove[candidateFishNo];
 
-//                System.out.println("depth = " + depth + " candidateFishNo = " + candidateFishNo);
+            // eat fish on the location
+            fishLocationAfterMove[candidateFishNo] = null;
+            vector[nextSharkY][nextSharkX] = BLANK;
+            vector[nextSharkY][nextSharkX + 1] = BLANK;
 
-                fishLocation[candidateFishNo] = null;
-                vect[nextSharkY][nextSharkX] = BLANK;
-                vect[nextSharkY][nextSharkX + 1] = BLANK;
+            max = Math.max(max, moveShark(depth + 1, nextSharkY, nextSharkX, candidateFishD, acc + candidateFishNo));
 
-                max = Math.max(max, moveShark(depth + 1, nextSharkY, nextSharkX, sharkDir, cnt + 1));
+//            System.out.println("\n[AFTER] depth = " + depth + "("+nextSharkY + ", " + nextSharkX +")");
+            displayVector();
 
-                fishLocation[candidateFishNo] = candidateFishInfo;
-                vect[nextSharkY][nextSharkX] = candidateFishNo;
-                vect[nextSharkY][nextSharkX + 1] = candidateFishD;
-            }
+//            System.out.println("acc = " + acc + " >> " + max);
+
+            fishLocationAfterMove[candidateFishNo] = candidateFishInfo;
+            vector[nextSharkY][nextSharkX] = candidateFishNo;
+            vector[nextSharkY][nextSharkX + 1] = candidateFishD;
+
         }
+
+        // 물고기 원위치 - 백업해놓은 배열 비용
+        for (int y = 0; y < yHeight; y++)
+            vector[y] = vectorBack[y].clone();
+
+        for (int f = 1; f <= 16; f++)
+            fishLocationAfterMove[f] = fishLocationBeforeMove[f] == null ? null : fishLocationBeforeMove[f].clone();
 
         return max;
     }
-    void moveFish(int sharkY, int sharkX){
+
+    void moveFish(int sharkY, int sharkX) {
         int toSwapY, toSwapX;
-        int tmpNo, tmpD; int[] tmpArr;
-        int swapFishNo, swapFishD; int[] swapFishArr;
 
-        for(int fishNo = 1; fishNo <= 16; fishNo++) {
-            if (fishLocation[fishNo] == null) continue;
-            System.out.println();
-            System.out.println("fishNo = " + fishNo);
-            System.out.print("fishLocation[Y] = " + fishLocation[fishNo][Y]);
-            System.out.println(" fishLocation[X] = " + fishLocation[fishNo][X]);
-//            displayVect();
+        int tmpNo, tmpD;
+        int[] tmpArr;
 
-            for (int dir = 0; dir < 8; dir++) {
-                toSwapY = fishLocation[fishNo][Y] + dy[(fishLocation[fishNo][D] + dir) % 8];
-                toSwapX = fishLocation[fishNo][X] + 2 * dx[(fishLocation[fishNo][D] + dir) % 8];
+        int swapFishNo, swapFishD;
+        int[] swapFishArr;
 
-                System.out.println("toSwapY = " + toSwapY + " toSwapX = " + toSwapX);
-                if (toSwapY < 0 || toSwapX < 0 || toSwapY >= 4 || toSwapX >= 8 || (toSwapY == sharkY && toSwapX == sharkX)) continue;
+        for (int fishNo = 1; fishNo <= 16; fishNo++) {
+            if (fishLocationAfterMove[fishNo] == null) continue;
+//            System.out.println();
+//            System.out.println("fishNo = " + fishNo);
+//            System.out.println("Arrays.toString(fishLocation[fishNo]) = " + Arrays.toString(fishLocationAfterMove[fishNo]));
+
+            for (int dir = 0; dir < directionN; dir++) {
+                toSwapY = fishLocationAfterMove[fishNo][Y] + dy[(fishLocationAfterMove[fishNo][D] + dir) % directionN];
+                toSwapX = fishLocationAfterMove[fishNo][X] + 2 * (dx[(fishLocationAfterMove[fishNo][D] + dir) % directionN]);
+
+//                System.out.println("toSwapY = " + toSwapY + " toSwapX = " + toSwapX);
+                if (toSwapY < 0 || toSwapX < 0 || toSwapY >= yHeight || toSwapX >= xWidth || (toSwapY == sharkY && toSwapX == sharkX))
+                    continue;
 
                 // swap info -> for print
-                swapFishNo = vect[toSwapY][toSwapX];
-                swapFishD = vect[toSwapY][toSwapX + 1];
+                swapFishNo = vector[toSwapY][toSwapX];
+                swapFishD = vector[toSwapY][toSwapX + 1];
 //                System.out.println("swapFishNo = " + swapFishNo + " swapFishD = " + swapFishD);
 
                 // just get into it
-                if(swapFishNo == BLANK){
-                    vect[toSwapY][toSwapX] = fishNo;
-                    vect[toSwapY][toSwapX + 1] = fishLocation[fishNo][D];
+                if (swapFishNo == BLANK) {
+                    // 물고기가 이동할 자리에 현재 물고기의 정보를 담음
+                    vector[toSwapY][toSwapX] = fishNo;
+                    vector[toSwapY][toSwapX + 1] = fishLocationAfterMove[fishNo][D];
 
-                    vect[fishLocation[fishNo][Y]][fishLocation[fishNo][X]] = BLANK;
-                    vect[fishLocation[fishNo][Y]][fishLocation[fishNo][X] + 1] = BLANK;
-                    fishLocation[fishNo] = null;
-                    fishLocation[fishNo] = null;
+                    // 물고기가 원래 있던 자리는 비게 됨
+                    vector[fishLocationAfterMove[fishNo][Y]][fishLocationAfterMove[fishNo][X]] = BLANK;
+                    vector[fishLocationAfterMove[fishNo][Y]][fishLocationAfterMove[fishNo][X] + 1] = BLANK;
+
+                    // 현재 물고기가 이동한 곳에 대한 정보 업데이트
+                    fishLocationAfterMove[fishNo] = new int[]{toSwapY, toSwapX, fishLocationAfterMove[fishNo][D]};
                 } else { // swap
-                    // original -> tmp
-                    swapFishArr = fishLocation[swapFishNo];
-                    tmpNo = vect[fishLocation[fishNo][Y]][fishLocation[fishNo][X]];
-                    tmpD = vect[fishLocation[fishNo][Y]][fishLocation[fishNo][X] + 1];
-                    tmpArr = fishLocation[fishNo];
+                    // 현재 물고기의 정보를 tmp에 담음
+                    tmpNo = vector[fishLocationAfterMove[fishNo][Y]][fishLocationAfterMove[fishNo][X]];
+                    tmpD = vector[fishLocationAfterMove[fishNo][Y]][fishLocationAfterMove[fishNo][X] + 1];
+                    tmpArr = fishLocationAfterMove[fishNo];
 
-                    // swapped to original
-                    vect[fishLocation[fishNo][Y]][fishLocation[fishNo][X]] = swapFishNo;
-                    vect[fishLocation[fishNo][Y]][fishLocation[fishNo][X] + 1] = swapFishD;
+                    // 현재 물고기가 있는 곳에 먼저 스왑할 자리에 있는 물고기의 정보를 받아옴
+                    vector[fishLocationAfterMove[fishNo][Y]][fishLocationAfterMove[fishNo][X]] = swapFishNo;
+                    vector[fishLocationAfterMove[fishNo][Y]][fishLocationAfterMove[fishNo][X] + 1] = swapFishD;
+                    swapFishArr = fishLocationAfterMove[swapFishNo];
 
-                    // original to swapped
-                    vect[fishLocation[swapFishNo][Y]][fishLocation[swapFishNo][X]] = tmpNo;
-                    vect[fishLocation[swapFishNo][Y]][fishLocation[swapFishNo][X] + 1] = tmpD;
+                    // tmp에 옮겨놓았던 현재 물고기의 정보를 스왑할 자리에 넣어둠
+                    vector[fishLocationAfterMove[swapFishNo][Y]][fishLocationAfterMove[swapFishNo][X]] = tmpNo;
+                    vector[fishLocationAfterMove[swapFishNo][Y]][fishLocationAfterMove[swapFishNo][X] + 1] = tmpD;
 
-                    fishLocation[fishNo] = swapFishArr;
-                    fishLocation[swapFishNo] = tmpArr;
+                    // 위치는 바뀌되 방향은 그대로
+                    fishLocationAfterMove[fishNo] = new int[]{swapFishArr[Y], swapFishArr[X], tmpArr[D]};
+                    fishLocationAfterMove[swapFishNo] = new int[]{tmpArr[Y], tmpArr[X], swapFishArr[D]};
                 }
 
-                break;
+                break; // 여기까지 도달했다는 것은 한번 스왑했다는 것 -> 이동 중지
             }
-
-            displayVect();
         }
     }
-    void displayVect() {
-        for(int y = 0; y < 4; y++){
-            for(int x = 0; x < 8; x+=2)
-                System.out.print(vect[y][x] + "("+vect[y][x+1]+") ");
+
+    void displayVector() {
+        for (int y = 0; y < yHeight; y++) {
+            for (int x = 0; x < xWidth; x += 2)
+                System.out.print(vector[y][x] + "(" + vector[y][x + 1] + ") ");
             System.out.println();
         }
         System.out.println();
@@ -165,8 +201,8 @@ class 청소년상어_19236 {
 
     void displayFishLocation() {
         int idx = -1;
-        for(int[] i : fishLocation){
-            if(++idx == 0) continue;
+        for (int[] i : fishLocationAfterMove) {
+            if (++idx == 0) continue;
             System.out.println(idx + " > " + Arrays.toString(i));
         }
         System.out.println();
@@ -174,16 +210,16 @@ class 청소년상어_19236 {
 }
 
 class MainA19236 {
-    public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int[][] vect = new int[4][8];
-        for(int i = 0; i < 4; i++)
-            vect[i] = strToIntArr(br.readLine());
+        for (int y = 0; y < 4; y++)
+            vect[y] = strToIntArr(br.readLine());
 
         System.out.println(new 청소년상어_19236(vect).getAns());
     }
 
-    static int[] strToIntArr(String s){
+    static int[] strToIntArr(String s) {
         return Pattern.compile(" ").splitAsStream(s).mapToInt(Integer::parseInt).toArray();
     }
 }
