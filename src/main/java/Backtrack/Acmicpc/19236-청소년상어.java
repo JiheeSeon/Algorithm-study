@@ -66,8 +66,9 @@ class 청소년상어_19236 {
         int candidateFishD;
         int[] candidateFishInfo;
 
+        // for backup
         int[][] vectorBack = new int[yHeight][xWidth];
-        int[][] fishLocationBeforeMove = new int[17][3]; // for backup
+        int[][] fishLocationBeforeMove = new int[17][3];
 
         // 물고기 이동하기 전에 원상복구할 수 있도록 백업
         for (int y = 0; y < yHeight; y++)
@@ -76,10 +77,8 @@ class 청소년상어_19236 {
         for (int f = 1; f <= 16; f++)
             fishLocationBeforeMove[f] = (fishLocationAfterMove[f] == null) ? null : fishLocationAfterMove[f].clone();
 
-        System.out.println("\ndepth = " + depth);
         // 물고기 이동
         moveFish(sharkY, sharkX);
-        displayVector();
 
         // 상어가 잡아먹을 수 있는 모든 물고기에 대한 simulation
         int nextSharkY, nextSharkX;
@@ -104,15 +103,9 @@ class 청소년상어_19236 {
 
             max = Math.max(max, moveShark(depth + 1, nextSharkY, nextSharkX, candidateFishD, acc + candidateFishNo));
 
-//            System.out.println("\n[AFTER] depth = " + depth + "("+nextSharkY + ", " + nextSharkX +")");
-            displayVector();
-
-//            System.out.println("acc = " + acc + " >> " + max);
-
             fishLocationAfterMove[candidateFishNo] = candidateFishInfo;
             vector[nextSharkY][nextSharkX] = candidateFishNo;
             vector[nextSharkY][nextSharkX + 1] = candidateFishD;
-
         }
 
         // 물고기 원위치 - 백업해놓은 배열 비용
@@ -134,41 +127,39 @@ class 청소년상어_19236 {
         int swapFishNo, swapFishD;
         int[] swapFishArr;
 
+        int nowD;
+
         for (int fishNo = 1; fishNo <= 16; fishNo++) {
             if (fishLocationAfterMove[fishNo] == null) continue;
-//            System.out.println();
-//            System.out.println("fishNo = " + fishNo);
-//            System.out.println("Arrays.toString(fishLocation[fishNo]) = " + Arrays.toString(fishLocationAfterMove[fishNo]));
 
             for (int dir = 0; dir < directionN; dir++) {
-                toSwapY = fishLocationAfterMove[fishNo][Y] + dy[(fishLocationAfterMove[fishNo][D] + dir) % directionN];
-                toSwapX = fishLocationAfterMove[fishNo][X] + 2 * (dx[(fishLocationAfterMove[fishNo][D] + dir) % directionN]);
+                nowD = (fishLocationAfterMove[fishNo][D] + dir) % directionN;
+                toSwapY = fishLocationAfterMove[fishNo][Y] + dy[nowD];
+                toSwapX = fishLocationAfterMove[fishNo][X] + 2 * (dx[nowD]);
 
-//                System.out.println("toSwapY = " + toSwapY + " toSwapX = " + toSwapX);
                 if (toSwapY < 0 || toSwapX < 0 || toSwapY >= yHeight || toSwapX >= xWidth || (toSwapY == sharkY && toSwapX == sharkX))
                     continue;
 
                 // swap info -> for print
                 swapFishNo = vector[toSwapY][toSwapX];
                 swapFishD = vector[toSwapY][toSwapX + 1];
-//                System.out.println("swapFishNo = " + swapFishNo + " swapFishD = " + swapFishD);
 
                 // just get into it
                 if (swapFishNo == BLANK) {
                     // 물고기가 이동할 자리에 현재 물고기의 정보를 담음
                     vector[toSwapY][toSwapX] = fishNo;
-                    vector[toSwapY][toSwapX + 1] = fishLocationAfterMove[fishNo][D];
+                    vector[toSwapY][toSwapX + 1] = nowD;
 
                     // 물고기가 원래 있던 자리는 비게 됨
                     vector[fishLocationAfterMove[fishNo][Y]][fishLocationAfterMove[fishNo][X]] = BLANK;
                     vector[fishLocationAfterMove[fishNo][Y]][fishLocationAfterMove[fishNo][X] + 1] = BLANK;
 
                     // 현재 물고기가 이동한 곳에 대한 정보 업데이트
-                    fishLocationAfterMove[fishNo] = new int[]{toSwapY, toSwapX, fishLocationAfterMove[fishNo][D]};
+                    fishLocationAfterMove[fishNo] = new int[]{toSwapY, toSwapX, nowD};
                 } else { // swap
                     // 현재 물고기의 정보를 tmp에 담음
                     tmpNo = vector[fishLocationAfterMove[fishNo][Y]][fishLocationAfterMove[fishNo][X]];
-                    tmpD = vector[fishLocationAfterMove[fishNo][Y]][fishLocationAfterMove[fishNo][X] + 1];
+                    tmpD = nowD;
                     tmpArr = fishLocationAfterMove[fishNo];
 
                     // 현재 물고기가 있는 곳에 먼저 스왑할 자리에 있는 물고기의 정보를 받아옴
@@ -181,7 +172,7 @@ class 청소년상어_19236 {
                     vector[fishLocationAfterMove[swapFishNo][Y]][fishLocationAfterMove[swapFishNo][X] + 1] = tmpD;
 
                     // 위치는 바뀌되 방향은 그대로
-                    fishLocationAfterMove[fishNo] = new int[]{swapFishArr[Y], swapFishArr[X], tmpArr[D]};
+                    fishLocationAfterMove[fishNo] = new int[]{swapFishArr[Y], swapFishArr[X], nowD};
                     fishLocationAfterMove[swapFishNo] = new int[]{tmpArr[Y], tmpArr[X], swapFishArr[D]};
                 }
 
