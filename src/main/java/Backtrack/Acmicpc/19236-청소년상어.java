@@ -6,8 +6,15 @@ import java.util.regex.Pattern;
 
 /*
 19236 청소년 상어
-backtracking
-stage : 한
+backtracking - 푸는 데 엄청 오래 걸림
+
+1. for문 안팎으로 backtrack, backup 세팅
+   moveFish 이전 상황으로 되돌려야 하는 것 간과.
+   moveFish의 영향을 받는 vector, fishLocation 모두 되돌려야 함.
+2. moveFish 로직
+   swap에서 index 헷갈리지 않게 주의했어야 함.
+   기존의 direction을 읽어오는 게 아니라 바뀌는 direction을 반영해서 업데이트
+3. backtrack에서 이번에 선택할 걸 고르는 것에 반해 얘는 다음걸 고르는 방식
 */
 
 class 청소년상어_19236 {
