@@ -3,37 +3,81 @@ package Recursion;
 import java.io.*;
 
 class Solution{
-    int getAns(String s){
-        int openIdx = -1;
-        int closeIdx = -1;
-        int nowIdx = -1;
-        boolean unmatched = false;
-        boolean firstFlag = true;
+//    int solve(String s){
+//        System.out.println(s);
+//        if(s.length() == 1) return 1;
+//
+//        int nowIdx = -1;
+//        int openIdx = -1;
+//        int closeIdx = 0;
+//        int beforeCloseIdx = 0;
+//
+//        int openParenthesisN = 0;
+//        int closeParenthesisN = 0;
+//        boolean firstOpenFlag = true;
+//
+//        char nowC;
+//        int ret = 0;
+//
+//        while (++nowIdx < s.length()) {
+//            nowC = s.charAt(nowIdx);
+//
+//            if (nowC == '('){
+//                openParenthesisN++;
+//
+//                if(firstOpenFlag){
+//                    firstOpenFlag = false;
+//                    openIdx = nowIdx;
+//                    ret += (openIdx - 1);
+//                }
+//            } else if (nowC == ')'){
+//                closeParenthesisN++;
+//                closeIdx = nowIdx;
+//
+//                if(openParenthesisN == closeParenthesisN){
+//                    ret += ((s.charAt(openIdx - 1) - '0') * solve(s.substring(openIdx + 1, closeIdx)));
+//                }
+//            }
+//        }
+//        ret += (s.length() - closeIdx - 1);
+//
+//        return ret;
+//    }
 
+    int getAns(String s){
+        int nowIdx = -1;
+        int openIdx = -1;
+        int closeIdx = 0;
+        int beforeCloseIdx = 0;
+
+        int openParenthesisN = 0;
+        int closeParenthesisN = 0;
+        boolean firstOpenFlag = true;
+
+        char nowC;
         int ret = 0;
 
-        while(++nowIdx < s.length()){
-            if(!unmatched) openIdx = closeIdx;
+        while (++nowIdx < s.length()) {
+            nowC = s.charAt(nowIdx);
 
-            if(s.charAt(nowIdx) == '('){
+            if (nowC == '('){
+                openParenthesisN++;
                 openIdx = nowIdx;
-                unmatched = true;
 
-                if(firstFlag) {
-                    ret += openIdx - 1;
-                    firstFlag = false;
-                } else{
-                    ret += openIdx - closeIdx - 2;
+                if(firstOpenFlag){
+                    firstOpenFlag = false;
+                    ret += (openIdx - 1);
                 }
-            } else if(s.charAt(nowIdx) == ')'){
+            } else if (nowC == ')'){
+                closeParenthesisN++;
+
+                if(openParenthesisN == closeParenthesisN){
+                    ret += ((s.charAt(openIdx - closeIdx - 1) - '0') * getAns(s.substring(openIdx + 1, closeIdx)));
+                }
                 closeIdx = nowIdx;
-                ret += (s.charAt(openIdx - 1) - '0') * getAns(s.substring(openIdx + 1, closeIdx));
-                unmatched = false;
             }
         }
-        ret += (s.length() - closeIdx - 1);
 
-        if(openIdx == -1 && closeIdx == -1) return s.length();
         return ret;
     }
 }
@@ -47,4 +91,7 @@ class Main{
 /*
 3(3(3(2(2)2(2))))
 108
+
+6(22)122
+15
 */
