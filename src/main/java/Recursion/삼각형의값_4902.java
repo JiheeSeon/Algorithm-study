@@ -25,44 +25,40 @@ class 삼각형의값_4902 {
         dp = new HashMap<>();
         max = Integer.MIN_VALUE;
 
-        recursion(1, 1, 1);
+        recursion(L, 1, 1);
         return max;
     }
 
-    int recursion(int depth, int level, int apexIdx){
-        if(depth == maxDepth){
+    int recursion(int length, int level, int apexIdx){
+        if(length == 1){
             max = Math.max(max, triangle[apexIdx]);
             dp.put(new Triangle(apexIdx, 1), triangle[apexIdx]);
             return triangle[apexIdx];
         }
 
-        System.out.print("depth = " + depth);
-        System.out.print(" level = " + level);
-        System.out.println(" apexIdx = " + apexIdx);
-
         if(level >= L){
             return triangle[apexIdx];
         }
-        int length = (L + 1 - depth);
-        int sameDepthTriangleN = 2 * level - 1;
+
+        int sameLevelTriangleN = 2 * level - 1;
 
         int[] tr = new int[4];
 
         Triangle tmp = new Triangle(apexIdx, length - 1);
         if(!dp.containsKey(tmp)){
-            tr[0] = recursion(depth + 1, level, apexIdx);
+            tr[0] = recursion(length - 1, level, apexIdx);
             dp.put(tmp, tr[0]);
         } else tr[0] = dp.get(tmp);
 
-        tmp = new Triangle(apexIdx + sameDepthTriangleN, length - 1);
+        tmp = new Triangle(apexIdx + sameLevelTriangleN, length - 1);
         if(!dp.containsKey(tmp)){
-            tr[1] = recursion(depth + 1, level + 1, apexIdx + sameDepthTriangleN);
+            tr[1] = recursion(length - 1, level + 1, apexIdx + sameLevelTriangleN);
             dp.put(tmp, tr[1]);
         } else tr[1] = dp.get(tmp);
 
-        tmp = new Triangle(apexIdx + sameDepthTriangleN + 2, length - 1);
+        tmp = new Triangle(apexIdx + sameLevelTriangleN + 2, length - 1);
         if(!dp.containsKey(tmp)){
-            tr[2] = recursion(depth + 1, level + 1, apexIdx + sameDepthTriangleN + 2);
+            tr[2] = recursion(length - 1, level + 1, apexIdx + sameLevelTriangleN + 2);
             dp.put(tmp, tr[2]);
         } else tr[2] = dp.get(tmp);
 
@@ -70,38 +66,37 @@ class 삼각형의값_4902 {
         tr[3] = tr[0] + tr[1] + tr[2];
 
         if(length == 2){
-            tr[3] += triangle[apexIdx + sameDepthTriangleN + 1];
-            dp.putIfAbsent(new Triangle(apexIdx, length), tr[3]);
-            max = Math.max(max, Arrays.stream(tr).max().getAsInt());
-            return tr[3];
+            tr[3] += triangle[apexIdx + sameLevelTriangleN + 1];
+        }else {
+
+            // 한변의 길이가 2 이상일 때
+            tmp = new Triangle(apexIdx, length);
+            int subApexIdx = apexIdx + sameLevelTriangleN;
+
+            if (!dp.containsKey(tmp)) {
+                // add three sub triangles
+                tr[3] -= dp.getOrDefault(new Triangle(subApexIdx, length - 2), recursion(length - 2, level + 1, subApexIdx));
+                subApexIdx += 2;
+                tr[3] -= dp.getOrDefault(new Triangle(subApexIdx, length - 2), recursion(length - 2, level + 1, subApexIdx));
+                subApexIdx += 2 * (level + 1) - 1;
+                tr[3] -= dp.getOrDefault(new Triangle(subApexIdx, length - 2), recursion(length - 2, level + 2, subApexIdx));
+
+                if (length > 3) {
+                    subApexIdx += (2 * (level + 2) - 1);
+                    tr[3] += dp.getOrDefault(new Triangle(subApexIdx, length - 3), recursion(length - 2, level + 3, subApexIdx));
+                }
+
+                dp.put(tmp, tr[3]);
+            } else tr[3] = dp.get(tmp);
         }
-
-        // 한변의 길이가 2 이상일 때
-        tmp = new Triangle(apexIdx, length);
-        int subApexIdx = apexIdx + sameDepthTriangleN;
-
-        if(!dp.containsKey(tmp)){
-            // add three sub triangles
-            tr[3] -= dp.getOrDefault(new Triangle(subApexIdx, length - 2), recursion(depth + 1, level + 1, subApexIdx));
-            subApexIdx += 2;
-            tr[3] -= dp.getOrDefault(new Triangle(subApexIdx, length - 2), recursion(depth + 1, level + 1, subApexIdx));
-            subApexIdx += 2 * (level + 1) - 1;
-            tr[3] -= dp.getOrDefault(new Triangle(subApexIdx, length - 2), recursion(depth + 1, level + 2, subApexIdx));
-
-            if(depth != maxDepth - 2) {
-                subApexIdx += (2 * (level + 2) - 1);
-                tr[3] += dp.getOrDefault(new Triangle(subApexIdx, length - 3), recursion(depth + 2, level + 3, subApexIdx));
-            }
-
-            dp.put(tmp, tr[3]);
-        } else tr[3] = dp.get(tmp);
 
         dp.put(new Triangle(apexIdx, length), tr[3]);
         max = Math.max(max, Arrays.stream(tr).max().getAsInt());
+
         return tr[3];
     }
 
-    private class Triangle implements Comparable<Triangle>{
+    private class Triangle{
         int apexIdx;
         int length;
 
@@ -122,11 +117,6 @@ class 삼각형의값_4902 {
         public int hashCode() {
             return Objects.hash(apexIdx, length);
         }
-
-        @Override
-        public int compareTo(Triangle o) {
-            return Integer.compare(apexIdx, o.apexIdx);
-        }
     }
 }
 
@@ -139,7 +129,7 @@ class MainA4902 {
 
         삼각형의값_4902 reusableS = new 삼각형의값_4902();
         while(triangle[0] != 0){
-            stb.append(++idx).append(".").append(reusableS.getAns(triangle)).append("\n");
+            stb.append(++idx).append(". ").append(reusableS.getAns(triangle)).append("\n");
             triangle = strToIntArr(br.readLine());
         }
         System.out.print(stb);
