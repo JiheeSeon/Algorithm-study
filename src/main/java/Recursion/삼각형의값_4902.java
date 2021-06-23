@@ -36,6 +36,13 @@ class 삼각형의값_4902 {
             return triangle[apexIdx];
         }
 
+        System.out.print("depth = " + depth);
+        System.out.print(" level = " + level);
+        System.out.println(" apexIdx = " + apexIdx);
+
+        if(level >= L){
+            return triangle[apexIdx];
+        }
         int length = (L + 1 - depth);
         int sameDepthTriangleN = 2 * level - 1;
 
@@ -49,13 +56,13 @@ class 삼각형의값_4902 {
 
         tmp = new Triangle(apexIdx + sameDepthTriangleN, length - 1);
         if(!dp.containsKey(tmp)){
-            tr[1] = recursion(depth + 1, level, apexIdx + sameDepthTriangleN);
+            tr[1] = recursion(depth + 1, level + 1, apexIdx + sameDepthTriangleN);
             dp.put(tmp, tr[1]);
         } else tr[1] = dp.get(tmp);
 
         tmp = new Triangle(apexIdx + sameDepthTriangleN + 2, length - 1);
         if(!dp.containsKey(tmp)){
-            tr[2] = recursion(depth + 1, level, apexIdx + sameDepthTriangleN + 2);
+            tr[2] = recursion(depth + 1, level + 1, apexIdx + sameDepthTriangleN + 2);
             dp.put(tmp, tr[2]);
         } else tr[2] = dp.get(tmp);
 
@@ -78,12 +85,12 @@ class 삼각형의값_4902 {
             tr[3] -= dp.getOrDefault(new Triangle(subApexIdx, length - 2), recursion(depth + 1, level + 1, subApexIdx));
             subApexIdx += 2;
             tr[3] -= dp.getOrDefault(new Triangle(subApexIdx, length - 2), recursion(depth + 1, level + 1, subApexIdx));
-            subApexIdx += ((2 * (level + 1) - 1) / 2);
-            tr[3] -= dp.getOrDefault(new Triangle(subApexIdx, length - 2), recursion(depth + 1, level + 1, subApexIdx));
+            subApexIdx += 2 * (level + 1) - 1;
+            tr[3] -= dp.getOrDefault(new Triangle(subApexIdx, length - 2), recursion(depth + 1, level + 2, subApexIdx));
 
             if(depth != maxDepth - 2) {
                 subApexIdx += (2 * (level + 2) - 1);
-                tr[3] += dp.getOrDefault(new Triangle(subApexIdx, length - 3), recursion(depth + 1, level + 1, subApexIdx));
+                tr[3] += dp.getOrDefault(new Triangle(subApexIdx, length - 3), recursion(depth + 2, level + 3, subApexIdx));
             }
 
             dp.put(tmp, tr[3]);
