@@ -22,20 +22,35 @@ class 숫자카드2_10816{
         int ans = 0;
         int lDist = 0, rDist = 0;
 
+        // 가장 최대로 target이 나온 것 - 가장 최소로 target이 나온 것
+
         while(low <= high){
             mid = (low + high) / 2;
             if(cards[mid] == target){
+                low = mid + 1;
+                if(target == 2) System.out.println("low = " + low + " mid = " + mid + " high = " + high + " -> " + (ans + 1));
                 ans++;
-                while(mid - ++lDist >= 0 && cards[mid - lDist] == target) ans++;
-                while(mid + ++rDist < N && cards[mid + rDist] == target) ans++;
-                return ans;
             } else if(cards[mid] < target){
                 low = mid + 1;
             } else{
                 high = mid - 1;
             }
         }
-        return ans;
+
+        low = 0; high = N - 1;
+        while(low <= high){
+            mid = (low + high) / 2;
+            if(cards[mid] == target){
+                high = mid - 1;
+                if(target == 2) System.out.println("low = " + low + " mid = " + mid + " high = " + high + " -> " + (ans + 1));
+                ans++;
+            } else if(cards[mid] < target){
+                low = mid + 1;
+            } else{
+                high = mid - 1;
+            }
+        }
+        return ans == 0 ? 0 : ans - 1;
     }
 
     String getAns(){
@@ -68,4 +83,9 @@ class MainA10816 {
 3 3 2 10 10 10 -10 -10 7 3
 8
 10 9 -5 2 3 4 5 -10
+
+10
+1 1 1 2 2 2 2 2 2 3
+4
+1 2 3 4
 */
