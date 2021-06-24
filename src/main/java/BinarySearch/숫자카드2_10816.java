@@ -16,7 +16,7 @@ class 숫자카드2_10816{
         this.toCheck = toCheck;
     }
 
-    int binary_search(long target){
+    int binary_search_iteration(long target){
         int low = 0; int high = N - 1;
         int mid;
         int l = -1; int h = -1;
@@ -50,12 +50,29 @@ class 숫자카드2_10816{
         return h == -1 && l == -1 ? 0 : h - l + 1;
     }
 
+    int binary_search_recursion_timeout(long target, int low, int high) {
+        int mid;
+
+        while(low <= high){
+            mid = (low + high) / 2;
+            if(cards[mid] == target){
+                return 1 + binary_search_recursion_timeout(target, low, mid - 1) + binary_search_recursion_timeout(target, mid + 1, high);
+            } else if(cards[mid] < target){
+                low = mid + 1;
+            } else{
+                high = mid - 1;
+            }
+        }
+
+        return 0;
+    }
+
     String getAns(){
         Arrays.sort(cards);
 
         StringBuilder stb = new StringBuilder();
         for(long target: toCheck){
-            stb.append(binary_search(target)).append(" ");
+            stb.append(binary_search_iteration(target)).append(" ");
         }
         return stb.toString();
     }
@@ -81,7 +98,7 @@ class MainA10816 {
 8
 10 9 -5 2 3 4 5 -10
 
-3 0 0 1 3 0 0 2
+output : 3 0 0 1 3 0 0 2
 
 
 10
