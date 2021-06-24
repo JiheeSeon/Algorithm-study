@@ -19,17 +19,15 @@ class 숫자카드2_10816{
     int binary_search(long target){
         int low = 0; int high = N - 1;
         int mid;
-        int ans = 0;
-        int lDist = 0, rDist = 0;
+        int l = -1; int h = -1;
 
         // 가장 최대로 target이 나온 것 - 가장 최소로 target이 나온 것
 
         while(low <= high){
             mid = (low + high) / 2;
             if(cards[mid] == target){
-                low = mid + 1;
-                if(target == 2) System.out.println("low = " + low + " mid = " + mid + " high = " + high + " -> " + (ans + 1));
-                ans++;
+                h = mid;
+                low = mid + 1; // 무조건 오른쪽으로만 탐색하게
             } else if(cards[mid] < target){
                 low = mid + 1;
             } else{
@@ -41,16 +39,15 @@ class 숫자카드2_10816{
         while(low <= high){
             mid = (low + high) / 2;
             if(cards[mid] == target){
-                high = mid - 1;
-                if(target == 2) System.out.println("low = " + low + " mid = " + mid + " high = " + high + " -> " + (ans + 1));
-                ans++;
+                l = mid;
+                high = mid - 1; // 무조건 왼쪽으로 탐색하게
             } else if(cards[mid] < target){
                 low = mid + 1;
             } else{
                 high = mid - 1;
             }
         }
-        return ans == 0 ? 0 : ans - 1;
+        return h == -1 && l == -1 ? 0 : h - l + 1;
     }
 
     String getAns(){
@@ -84,8 +81,13 @@ class MainA10816 {
 8
 10 9 -5 2 3 4 5 -10
 
+3 0 0 1 3 0 0 2
+
+
 10
 1 1 1 2 2 2 2 2 2 3
 4
 1 2 3 4
+
+output : 3 6 1 0
 */
