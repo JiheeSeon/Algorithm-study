@@ -21,12 +21,12 @@ class 수찾기_1920{
 
         StringBuilder stb = new StringBuilder();
         for(int f: toFind){
-            stb.append(parametric_search(f)).append("\n");
+            stb.append(parametric_search_recursion(f, 0, N - 1)).append("\n");
         }
         return stb.toString();
     }
 
-    int parametric_search(int f){
+    int parametric_search_iteration(int f){
         int low = 0;
         int high = N - 1;
         int mid;
@@ -38,6 +38,18 @@ class 수찾기_1920{
             else high = mid - 1;
         }
         return 0;
+    }
+
+    // 하위 콜스택을 호출하면서 low, high의 범위를 좁힘
+    // -> 맨 아래에 있는 애가 return 하는걸 그대로 토스
+    int parametric_search_recursion(int f, int low, int high){
+        if(low > high) return 0;
+
+        int mid = (low + high) / 2;
+        if(given[mid] == f) return 1;
+        return (given[mid] > f)
+                ? parametric_search_recursion(f, low, mid - 1)
+                : parametric_search_recursion(f, mid + 1, high);
     }
 }
 
