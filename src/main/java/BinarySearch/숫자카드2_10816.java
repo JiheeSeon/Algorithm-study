@@ -17,30 +17,30 @@ class 숫자카드2_10816{
     }
 
     int binary_search(long target){
-        Arrays.sort(cards);
         int low = 0; int high = N - 1;
         int mid;
         int ans = 0;
-        boolean goLeft = true;
+        int lDist = 0, rDist = 0;
 
         while(low <= high){
             mid = (low + high) / 2;
             if(cards[mid] == target){
                 ans++;
-                if(goLeft) high = mid - 1;
-                else low = mid + 1;
+                while(mid - ++lDist >= 0 && cards[mid - lDist] == target) ans++;
+                while(mid + ++rDist < N && cards[mid + rDist] == target) ans++;
+                return ans;
             } else if(cards[mid] < target){
                 low = mid + 1;
-                goLeft = false;
             } else{
                 high = mid - 1;
-                goLeft = true;
             }
         }
         return ans;
     }
 
     String getAns(){
+        Arrays.sort(cards);
+
         StringBuilder stb = new StringBuilder();
         for(long target: toCheck){
             stb.append(binary_search(target)).append(" ");
@@ -63,3 +63,9 @@ class MainA10816 {
         return Pattern.compile(" ").splitAsStream(s).mapToLong(Long::parseLong).toArray();
     }
 }
+/*
+10
+3 3 2 10 10 10 -10 -10 7 3
+8
+10 9 -5 2 3 4 5 -10
+*/
