@@ -25,13 +25,13 @@ class 나무자르기_2805{
             mid = (low + high) / 2;
 
             sum = 0;
-            for(long i : trees){
-                if(i - mid <= 0) continue;
-                sum += (i - mid);
+            for(long tree : trees){
+                if(tree - mid <= 0) continue;
+                sum += (tree - mid);
             }
 
             if(sum >= M) {
-                low = mid + 1;
+                low = mid + 1; // sum 이 목표높이와 같아도 low 를 조정(어차피 high 만 사용)
             } else {
                 high = mid - 1;
             }
