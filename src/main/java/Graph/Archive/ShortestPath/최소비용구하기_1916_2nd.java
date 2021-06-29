@@ -8,12 +8,21 @@ import java.util.Arrays;
 import java.util.PriorityQueue;
 import java.util.regex.Pattern;
 
+/*
+distance의 초기값, INF
+
+INF는 항상 (간선 가중치의 최댓값) * (정점 개수 - 1) 보다 큰 값을 사용해야 합니다.
+거리가 가장 멀어지는 경우를 생각해 보면, 1-2-3-4-5-6-...-V
+이렇게 일직선으로 모든 간선이 최대 가중치를 가지고 연결되어 있을 때
+총 V-1개의 간선을 전부 차례대로 지나가야 하기 때문입니다.
+*/
 class 최소비용구하기_1916_2nd {
     int V, E;
     int src, dst;
     ArrayList<Edge_1916_2nd>[] graph;
 
     int[] distance;
+    boolean[] check;
 
     public 최소비용구하기_1916_2nd(int v, int e, int src, int dst, ArrayList<Edge_1916_2nd>[] graph) {
         V = v;
@@ -23,17 +32,22 @@ class 최소비용구하기_1916_2nd {
         this.graph = graph;
 
         distance = new int[V + 1];
-        Arrays.fill(distance, (int)1e5 + 1);
+        check = new boolean[V + 1];
+        Arrays.fill(distance, Integer.MAX_VALUE);
     }
 
     void dijkstra(){
         PriorityQueue<Edge_1916_2nd> pq = new PriorityQueue<>();
-        pq.add(new Edge_1916_2nd(src, 0));
+        pq.add(new Edge_1916_2nd(src, 0)); // start~start : 0
         distance[src] = 0;
 
         Edge_1916_2nd now;
         while (!pq.isEmpty()) {
             now = pq.poll();
+
+            if(check[now.vertex]) continue;
+
+            check[now.vertex] = true;
 
             for(Edge_1916_2nd next: graph[now.vertex]){
                 if(distance[next.vertex] > distance[now.vertex] + next.cost){
