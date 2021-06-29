@@ -8,14 +8,14 @@ import java.util.Arrays;
 import java.util.PriorityQueue;
 import java.util.regex.Pattern;
 
-class 최단경로_1916_2nd {
+class 최소비용구하기_1916_2nd {
     int V, E;
     int src, dst;
     ArrayList<Edge_1916_2nd>[] graph;
 
     int[] distance;
 
-    public 최단경로_1916_2nd(int v, int e, int src, int dst, ArrayList<Edge_1916_2nd>[] graph) {
+    public 최소비용구하기_1916_2nd(int v, int e, int src, int dst, ArrayList<Edge_1916_2nd>[] graph) {
         V = v;
         E = e;
         this.src = src;
@@ -83,7 +83,7 @@ class MainA1916_2nd {
         int[] SE = strToIntArr(br.readLine());
         int src = SE[0]; int dst = SE[1];
 
-        System.out.println(new 최단경로_1916_2nd(V, E, src, dst, graph).getAns());
+        System.out.println(new 최소비용구하기_1916_2nd(V, E, src, dst, graph).getAns());
     }
 
     static int[] strToIntArr(String s) {
