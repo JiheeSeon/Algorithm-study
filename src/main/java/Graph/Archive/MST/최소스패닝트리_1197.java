@@ -78,7 +78,7 @@ class 최소스패닝트리_1197_Prim {
         Edge_1197 now;
         int cnt = 0;
 
-        while (!pq.isEmpty()) {
+        while (!pq.isEmpty() && cnt < V) {
             now = pq.poll();
 
             if (check[now.end]) continue;
@@ -86,6 +86,7 @@ class 최소스패닝트리_1197_Prim {
             cnt++;
             check[now.end] = true;
             totalCost += now.cost;
+            pq.addAll(graph[now.start]);
             pq.addAll(graph[now.end]);
         }
         return totalCost;
@@ -143,6 +144,7 @@ class MainA1197{
             tmp = strToIntArr(br.readLine());
             tempEdge = new Edge_1197(tmp[0], tmp[1], tmp[2]);
             graph[tmp[0]].add(tempEdge);
+            graph[tmp[1]].add(new Edge_1197(tmp[1], tmp[0], tmp[2]));
             if(min > tmp[2]){
                 first = tempEdge;
                 min = tmp[2];
@@ -167,4 +169,17 @@ class MainA1197{
 6 5 27
 6 1 10
 102
+
+7 11
+1 2 2
+2 3 5
+3 7 2
+7 2 7
+7 6 9
+5 6 23
+4 5 1
+1 4 10
+3 1 20
+6 3 3
+3 5 6
 */
