@@ -69,11 +69,11 @@ class 문제집_1766{
         while (!diffWinnerSet.isEmpty()) {
             p = pq.poll();
             if(!diffWinnerSet.contains(p.num)) continue;
-//            System.out.println(p);
             stb.append(p.num).append(" ");
             diffWinnerSet.remove(p.num);
         }
 
+        // 현재 TC가 틀리는 이유 : rank가 무조건적인 1등 우선순위가 아니기 때문
         return stb.toString();
     }
 
