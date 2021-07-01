@@ -3,129 +3,70 @@ package Heap;
 import java.io.*;
 import java.util.regex.Pattern;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
+/*
+위상정렬
+
+알고리즘 개요
+1. 진입차수가 0인 정점을 큐에 삽입
+2. 큐에서 원소를 꺼내 연결된 모든 간선 제거
+3. 간선 제거 이후 진입차수가 0이 된 정점을 큐에 삽입
+4. 큐가 빌 때까지 2-3 반복, 모든 원소를 방문하기 전에 큐가 빈다면 사이클 존재.
+   모든 원소 방문했다면 큐에서 꺼낸 순서가 위상정렬의 결과
+
+해당 문제에서 위상정렬을 사용해야하는 이유
+- 먼저 푸는 것이 좋은 문제는, 반드시 먼저 풀어야 한다.
+-> DAG, 사이클 없이 선수과목 그릴 때와 같은 그래프
+
+변형된 부분
+- 진입차수가 0이 되면 큐 가장 앞으로 보내야 함.
+b/c 문제 번호가 낮은 것 (문제의 난이도가 낮은 것)부터 풀기로 했음.
+-> 우선순위 큐 사용
+*/
 class 문제집_1766{
     int N, M;
-    int[][] orderPair;
-    int[] check;
 
-    int loopIdx = 1;
-
-    ArrayList<Integer>[] winFrom;
-    ArrayList<Integer>[] loseFrom;
-    Set<Integer> winnerSet, diffWinnerSet;
-    PriorityQueue<Problem> pq;
+    ArrayList<Integer>[] out;
+    int[] degree;
 
     public 문제집_1766(int n, int m, int[][] orderPair) {
         N = n;
         M = m;
-        this.orderPair = orderPair;
 
-        winFrom = new ArrayList[N + 1];
-        loseFrom = new ArrayList[N + 1];
-        check = new int[N + 1];
+        out = new ArrayList[N + 1];
 
-        for(int i = 1; i <= N; i++) {
-            winFrom[i] = new ArrayList<>();
-            loseFrom[i] = new ArrayList<>();
+        for(int i = 1; i <= N; i++) out[i] = new ArrayList<>();
+
+        // out, inDegree Map
+        degree = new int[N + 1];
+        for (int[] pair : orderPair) {
+            out[pair[0]].add(pair[1]);
+            degree[pair[1]] += 1;
         }
-
-        winnerSet = IntStream.rangeClosed(1, N).boxed().collect(Collectors.toCollection(TreeSet::new));
-        for(int[] pair : orderPair){
-            winFrom[pair[0]].add(pair[1]);
-            loseFrom[pair[1]].add(pair[0]);
-            winnerSet.remove(pair[1]); // 한번이라도 지면 제거
-        }
-        diffWinnerSet = IntStream.rangeClosed(1, N).boxed().collect(Collectors.toCollection(TreeSet::new));
-        diffWinnerSet.removeAll(winnerSet);
     }
 
     String getAns() {
-        pq = new PriorityQueue<>();
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
+        for(int i = 1; i <= N; i++)
+            if(degree[i] == 0) pq.add(i);
+
         StringBuilder stb = new StringBuilder();
-        // 무조건 먼저 풀 애들을 set 에 넣어줌.
-        for (int i : winnerSet) {
-            stb.append(i).append(" ");
-            check[i] = M + 1;
+
+        int prob;
+        while (!pq.isEmpty()) {
+            prob = pq.poll();
+            stb.append(prob).append(" ");
+
+            // 진출차수 없앰
+            for (int next : out[prob]) {
+                degree[next] -= 1;
+                if(degree[next] == 0) pq.add(next);
+            }
         }
-
-        // 먼저 풀 애들이 상대했던 애들을 DFS로 타고감
-        for(int i : winnerSet) getRankToRegister(i);
-
-        // 사실상 rank 와 무관한 것끼리의 순서 (무조건적인 순서 강제 X)
-        int ret, rankToRegister;
-        for(int i = 1; i <= N; i++){
-            if(check[i] != 0) continue;
-
-            rankToRegister = getRankToRegister(i);
-
-            check[i] = rankToRegister;
-            pq.add(new Problem(i, rankToRegister, loopIdx++));
-        }
-
-        Problem p;
-        while (!diffWinnerSet.isEmpty()) {
-            p = pq.poll();
-            if(!diffWinnerSet.contains(p.num)) continue;
-            stb.append(p.num).append(" ");
-            diffWinnerSet.remove(p.num);
-        }
-
-        // 현재 TC가 틀리는 이유 : rank가 무조건적인 1등 우선순위가 아니기 때문
         return stb.toString();
     }
-
-    private int getRankToRegister(int i) {
-        int rankToRegister;
-        int ret;
-        rankToRegister = M;
-
-        for(int j : winFrom[i]) {
-            ret = dfs(j, M, loopIdx);
-            rankToRegister = Math.min(rankToRegister, ret);
-            pq.add(new Problem(j, ret, loopIdx++));
-        }
-        return rankToRegister;
-    }
-
-    int dfs(int probN, int cnt, int time) {
-        if(loseFrom[probN].isEmpty() || check[probN] == M + 1) return cnt - 1;
-
-        int rankToRegister = cnt - 1;
-        int loopIdx = 1;
-        for(int winner : loseFrom[probN]){
-            rankToRegister = Math.min(rankToRegister, dfs(winner, cnt, time + loopIdx++));
-        }
-
-        check[probN] = rankToRegister;
-        pq.add(new Problem(probN, rankToRegister, time));
-        return rankToRegister;
-    }
 }
 
-class Problem implements Comparable<Problem>{
-    int num, rank, time;
-
-    public Problem(int num, int rank, int time){
-        this.num = num;
-        this.rank = rank;
-        this.time = time;
-    }
-
-    @Override
-    public int compareTo(Problem p){
-        if (rank == p.rank) {
-            return time == p.time ? Integer.compare(num, p.num) : Integer.compare(p.time, time);
-        } else return Integer.compare(rank, p.rank);
-    }
-
-    @Override
-    public String toString() {
-        return "Problem (" + "num=" + num + ", rank=" + rank + ", time=" + time + ')';
-    }
-}
 
 class MainA1766{
     public static void main(String[] args) throws IOException{
