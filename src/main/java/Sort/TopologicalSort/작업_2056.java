@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 -> 즉 나를 가리키는 애는 이미 처리되었다고 봐야 함
 -> 나를 가리켰던 애의 최단거리는 이미 구했음.
 -> 이를 DP 로 저장해 놓아서 꺼내쓰면 됨. 각 구간의 최댓값을 찾아야 함.
+   (MPI Barrier 와 같은 효과를 내는 것)
 
 Testcases
 TC #1.
