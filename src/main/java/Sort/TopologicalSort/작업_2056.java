@@ -8,9 +8,50 @@ import java.util.regex.Pattern;
 
 /*
 2056 작업
-작업시간 / 선행작업개수(inDegree) / 선행작업 번호들 (graph)
-서로 선행 관계가 없는 작업들은 동시에 수행 가능
- */
+
+처음에 삽질했던 부분
+큐에 어떤 순서로 넣어야 하는지
+-> 시작점들을 한번에 넣을지, 아니면 하나 하나씩 넣을지
+-> 우선순위큐를 사용해야 할지 등
+
+문제 분석
+위상정렬의 주요 특성을 알 수 있음.
+위상정렬은, 들어오는 차수가 0일 때(아무도 날 안 가리킬 때) 큐에 들어감
+-> 즉 나를 가리키는 애는 이미 처리되었다고 봐야 함
+-> 나를 가리켰던 애의 최단거리는 이미 구했음.
+-> 이를 DP 로 저장해 놓아서 꺼내쓰면 됨. 각 구간의 최댓값을 찾아야 함.
+
+Testcases
+TC #1.
+17
+2 0
+4 1 1
+1 1 1
+3 0
+9 1 4
+2 3 5 2 3
+10 1 3
+3 1 3
+1 2 6 7
+3 2 6 7
+9 2 7 8
+1 2 10 11
+1 1 9
+2 1 9
+7 1 13
+5 1 14
+5 2 15 16
+output : 28
+
+TC #2.
+5
+2 0
+3 1 1
+4 1 1
+7 1 3
+8 0
+output : 13
+*/
 
 class 작업_2056 {
     int N;
@@ -77,8 +118,7 @@ class 작업_2056 {
                 if(inDegree[next] == 0) q.add(jobs[next]);
             }
         }
-        System.out.println(Arrays.toString(distance));
-        return distance[N];
+        return Arrays.stream(distance).max().getAsInt(); // 마지막 index 값으로 하게 되면 시작점으로 받을 때 문제가 됨
     }
 }
 
@@ -108,24 +148,3 @@ class MainA2056 {
         return Pattern.compile(" ").splitAsStream(s).mapToInt(Integer::parseInt).toArray();
     }
 }
-
-/*
-17
-2 0
-4 1 1
-1 1 1
-3 0
-9 1 4
-2 3 5 2 3
-10 1 3
-3 1 3
-1 2 6 7
-3 2 6 7
-9 2 7 8
-1 2 10 11
-1 1 9
-2 1 9
-7 1 13
-5 1 14
-5 2 15 16
-*/
