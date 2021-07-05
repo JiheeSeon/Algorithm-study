@@ -3,15 +3,15 @@ package Heap;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Comparator;
-import java.util.PriorityQueue;
+import java.util.*;
 
 class 이중우선순위큐_7662 {
     int opN;
     String[] operations;
 
-    PriorityQueue<Integer> minHeap;
-    PriorityQueue<Integer> maxHeap;
+    Set<Element> removed;
+    PriorityQueue<Element> minHeap;
+    PriorityQueue<Element> maxHeap;
 
     public 이중우선순위큐_7662(int opN, String[] operations) {
         this.opN = opN;
@@ -21,74 +21,96 @@ class 이중우선순위큐_7662 {
     String solution() {
         StringBuilder stb = new StringBuilder();
 
-        boolean maxHeapFlag = true;
         String[] operation;
 
-        minHeap = new PriorityQueue<>();
-        maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
+        minHeap = new PriorityQueue<>(new Comparator<Element>() {
+            @Override
+            public int compare(Element o1, Element o2) {
+                return o1.value == o2.value ? Integer.compare(o1.idx, o2.idx) : Integer.compare(o1.value, o2.value) ;
+            }
+        });
 
-        // 총체적으로 최대 O(1000000 * 1000000 * lg(1000000))
+        maxHeap = new PriorityQueue<>(new Comparator<Element>() {
+            @Override
+            public int compare(Element o1, Element o2) {
+                return o1.value == o2.value ? Integer.compare(o1.idx, o2.idx) : Integer.compare(o2.value, o1.value) ;
+            }
+        });
+        removed = new HashSet<>();
+
+        Element polled;
+
+        bigLoop:
         for (int i = 0; i < opN; i++) { // O(opN)
             operation = operations[i].split(" ");
 
             switch(operation[0]){
                 case "I":
-                    if(maxHeapFlag) maxHeap.add(Integer.parseInt(operation[1])); // lgn
-                    else minHeap.add(Integer.parseInt(operation[1]));
+                    Element e = new Element(i, Integer.parseInt(operation[1]));
+                    maxHeap.add(e);
+                    minHeap.add(e);
                     break;
                 case "D":
-                    if(maxHeapFlag && maxHeap.isEmpty()) continue;
-                    if(!maxHeapFlag && minHeap.isEmpty()) continue;
+                    if(maxHeap.isEmpty() || minHeap.isEmpty()) continue;
 
                     if(operation[1].equals("1")){
-                        if(maxHeapFlag) maxHeap.poll();
-                        else{
-                            maxHeap.addAll(minHeap); // O(m * lgm)
-                            maxHeap.poll(); // O(1)
-                            minHeap = new PriorityQueue<>();
-                            maxHeapFlag = true;
+                        while (removed.contains(polled = maxHeap.poll())) {
+                            if(maxHeap.isEmpty()) continue bigLoop;
                         }
                     } else{
-                        if(maxHeapFlag){
-                            minHeap.addAll(maxHeap); // O(n * lgn)
-                            minHeap.poll(); // O(1)
-                            maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
-                            maxHeapFlag = false;
-                        } else{
-                            minHeap.poll();
+
+                        while (removed.contains(polled = minHeap.poll())) {
+                            if(minHeap.isEmpty()) continue bigLoop;
                         }
                     }
+
+                    removed.add(polled);
                     break;
             }
         }
 
-        int max, min;
+        if(maxHeap.isEmpty() || minHeap.isEmpty()) return stb.append("EMPTY").append("\n").toString();
+        maxHeap.removeAll(removed);
+        minHeap.removeAll(removed);
+        if(maxHeap.isEmpty() || minHeap.isEmpty()) return stb.append("EMPTY").append("\n").toString();
 
-        if(maxHeap.isEmpty() && minHeap.isEmpty())
-            stb.append("EMPTY").append("\n");
-        else {
-            if(maxHeapFlag){
-                max = maxHeap.poll();
-                if(maxHeap.isEmpty()) min = max;
-                else{
-                    minHeap.addAll(maxHeap);
-                    min = minHeap.poll();
-                }
-            }else{
-                min = minHeap.poll();
-                if(minHeap.isEmpty()) max = min;
-                else{
-                    maxHeap.addAll(minHeap);
-                    max = maxHeap.poll();
-                }
-            }
-            stb.append(max).append(" ").append(min).append("\n");
-        }
+        int max = maxHeap.poll().value;
+        if(maxHeap.size() == 1) return stb.append(max).append(" ").append(max).append("\n").toString();
 
-        return stb.toString();
+        int min = minHeap.poll().value;
+        return stb.append(max).append(" ").append(min).append("\n").toString();
+    }
+}
+
+class Element{
+    int idx;
+    int value;
+
+    public Element(int idx, int value) {
+        this.idx = idx;
+        this.value = value;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Element element = (Element) o;
+        return idx == element.idx && value == element.value;
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(idx, value);
+    }
+
+    @Override
+    public String toString() {
+        return "Element{" +
+                "idx=" + idx +
+                ", value=" + value +
+                '}';
+    }
 }
 class MainA7662{
     public static void main(String[] args) throws IOException {
