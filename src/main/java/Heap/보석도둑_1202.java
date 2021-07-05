@@ -25,14 +25,47 @@ input
 
 output
 180 + 100 + 100 + 40 + 35 = 455
+
+
+input
+3 6
+1 500
+1 400
+1 100
+10
+3
+4
+5
+100
+50
+
+output
+500 + 400 + 100 = 1000
+
+
+<<--Wrong TC-->>
+input
+3 5
+10 500
+20 560
+40 100
+9
+8
+6
+5
+10
+
+output
+500
+
 */
 
 class 보석도둑_1202{
     int jewelryN, bagN;
     List<Jewelry> jewelryList;
     long[] bags;
-    PriorityQueue<Jewelry> minHeap;
-    PriorityQueue<Jewelry> maxHeap;
+    PriorityQueue<Jewelry> minHeap; // 무게의 min 값을 루트로 느슨히 정렬된 minHeap (무게 기준)
+    PriorityQueue<Jewelry> maxHeap; // 특정 무게 이하의 보석 중에 가장 가치가 높은 보석이 root 로 작용하는 maxHeap (가격 기준)
 
     public 보석도둑_1202(int jewelryN, int bagN, List<Jewelry> jewelryList, long[] bags){
         this.jewelryN = jewelryN;
@@ -51,9 +84,11 @@ class 보석도둑_1202{
         long ret = 0;
         long price;
         for(long bagWeight : bags){
+            // 이 루프를 안 돈다는건 이미 다 maxHeap 으로 넘어갔다는 것
             while(!minHeap.isEmpty() && minHeap.peek().weight <= bagWeight){ maxHeap.add(minHeap.poll()); }
 
-            if(maxHeap.isEmpty()) break;
+            // maxHeap 이 비었다는 것은 bag 개수가 훨씬 많다는 것
+            if(maxHeap.isEmpty()) continue; // break -> continue :: 틀렸습니다 -> 시간초과
 
             price = maxHeap.poll().price;
             ret += price;
