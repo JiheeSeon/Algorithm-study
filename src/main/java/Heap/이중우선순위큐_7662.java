@@ -9,7 +9,6 @@ class 이중우선순위큐_7662 {
     int opN;
     String[] operations;
 
-    Set<Element> removed;
     PriorityQueue<Element> minHeap;
     PriorityQueue<Element> maxHeap;
 
@@ -36,7 +35,6 @@ class 이중우선순위큐_7662 {
                 return o1.value == o2.value ? Integer.compare(o1.idx, o2.idx) : Integer.compare(o2.value, o1.value) ;
             }
         });
-        removed = new HashSet<>();
 
         Element polled;
 
@@ -54,24 +52,15 @@ class 이중우선순위큐_7662 {
                     if(maxHeap.isEmpty() || minHeap.isEmpty()) continue;
 
                     if(operation[1].equals("1")){
-                        while (removed.contains(polled = maxHeap.poll())) {
-                            if(maxHeap.isEmpty()) continue bigLoop;
-                        }
+                        minHeap.remove(maxHeap.poll());
                     } else{
-
-                        while (removed.contains(polled = minHeap.poll())) {
-                            if(minHeap.isEmpty()) continue bigLoop;
-                        }
+                        maxHeap.remove(minHeap.poll());
                     }
 
-                    removed.add(polled);
                     break;
             }
         }
 
-        if(maxHeap.isEmpty() || minHeap.isEmpty()) return stb.append("EMPTY").append("\n").toString();
-        maxHeap.removeAll(removed);
-        minHeap.removeAll(removed);
         if(maxHeap.isEmpty() || minHeap.isEmpty()) return stb.append("EMPTY").append("\n").toString();
 
         int max = maxHeap.poll().value;
