@@ -7,16 +7,14 @@ import java.util.Comparator;
 import java.util.PriorityQueue;
 
 class 이중우선순위큐_7662 {
-    int T;
-    int[] operationCounts;
-    String[][] operations;
+    int opN;
+    String[] operations;
 
     PriorityQueue<Integer> minHeap;
     PriorityQueue<Integer> maxHeap;
 
-    public 이중우선순위큐_7662(int[] operationCounts, String[][] operations) {
-        T = operationCounts.length;
-        this.operationCounts = operationCounts;
+    public 이중우선순위큐_7662(int opN, String[] operations) {
+        this.opN = opN;
         this.operations = operations;
     }
 
@@ -26,63 +24,61 @@ class 이중우선순위큐_7662 {
         boolean maxHeapFlag = true;
         String[] operation;
 
-        while (--T >= 0) {
-            minHeap = new PriorityQueue<>();
-            maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
+        minHeap = new PriorityQueue<>();
+        maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
 
-            for (int i = 0; i < operationCounts[T]; i++) {
-                operation = operations[T][i].split(" ");
+        for (int i = 0; i < opN; i++) {
+            operation = operations[i].split(" ");
 
-                switch(operation[0]){
-                    case "I":
-                        if(maxHeapFlag) maxHeap.add(Integer.parseInt(operation[1]));
-                        else minHeap.add(Integer.parseInt(operation[1]));
-                        break;
-                    case "D":
-                        if(operation[1].equals("1")){
-                            if(maxHeapFlag) maxHeap.poll();
-                            else{
-                                maxHeap.addAll(minHeap);
-                                maxHeap.poll();
-                                minHeap = new PriorityQueue<>();
-                                maxHeapFlag = true;
-                            }
-                        } else{
-                            if(maxHeapFlag){
-                                minHeap.addAll(maxHeap);
-                                minHeap.poll();
-                                maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
-                                maxHeapFlag = false;
-                            } else{
-                                minHeap.poll();
-                            }
+            switch(operation[0]){
+                case "I":
+                    if(maxHeapFlag) maxHeap.add(Integer.parseInt(operation[1]));
+                    else minHeap.add(Integer.parseInt(operation[1]));
+                    break;
+                case "D":
+                    if(operation[1].equals("1")){
+                        if(maxHeapFlag) maxHeap.poll();
+                        else{
+                            maxHeap.addAll(minHeap);
+                            maxHeap.poll();
+                            minHeap = new PriorityQueue<>();
+                            maxHeapFlag = true;
                         }
-                        break;
-                }
-            }
-
-            int max, min;
-
-            if(maxHeap.isEmpty() && minHeap.isEmpty())
-                stb.append("EMPTY").append("\n");
-            else {
-                if(maxHeapFlag){
-                    max = maxHeap.poll();
-                    if(maxHeap.isEmpty()) min = max;
-                    else{
-                        minHeap.addAll(maxHeap);
-                        min = minHeap.poll();
+                    } else{
+                        if(maxHeapFlag){
+                            minHeap.addAll(maxHeap);
+                            minHeap.poll();
+                            maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
+                            maxHeapFlag = false;
+                        } else{
+                            minHeap.poll();
+                        }
                     }
-                }else{
+                    break;
+            }
+        }
+
+        int max, min;
+
+        if(maxHeap.isEmpty() && minHeap.isEmpty())
+            stb.append("EMPTY").append("\n");
+        else {
+            if(maxHeapFlag){
+                max = maxHeap.poll();
+                if(maxHeap.isEmpty()) min = max;
+                else{
+                    minHeap.addAll(maxHeap);
                     min = minHeap.poll();
-                    if(minHeap.isEmpty()) max = min;
-                    else{
-                        maxHeap.addAll(minHeap);
-                        max = maxHeap.poll();
-                    }
                 }
-                stb.append(max).append(" ").append(min);
+            }else{
+                min = minHeap.poll();
+                if(minHeap.isEmpty()) max = min;
+                else{
+                    maxHeap.addAll(minHeap);
+                    max = maxHeap.poll();
+                }
             }
+            stb.append(max).append(" ").append(min).append("\n");
         }
 
         return stb.toString();
@@ -95,15 +91,17 @@ class MainA7662{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int T = Integer.parseInt(br.readLine());
 
-        int[] operationCounts = new int[T];
-        String[][] operations = new String[T][];
+        int opN;
+        String[] operations;
+
+        StringBuilder stb = new StringBuilder();
         while (--T >= 0) {
-            operationCounts[T] = Integer.parseInt(br.readLine());
-            operations[T] = new String[operationCounts[T]];
+            opN = Integer.parseInt(br.readLine());
+            operations = new String[opN];
 
-            for(int i = 0; i < operationCounts[T]; i++) operations[T][i] = br.readLine();
+            for(int i = 0; i < opN; i++) operations[i] = br.readLine();
+            stb.append(new 이중우선순위큐_7662(opN, operations).solution());
         }
-
-        System.out.print(new 이중우선순위큐_7662(operationCounts, operations).solution());
+        System.out.print(stb);
     }
 }
