@@ -3,22 +3,8 @@ package ParametricSearch;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.regex.Pattern;
 
-/*
-TC
-6 9
-1
-1
-1
-1
-1
-1
-1
-1
-1
-*/
 class 보석상자_2792 {
     int childrenN, colorN;
     long[] jewelry;
@@ -30,8 +16,12 @@ class 보석상자_2792 {
     }
 
     long parametricSearch() {
+        long max = -1;
+        for(long l : jewelry){
+            if(l > max) max = l;
+        }
+
         long low = 1;
-        long max = Arrays.stream(jewelry).max().getAsLong();
         long high = max;
         long mid;
         long childrenSum;
@@ -41,14 +31,13 @@ class 보석상자_2792 {
             childrenSum = 0;
 
             for (long colorOfJewelry : jewelry) {
-                if(colorOfJewelry < mid) continue;
                 childrenSum += ((colorOfJewelry / mid) + (colorOfJewelry % mid == 0 ? 0 : 1));
             }
 
             if(childrenSum <= childrenN) high = mid - 1;
             else low = mid + 1;
         }
-        return high >= max ? high : high + 1;
+        return high + 1;
     }
 }
 
