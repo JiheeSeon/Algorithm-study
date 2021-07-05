@@ -27,27 +27,31 @@ class 이중우선순위큐_7662 {
         minHeap = new PriorityQueue<>();
         maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
 
-        for (int i = 0; i < opN; i++) {
+        // 총체적으로 최대 O(1000000 * 1000000 * lg(1000000))
+        for (int i = 0; i < opN; i++) { // O(opN)
             operation = operations[i].split(" ");
 
             switch(operation[0]){
                 case "I":
-                    if(maxHeapFlag) maxHeap.add(Integer.parseInt(operation[1]));
+                    if(maxHeapFlag) maxHeap.add(Integer.parseInt(operation[1])); // lgn
                     else minHeap.add(Integer.parseInt(operation[1]));
                     break;
                 case "D":
+                    if(maxHeapFlag && maxHeap.isEmpty()) continue;
+                    if(!maxHeapFlag && minHeap.isEmpty()) continue;
+
                     if(operation[1].equals("1")){
                         if(maxHeapFlag) maxHeap.poll();
                         else{
-                            maxHeap.addAll(minHeap);
-                            maxHeap.poll();
+                            maxHeap.addAll(minHeap); // O(m * lgm)
+                            maxHeap.poll(); // O(1)
                             minHeap = new PriorityQueue<>();
                             maxHeapFlag = true;
                         }
                     } else{
                         if(maxHeapFlag){
-                            minHeap.addAll(maxHeap);
-                            minHeap.poll();
+                            minHeap.addAll(maxHeap); // O(n * lgn)
+                            minHeap.poll(); // O(1)
                             maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
                             maxHeapFlag = false;
                         } else{
