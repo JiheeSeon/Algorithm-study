@@ -19,6 +19,14 @@ TC
 4 5 1
 5 6 23
 19
+
+4 5
+1 2 10
+2 3 20
+1 3 15
+2 4 24
+3 4 30
+49
 */
 
 class 최소스패닝트리_1197 {
@@ -31,18 +39,18 @@ class 최소스패닝트리_1197 {
         this.input = input;
     }
 
-    long solution_krukal(){
+    long solution_kruskal(){
         long ans = 0;
         int[] parent = IntStream.rangeClosed(0, V).toArray();
 
-        ArrayList<EdgeA1197> graph = new ArrayList<>();
+        ArrayList<EdgeA1197_Kruskal> graph = new ArrayList<>();
         for(int e = 0; e < E; e++){
-            graph.add(new EdgeA1197(input[e][0], input[e][1], input[e][2]));
+            graph.add(new EdgeA1197_Kruskal(input[e][0], input[e][1], input[e][2]));
         }
         Collections.sort(graph);
 
         int edgeCnt = 0;
-        for(EdgeA1197 e : graph){
+        for(EdgeA1197_Kruskal e : graph){
             if(!union(parent, e.v1, e.v2)) continue;
 
             ans += e.w;
@@ -69,7 +77,7 @@ class 최소스패닝트리_1197 {
 
     long solution_prim(){
         long ans = 0;
-        ArrayList<EdgeA1197>[] graph = new ArrayList[V + 1];
+        ArrayList<EdgeA1197_Prim>[] graph = new ArrayList[V + 1];
         int startV = -1;
 
         // setting graph
@@ -78,49 +86,64 @@ class 최소스패닝트리_1197 {
 
         for (int[] info : input) {
             if(startV == -1) startV = info[0];
-            graph[info[0]].add(new EdgeA1197(info[0], info[1], info[2]));
-            graph[info[1]].add(new EdgeA1197(info[1], info[0], info[2]));
+            graph[info[0]].add(new EdgeA1197_Prim(info[1], info[2]));
+            graph[info[1]].add(new EdgeA1197_Prim(info[0], info[2]));
         }
         boolean[] hasParent = new boolean[V + 1];
 
         // setting other variables
         Set<Integer> selectedV = new HashSet<>();
-        PriorityQueue<EdgeA1197> edgePQ = new PriorityQueue<>();
+        PriorityQueue<EdgeA1197_Prim> edgePQ = new PriorityQueue<>();
         edgePQ.addAll(graph[startV]);
+        selectedV.add(startV);
 
-        EdgeA1197 selectedEdge;
+        EdgeA1197_Prim selectedEdge;
 
-        while(!edgePQ.isEmpty() && selectedV.size() < E){
+        while(!edgePQ.isEmpty() && selectedV.size() < V){
             // 선택된 정점과 연결되는 간선 중 가장 가중치가 작은 것 추가
             selectedEdge = edgePQ.poll();
 
             // 이미 선택된 정점과 연결되어 있는 경우
-            if(selectedV.contains(selectedEdge.v2)) continue;
+            if(selectedV.contains(selectedEdge.v)) continue;
             // 트리의 조건 : 부모는 무조건 하나
-            if(hasParent[selectedEdge.v2]) continue;
+            if(hasParent[selectedEdge.v]) continue;
 
             ans += selectedEdge.w;
-            selectedV.add(selectedEdge.v1);
-            hasParent[selectedEdge.v2] = true;
-            edgePQ.addAll(graph[selectedEdge.v2]);
+            selectedV.add(selectedEdge.v);
+            hasParent[selectedEdge.v] = true;
+            edgePQ.addAll(graph[selectedEdge.v]);
         }
 
         return ans;
     }
 }
 
-class EdgeA1197 implements Comparable<EdgeA1197>{
+class EdgeA1197_Kruskal implements Comparable<EdgeA1197_Kruskal>{
     int v1, v2;
     long w;
 
-    public EdgeA1197(int v1, int v2, int w){
+    public EdgeA1197_Kruskal(int v1, int v2, int w){
         this.v1 = v1;
         this.v2 = v2;
         this.w = w;
     }
 
     @Override
-    public int compareTo(EdgeA1197 o) {
+    public int compareTo(EdgeA1197_Kruskal o) {
+        return Long.compare(w, o.w);
+    }
+}
+
+class EdgeA1197_Prim implements Comparable<EdgeA1197_Prim> {
+    int v; long w;
+
+    public EdgeA1197_Prim(int v, long w) {
+        this.v = v;
+        this.w = w;
+    }
+
+    @Override
+    public int compareTo(EdgeA1197_Prim o) {
         return Long.compare(w, o.w);
     }
 }
