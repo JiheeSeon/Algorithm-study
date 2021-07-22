@@ -10,11 +10,11 @@ import java.util.PriorityQueue;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
-class 행성터널_2887_Kruskal {
+class 행성터널_2887 {
     int V;
     ArrayList<KruskalEdge> edges;
 
-    public 행성터널_2887_Kruskal(int v, ArrayList<KruskalEdge> edges) {
+    public 행성터널_2887(int v, ArrayList<KruskalEdge> edges) {
         V = v;
         this.edges = edges;
     }
@@ -69,6 +69,7 @@ class MainA2887{
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int V = Integer.parseInt(br.readLine());
+
         if(V == 1){
             System.out.println(0);
             return;
@@ -92,17 +93,15 @@ class MainA2887{
         Arrays.sort(points, Comparator.comparing(a -> a.z));
         addToEdges(V, points, edges);
 
-        System.out.println(new 행성터널_2887_Kruskal(V, edges).solve());
+        System.out.println(new 행성터널_2887(V, edges).solve());
     }
 
     static void addToEdges(int V, PointA2887[] points, ArrayList<KruskalEdge> edges) {
         edges.add(new KruskalEdge(points[0].label, points[1].label, getCost(points, 0, 1)));
 
-        for(int v = 1; v < V - 1; v++){
-            edges.add(new KruskalEdge(points[v].label, points[v - 1].label, getCost(points, v, v - 1)));
+        for(int v = 0; v < V - 1; v++){
             edges.add(new KruskalEdge(points[v].label, points[v + 1].label, getCost(points, v, v + 1)));
         }
-        edges.add(new KruskalEdge(points[V - 1].label, points[V - 2].label, getCost(points, V - 1, V - 2)));
     }
 
     static int getCost(PointA2887[] points, int i, int j) {
