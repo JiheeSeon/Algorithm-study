@@ -54,24 +54,24 @@ class 다리만들기2_17472 {
     }
 }
 
-class Guideline implements Comparable<Guideline> {
+class GuidelineA17472 implements Comparable<GuidelineA17472> {
     int label, coordinate;
 
-    public Guideline(int label, int coordinate) {
+    public GuidelineA17472(int label, int coordinate) {
         this.label = label;
         this.coordinate = coordinate;
     }
 
     @Override
-    public int compareTo(Guideline o) {
+    public int compareTo(GuidelineA17472 o) {
         return Integer.compare(coordinate, o.coordinate);
     }
 }
 
-class Pair{
+class PairA17472 {
     int v1, v2;
 
-    public Pair(int v1, int v2) {
+    public PairA17472(int v1, int v2) {
         this.v1 = v1;
         this.v2 = v2;
     }
@@ -80,8 +80,8 @@ class Pair{
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Pair pair = (Pair) o;
-        return v1 == pair.v1 && v2 == pair.v2;
+        PairA17472 pairA17472 = (PairA17472) o;
+        return v1 == pairA17472.v1 && v2 == pairA17472.v2;
     }
 
     @Override
@@ -98,8 +98,8 @@ class MainA17472{
     static int[] dy = {-1, 1, 0, 0}; // 상하좌우
     static int[] dx = {0, 0, -1, 1};
 
-    static TreeMap<Integer, LinkedList<Guideline>> xMap = new TreeMap<>();
-    static TreeMap<Integer, LinkedList<Guideline>> yMap = new TreeMap<>();
+    static TreeMap<Integer, LinkedList<GuidelineA17472>> xMap = new TreeMap<>();
+    static TreeMap<Integer, LinkedList<GuidelineA17472>> yMap = new TreeMap<>();
 
     static LinkedList<KruskalEdge> edges = new LinkedList<>();
 
@@ -132,19 +132,19 @@ class MainA17472{
             switch (direction) {
                 case 0 ->{
                     xMap.putIfAbsent(x, new LinkedList<>());
-                    xMap.get(x).add(new Guideline(mark, y + 1));
+                    xMap.get(x).add(new GuidelineA17472(mark, y + 1));
                 }
                 case 1 -> {
                     xMap.putIfAbsent(x, new LinkedList<>());
-                    xMap.get(x).add(new Guideline(mark, y - 1));
+                    xMap.get(x).add(new GuidelineA17472(mark, y - 1));
                 }
                 case 2->{
                     yMap.putIfAbsent(y, new LinkedList<>());
-                    yMap.get(y).add(new Guideline(mark, x + 1));
+                    yMap.get(y).add(new GuidelineA17472(mark, x + 1));
                 }
                 case 3-> {
                     yMap.putIfAbsent(y, new LinkedList<>());
-                    yMap.get(y).add(new Guideline(mark, x - 1));
+                    yMap.get(y).add(new GuidelineA17472(mark, x - 1));
                 }
             }
             return;
@@ -158,30 +158,30 @@ class MainA17472{
     }
 
     static void setEdges() {
-        TreeMap<Integer, LinkedList<Guideline>>[] maps = new TreeMap[]{xMap, yMap};
-        LinkedList<Guideline> guidelines;
-        int cost; Pair p;
+        TreeMap<Integer, LinkedList<GuidelineA17472>>[] maps = new TreeMap[]{xMap, yMap};
+        LinkedList<GuidelineA17472> guidelineA17472s;
+        int cost; PairA17472 p;
 
-        Map<Pair, Integer> costs = new HashMap<>();
+        Map<PairA17472, Integer> costs = new HashMap<>();
 
-        for(Map<Integer, LinkedList<Guideline>> m : maps) {
-            for (Map.Entry<Integer, LinkedList<Guideline>> entry : m.entrySet()) {
+        for(Map<Integer, LinkedList<GuidelineA17472>> m : maps) {
+            for (Map.Entry<Integer, LinkedList<GuidelineA17472>> entry : m.entrySet()) {
                 if(entry.getValue().size() <= 2) continue;
 
-                guidelines = entry.getValue();
-                Collections.sort(guidelines);
+                guidelineA17472s = entry.getValue();
+                Collections.sort(guidelineA17472s);
 
-                for(int i = 2; i < guidelines.size(); i += 2) {
-                    cost = guidelines.get(i).coordinate - guidelines.get(i - 1).coordinate - 1;
+                for(int i = 2; i < guidelineA17472s.size(); i += 2) {
+                    cost = guidelineA17472s.get(i).coordinate - guidelineA17472s.get(i - 1).coordinate - 1;
                     if(cost < 2) continue;
-                    p = new Pair(guidelines.get(i).label, guidelines.get(i - 1).label);
+                    p = new PairA17472(guidelineA17472s.get(i).label, guidelineA17472s.get(i - 1).label);
                     costs.put(p, Math.min(cost, costs.getOrDefault(p, Integer.MAX_VALUE)));
                 }
             }
         }
 
         KruskalEdge edge;
-        for (Map.Entry<Pair, Integer> entry : costs.entrySet()) {
+        for (Map.Entry<PairA17472, Integer> entry : costs.entrySet()) {
             edge = new KruskalEdge(entry.getKey().v1, entry.getKey().v2, entry.getValue());
             edges.add(new KruskalEdge(entry.getKey().v1, entry.getKey().v2, entry.getValue()));
         }
