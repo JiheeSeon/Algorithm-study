@@ -95,13 +95,11 @@ class MainA4386{
 
         ArrayList<KruskalEdge_4386> edges = new ArrayList<>();
 
-        Arrays.sort(stars, Comparator.comparing(a -> a.y));
-        for(int i = 0; i < V - 1; i++)
-            edges.add(new KruskalEdge_4386(stars[i].id, stars[i+1].id, getDistance(stars[i].y, stars[i].x, stars[i + 1].y, stars[i + 1].x)));
-
-        Arrays.sort(stars, Comparator.comparing(a -> a.x));
-        for(int i = 0; i < V - 1; i++)
-            edges.add(new KruskalEdge_4386(stars[i].id, stars[i+1].id, getDistance(stars[i].y, stars[i].x, stars[i + 1].y, stars[i + 1].x)));
+        for(int i = 0; i < V - 1; i++){
+            for(int j = i + 1; j < V; j++){
+                edges.add(new KruskalEdge_4386(i + 1, j + 1, getDistance(stars[i].y, stars[i].x, stars[j].y, stars[j].x)));
+            }
+        }
 
         System.out.printf("%.2f", new 별자리만들기_4386(V, edges).solve());
     }
