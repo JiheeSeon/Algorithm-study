@@ -3,17 +3,15 @@ package Tree.MST;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 class 다리만들기2_17472 {
     int V;
-    ArrayList<KruskalEdge> edges;
+    LinkedList<KruskalEdge> edges;
 
-    public 다리만들기2_17472(int v, ArrayList<KruskalEdge> edges) {
+    public 다리만들기2_17472(int v, LinkedList<KruskalEdge> edges) {
         V = v;
         this.edges = edges;
     }
@@ -56,6 +54,20 @@ class 다리만들기2_17472 {
     }
 }
 
+class Guideline implements Comparable<Guideline> {
+    int label, coordinate;
+
+    public Guideline(int label, int coordinate) {
+        this.label = label;
+        this.coordinate = coordinate;
+    }
+
+    @Override
+    public int compareTo(Guideline o) {
+        return Integer.compare(coordinate, o.coordinate);
+    }
+}
+
 class Pair{
     int v1, v2;
 
@@ -69,7 +81,7 @@ class Pair{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Pair pair = (Pair) o;
-        return (v1 == pair.v1 && v2 == pair.v2) || (v1 == pair.v2 && v2 == pair.v1);
+        return v1 == pair.v1 && v2 == pair.v2;
     }
 
     @Override
@@ -78,153 +90,104 @@ class Pair{
     }
 }
 
-class CellInfo{
-    int islandLabel, startLocation, endLocation;
-
-    @Override
-    public String toString() {
-        return "CellInfo{" +
-                "islandLabel=" + islandLabel +
-                ", startLocation=" + startLocation +
-                ", endLocation=" + endLocation +
-                '}';
-    }
-
-    public CellInfo(int islandLabel, int startLocation, int endLocation) {
-        this.islandLabel = islandLabel;
-        this.startLocation = startLocation;
-        this.endLocation = endLocation;
-    }
-}
-
-//class Island{
-//    int label;
-//    int sY, sX, eY, eX;
-//
-//    public Island(int label, int sY, int sX, int eY, int eX) {
-//        this.label = label;
-//        this.sY = sY;
-//        this.sX = sX;
-//        this.eY = eY;
-//        this.eX = eX;
-//    }
-//}
-
 class MainA17472{
     static int yHeight, xWidth;
     static int[][] graph;
     static int[][] check;
 
-    static int[] dy = {-1, 1, 0, 0};
+    static int[] dy = {-1, 1, 0, 0}; // 상하좌우
     static int[] dx = {0, 0, -1, 1};
+
+    static TreeMap<Integer, LinkedList<Guideline>> xMap = new TreeMap<>();
+    static TreeMap<Integer, LinkedList<Guideline>> yMap = new TreeMap<>();
+
+    static LinkedList<KruskalEdge> edges = new LinkedList<>();
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int[] tmp = strToIntArr(br.readLine());
-        yHeight = tmp[0]; xWidth = tmp[1];
+        yHeight = tmp[0];
+        xWidth = tmp[1];
 
         graph = new int[yHeight][xWidth];
-        for(int y = 0; y < yHeight; y++)
+        for (int y = 0; y < yHeight; y++)
             graph[y] = strToIntArr(br.readLine());
 
         check = new int[yHeight][xWidth];
 
-        Map<Integer, ArrayList<CellInfo>> xMap = new TreeMap<>(); // y ->
-        Map<Integer, ArrayList<CellInfo>> yMap = new TreeMap<>(); // x ->
-
         int mark = 1;
-        int maxY, maxX;
+        for(int y = 0; y < yHeight; y++){
+            for(int x = 0; x < xWidth; x++){
+                if(check[y][x] == 0 && graph[y][x] == 1){
+                    dfs(y, x, mark++, 0);
+                }
+            }
+        }
+        setEdges();
+        System.out.println(new 다리만들기2_17472(mark - 1, edges).solve());
+    }
 
-        for(int x = 0; x < xWidth; x++){
-            for(int y = 0; y < yHeight; y++){
-                if(graph[y][x] == 1 && check[y][x] == 0){
-                    tmp = getMaxCoordinates(y, x, mark);
-                    maxY = tmp[0]; maxX = tmp[1];
+    static void dfs(int y, int x, int mark, int direction) {
+        if(y < 0 || y >= yHeight || x < 0 || x >= xWidth || graph[y][x] == 0){
+            switch (direction) {
+                case 0 ->{
+                    xMap.putIfAbsent(x, new LinkedList<>());
+                    xMap.get(x).add(new Guideline(mark, y + 1));
+                }
+                case 1 -> {
+                    xMap.putIfAbsent(x, new LinkedList<>());
+                    xMap.get(x).add(new Guideline(mark, y - 1));
+                }
+                case 2->{
+                    yMap.putIfAbsent(y, new LinkedList<>());
+                    yMap.get(y).add(new Guideline(mark, x + 1));
+                }
+                case 3-> {
+                    yMap.putIfAbsent(y, new LinkedList<>());
+                    yMap.get(y).add(new Guideline(mark, x - 1));
+                }
+            }
+            return;
+        }
+        if(check[y][x] != 0) return;
 
-                    for(int xx = x; xx <= maxX; xx++) {
-                        yMap.putIfAbsent(xx, new ArrayList<>());
-                        yMap.get(xx).add(new CellInfo(mark, y, maxY));
-                    }
+        check[y][x] = mark;
+        for (int i = 0; i < 4; i++) {
+            dfs(y + dy[i], x + dx[i], mark, i);
+        }
+    }
 
-                    for(int yy = y; yy <= maxY; yy++) {
-                        xMap.putIfAbsent(yy, new ArrayList<>());
-                        xMap.get(yy).add(new CellInfo(mark, x, maxX));
-                    }
+    static void setEdges() {
+        TreeMap<Integer, LinkedList<Guideline>>[] maps = new TreeMap[]{xMap, yMap};
+        LinkedList<Guideline> guidelines;
+        int cost; Pair p;
 
-                    mark++;
+        Map<Pair, Integer> costs = new HashMap<>();
+
+        for(Map<Integer, LinkedList<Guideline>> m : maps) {
+            for (Map.Entry<Integer, LinkedList<Guideline>> entry : m.entrySet()) {
+                if(entry.getValue().size() <= 2) continue;
+
+                guidelines = entry.getValue();
+                Collections.sort(guidelines);
+
+                for(int i = 2; i < guidelines.size(); i += 2) {
+                    cost = guidelines.get(i).coordinate - guidelines.get(i - 1).coordinate - 1;
+                    if(cost < 2) continue;
+                    p = new Pair(guidelines.get(i).label, guidelines.get(i - 1).label);
+                    costs.put(p, Math.min(cost, costs.getOrDefault(p, Integer.MAX_VALUE)));
                 }
             }
         }
 
-        Map<Pair, KruskalEdge> edgeMap = new HashMap<>();
-        enterToMap(edgeMap, xMap);
-        enterToMap(edgeMap, yMap);
-
-        System.out.println(new 다리만들기2_17472(mark - 1, new ArrayList<>(edgeMap.values())).solve());
-    }
-
-    static void enterToMap(Map<Pair, KruskalEdge> edgeMap , Map<Integer, ArrayList<CellInfo>> map) {
-        int cost;
-        ArrayList<CellInfo> cellInfos;
-        for (Map.Entry<Integer, ArrayList<CellInfo>> entry: map.entrySet()) {
-            if(entry.getValue().size() == 1) continue;
-
-            cellInfos = entry.getValue();
-
-            for(int i = 0; i < cellInfos.size() - 1; i++){
-                if(edgeMap.containsKey(new Pair(cellInfos.get(i).islandLabel, cellInfos.get(i + 1).islandLabel))) continue;
-                cost = cellInfos.get(i + 1).startLocation - cellInfos.get(i).endLocation - 1;
-                if(cost < 0) cost = cellInfos.get(i).startLocation - cellInfos.get(i + 1).endLocation - 1;
-
-                if(cost < 2) continue;
-
-                edgeMap.put(new Pair(cellInfos.get(i).islandLabel, cellInfos.get(i + 1).islandLabel),
-                        new KruskalEdge(cellInfos.get(i).islandLabel, cellInfos.get(i + 1).islandLabel, cost));
-            }
+        KruskalEdge edge;
+        for (Map.Entry<Pair, Integer> entry : costs.entrySet()) {
+            edge = new KruskalEdge(entry.getKey().v1, entry.getKey().v2, entry.getValue());
+            edges.add(new KruskalEdge(entry.getKey().v1, entry.getKey().v2, entry.getValue()));
         }
     }
 
-    static void display() {
-        for(int y = 0; y < yHeight; y++){
-            for(int x = 0; x < xWidth; x++){
-                System.out.print(check[y][x] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
-
-    }
-
-    static int[] strToIntArr(String s){
+    static int[] strToIntArr(String s) {
         return Pattern.compile(" ").splitAsStream(s).mapToInt(Integer::parseInt).toArray();
-    }
-
-    static int[] getMaxCoordinates(int sY, int sX, int mark) {
-        int eY = -1, eX = -1;
-
-        for(int y = sY; y < yHeight; y++){
-            if(graph[y][sX] == 0){
-                eY = y - 1;
-                break;
-            }
-        }
-
-        for(int x = sX; x < xWidth; x++){
-            if(graph[sY][x] == 0){
-                eX = x - 1;
-                break;
-            }
-        }
-
-        if(eY == -1) eY = yHeight - 1;
-        if(eX == -1) eX = xWidth - 1;
-
-        for(int y = sY; y <= eY; y++) {
-            for (int x = sX; x <= eX; x++) {
-                check[y][x] = mark;
-            }
-        }
-
-        return new int[]{eY, eX};
     }
 }
