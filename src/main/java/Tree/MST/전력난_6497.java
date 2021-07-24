@@ -10,9 +10,9 @@ import java.util.stream.IntStream;
 
 class 전력난_6497 {
     int V;
-    ArrayList<KruskalEdge> edges;
+    ArrayList<KruskalEdgeIW> edges;
 
-    public 전력난_6497(int v, ArrayList<KruskalEdge> edges) {
+    public 전력난_6497(int v, ArrayList<KruskalEdgeIW> edges) {
         V = v;
         this.edges = edges;
     }
@@ -21,9 +21,9 @@ class 전력난_6497 {
         int ans = 0; int cnt = 0;
 
         int[] parent = IntStream.range(0, V).toArray();
-        PriorityQueue<KruskalEdge> pq = new PriorityQueue<>(edges);
+        PriorityQueue<KruskalEdgeIW> pq = new PriorityQueue<>(edges);
 
-        KruskalEdge e;
+        KruskalEdgeIW e;
         while (!pq.isEmpty() && cnt < V - 1) {
             e = pq.poll();
 
@@ -67,10 +67,10 @@ class MainA6497{
             V = tmp[0]; E = tmp[1];
 
             sum = 0;
-            ArrayList<KruskalEdge> edges = new ArrayList<>();
+            ArrayList<KruskalEdgeIW> edges = new ArrayList<>();
             for(int e = 0; e < E; e++){
                 tmp = strToIntArr(br.readLine());
-                edges.add(new KruskalEdge(tmp[0], tmp[1], tmp[2]));
+                edges.add(new KruskalEdgeIW(tmp[0], tmp[1], tmp[2]));
                 sum += tmp[2];
             }
             stb.append(sum - new 전력난_6497(V, edges).solve()).append("\n");

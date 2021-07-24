@@ -12,9 +12,9 @@ import java.util.stream.IntStream;
 
 class 행성터널_2887 {
     int V;
-    ArrayList<KruskalEdge> edges;
+    ArrayList<KruskalEdgeIW> edges;
 
-    public 행성터널_2887(int v, ArrayList<KruskalEdge> edges) {
+    public 행성터널_2887(int v, ArrayList<KruskalEdgeIW> edges) {
         V = v;
         this.edges = edges;
     }
@@ -22,9 +22,9 @@ class 행성터널_2887 {
     int solve() {
         int ans = 0;
         int[] parent = IntStream.rangeClosed(0, V).toArray();
-        PriorityQueue<KruskalEdge> pq = new PriorityQueue<>(edges);
+        PriorityQueue<KruskalEdgeIW> pq = new PriorityQueue<>(edges);
 
-        KruskalEdge e; int cnt = 0; // local variable
+        KruskalEdgeIW e; int cnt = 0; // local variable
         while (!pq.isEmpty() && cnt < V - 1) {
             e = pq.poll();
             if(!union(e.v1, e.v2, parent)) continue;
@@ -75,7 +75,7 @@ class MainA2887{
             return;
         }
 
-        ArrayList<KruskalEdge> edges = new ArrayList<>();
+        ArrayList<KruskalEdgeIW> edges = new ArrayList<>();
         PointA2887[] points = new PointA2887[V];
 
         int[] tmp;
@@ -96,11 +96,11 @@ class MainA2887{
         System.out.println(new 행성터널_2887(V, edges).solve());
     }
 
-    static void addToEdges(int V, PointA2887[] points, ArrayList<KruskalEdge> edges) {
-        edges.add(new KruskalEdge(points[0].label, points[1].label, getCost(points, 0, 1)));
+    static void addToEdges(int V, PointA2887[] points, ArrayList<KruskalEdgeIW> edges) {
+        edges.add(new KruskalEdgeIW(points[0].label, points[1].label, getCost(points, 0, 1)));
 
         for(int v = 0; v < V - 1; v++){
-            edges.add(new KruskalEdge(points[v].label, points[v + 1].label, getCost(points, v, v + 1)));
+            edges.add(new KruskalEdgeIW(points[v].label, points[v + 1].label, getCost(points, v, v + 1)));
         }
     }
 

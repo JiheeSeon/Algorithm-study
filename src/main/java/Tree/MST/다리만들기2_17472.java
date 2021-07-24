@@ -9,9 +9,9 @@ import java.util.stream.IntStream;
 
 class 다리만들기2_17472 {
     int V;
-    LinkedList<KruskalEdge> edges;
+    LinkedList<KruskalEdgeIW> edges;
 
-    public 다리만들기2_17472(int v, LinkedList<KruskalEdge> edges) {
+    public 다리만들기2_17472(int v, LinkedList<KruskalEdgeIW> edges) {
         V = v;
         this.edges = edges;
     }
@@ -19,9 +19,9 @@ class 다리만들기2_17472 {
     int solve() {
         int cnt = 0;
         int ans = 0;
-        KruskalEdge e;
+        KruskalEdgeIW e;
 
-        PriorityQueue<KruskalEdge> pq = new PriorityQueue<>(edges);
+        PriorityQueue<KruskalEdgeIW> pq = new PriorityQueue<>(edges);
         int[] parent = IntStream.rangeClosed(0, V).toArray();
 
         while (cnt < V - 1) {
@@ -101,7 +101,7 @@ class MainA17472{
     static TreeMap<Integer, LinkedList<GuidelineA17472>> xMap = new TreeMap<>();
     static TreeMap<Integer, LinkedList<GuidelineA17472>> yMap = new TreeMap<>();
 
-    static LinkedList<KruskalEdge> edges = new LinkedList<>();
+    static LinkedList<KruskalEdgeIW> edges = new LinkedList<>();
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -180,10 +180,10 @@ class MainA17472{
             }
         }
 
-        KruskalEdge edge;
+        KruskalEdgeIW edge;
         for (Map.Entry<PairA17472, Integer> entry : costs.entrySet()) {
-            edge = new KruskalEdge(entry.getKey().v1, entry.getKey().v2, entry.getValue());
-            edges.add(new KruskalEdge(entry.getKey().v1, entry.getKey().v2, entry.getValue()));
+            edge = new KruskalEdgeIW(entry.getKey().v1, entry.getKey().v2, entry.getValue());
+            edges.add(new KruskalEdgeIW(entry.getKey().v1, entry.getKey().v2, entry.getValue()));
         }
     }
 
