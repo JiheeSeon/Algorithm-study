@@ -9,13 +9,6 @@ import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.stream.IntStream;
 
-/*
-TODO
-KruskalEdgeDW 추가
-Util.InputProcessor 추가
-Point 추가
-*/
-
 class 우주신과의교감_1774 {
     int V;
     ArrayList<KruskalEdgeDW> edgesAlreadyMade;
