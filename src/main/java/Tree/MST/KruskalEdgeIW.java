@@ -13,4 +13,9 @@ class KruskalEdgeIW implements Comparable<KruskalEdgeIW>{
     public int compareTo(KruskalEdgeIW o) {
         return Integer.compare(w, o.w);
     }
+
+    @Override
+    public String toString() {
+        return "(" + "v1=" + v1 + ", v2=" + v2 + ", w=" + w + ')';
+    }
 }

@@ -36,14 +36,15 @@ class 복제로봇_1944 {
 
         for (int idx = 0; idx < keyLocations.size() - 1; idx++) {
             check = new int[N][N];
-            check[keyLocations.get(idx).y][keyLocations.get(idx).x] = 1;
 
             bfs(keyLocations.get(idx));
 
             for (int other = idx + 1; other < keyLocations.size(); other++) {
-                pq.add(new KruskalEdgeIW(idx, other, check[keyLocations.get(other).y][keyLocations.get(other).x] - 1));
+                if(check[keyLocations.get(other).y][keyLocations.get(other).x] == 0) continue;
+                pq.add(new KruskalEdgeIW(idx, other, check[keyLocations.get(other).y][keyLocations.get(other).x]));
             }
         }
+
 
         int cnt = 0;
         int ans = 0;
@@ -130,3 +131,17 @@ class MainA1944 {
         System.out.println(new 복제로봇_1944(N, K, maze, startCoordinate, keyLocations).solve());
     }
 }
+
+/*
+한번에 안 맞음
+TC
+
+7 3
+1111111
+1S10011
+101K011
+1010011
+1010K11
+1K10011
+1111111
+*/
