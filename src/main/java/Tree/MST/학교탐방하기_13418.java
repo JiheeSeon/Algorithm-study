@@ -11,24 +11,22 @@ import java.util.stream.IntStream;
 
 class 학교탐방하기_13418 {
     int V;
-    KruskalEdgeIW firstEdge;
     ArrayList<KruskalEdgeIW> forGood;
     ArrayList<KruskalEdgeIW> forBad;
     int[] parent;
 
-    public 학교탐방하기_13418(int v, KruskalEdgeIW firstEdge, ArrayList<KruskalEdgeIW> forGood, ArrayList<KruskalEdgeIW> forBad) {
+    public 학교탐방하기_13418(int v,  ArrayList<KruskalEdgeIW> forGood, ArrayList<KruskalEdgeIW> forBad) {
         V = v;
-        this.firstEdge = firstEdge;
         this.forGood = forGood;
         this.forBad = forBad;
     }
 
-    int solve() {
-        return getFatigueScore(-firstEdge.w, forBad) - getFatigueScore(firstEdge.w, forGood);
+    long solve() {
+        return Math.abs(getFatigueScore(forBad) - getFatigueScore(forGood));
     }
 
-    int getFatigueScore(int firstWeight, ArrayList<KruskalEdgeIW> edges) {
-        int ret = firstWeight;
+    long getFatigueScore(ArrayList<KruskalEdgeIW> edges) {
+        long ret = 0;
 
         parent = IntStream.rangeClosed(0, V).toArray();
 
@@ -36,8 +34,10 @@ class 학교탐방하기_13418 {
 
         int cnt = 0;
         KruskalEdgeIW e;
+
         while (!pq.isEmpty() && cnt < V - 1) {
             e = pq.poll();
+            if(!union(e.v1, e.v2)) continue;
 
             ret += e.w;
             cnt++;
@@ -67,13 +67,10 @@ class MainA13418 {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int[] tmp = InputProcessor.strToIntArr(br.readLine());
-        int V = tmp[0]; int E = tmp[1];
+        int V = tmp[0] + 1; int E = tmp[1] + 1;
 
         ArrayList<KruskalEdgeIW> forGood = new ArrayList<>();
         ArrayList<KruskalEdgeIW> forBad = new ArrayList<>();
-
-        tmp = InputProcessor.strToIntArr(br.readLine());
-        KruskalEdgeIW firstEdge = new KruskalEdgeIW(tmp[0], tmp[1], tmp[2]);
 
         for (int e = 0; e < E; e++) {
             tmp = InputProcessor.strToIntArr(br.readLine());
@@ -81,6 +78,6 @@ class MainA13418 {
             forBad.add(new KruskalEdgeIW(tmp[0], tmp[1], -tmp[2]));
         }
 
-        System.out.println(new 학교탐방하기_13418(V, firstEdge, forGood, forBad).solve());
+        System.out.println(new 학교탐방하기_13418(V, forGood, forBad).solve());
     }
 }
