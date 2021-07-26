@@ -22,9 +22,11 @@ class 레드블루스패닝트리_4792 {
     }
 
     int solve() {
+        // 파란 간선이 최소로 들어가는 스패닝 트리 > 파란 간선의 개수
         int min = MST(new PriorityQueue<>(edges));
         if(min == -1) return 0;
 
+        // 파란 간선이 최대로 들어가는 스패닝 트리 > 파란 간선의 개수
         PriorityQueue<KruskalEdgeIW> maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
         maxHeap.addAll(edges);
         int max = MST(maxHeap);
@@ -34,22 +36,22 @@ class 레드블루스패닝트리_4792 {
     }
 
     int MST(PriorityQueue<KruskalEdgeIW> pq) {
-        int cnt = 0;
-        int bCnt = 0;
+        int cnt = 0;  // MST를 구성하는 간선의 개수
+        int bCnt = 0; // MST를 구성하는 파란색 간선의 개수
 
         parent = IntStream.rangeClosed(0, V).toArray();
         KruskalEdgeIW e;
+
         while(cnt < V - 1){
-            if(pq.isEmpty()) return -1; // MST를 만들 수 없는 경우
+            if(pq.isEmpty()) return -1; // 스패닝트리를 만들 수 없는 경우
 
             e = pq.poll();
 
             if(!union(e.v1, e.v2)) continue;
 
             cnt++;
-            if(e.w == 1) bCnt++;
+            if(e.w == 1) bCnt++; // 파란색 간선일 경우
         }
-
         return bCnt;
     }
 
@@ -108,6 +110,4 @@ B 2 5
 B 2 6
 R 5 6
 R 2 3
-0 0 0
-1
 */
