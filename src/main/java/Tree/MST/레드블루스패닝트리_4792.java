@@ -1,0 +1,98 @@
+package Tree.MST;
+
+import Util.InputProcessor;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.PriorityQueue;
+import java.util.stream.IntStream;
+
+class 레드블루스패닝트리_4792 {
+    int V, BE;
+    ArrayList<KruskalEdgeIW> edges;
+    int[] parent;
+
+    public 레드블루스패닝트리_4792(int v, int be, ArrayList<KruskalEdgeIW> edges) {
+        V = v;
+        BE = be;
+        this.edges = edges;
+        parent = IntStream.rangeClosed(0, V).toArray();
+    }
+
+    int solve() {
+        PriorityQueue<KruskalEdgeIW> pq = new PriorityQueue<>(edges);
+        int cnt = 0; int bCnt = 0;
+        KruskalEdgeIW e;
+
+        while (cnt < V - 1) {
+            if(pq.isEmpty()) return 0;
+
+            e = pq.poll();
+            if((e.w == 0 && bCnt >= BE) || (!union(e.v1, e.v2))) continue;
+
+            if(e.w == 0) bCnt++;
+            cnt++;
+        }
+
+        return 1;
+    }
+
+    boolean union(int a, int b){
+        int pA = find(a);
+        int pB = find(b);
+
+        if(pA == pB) return false;
+
+        if(pA < pB) parent[pB] = pA;
+        else parent[pA] = pB;
+
+        return true;
+    }
+
+    int find(int a) {
+        return parent[a] == a ? a : (parent[a] = find(parent[a]));
+    }
+}
+
+class MainA4782{
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int[] tmp;
+        int V, E, BE;
+
+        char[] info;
+        String s = br.readLine();
+
+        ArrayList<KruskalEdgeIW> edges;
+        StringBuilder stb = new StringBuilder();
+        while(!s.equals("0 0 0")){
+            tmp = InputProcessor.strToIntArr(s);
+            V = tmp[0]; E = tmp[1]; BE = tmp[2];
+            edges = new ArrayList<>();
+
+            for (int e = 0; e < E; e++) {
+                info = br.readLine().replace(" ", "").toCharArray();
+                edges.add(new KruskalEdgeIW(info[1] - '0', info[2] - '0', info[0] == 'B' ? 0 : 1));
+            }
+            stb.append(new 레드블루스패닝트리_4792(V, BE, edges).solve()).append("\n");
+
+            s = br.readLine();
+        }
+        System.out.print(stb);
+    }
+}
+/*
+6 8 1
+R 1 2
+B 1 3
+B 1 4
+R 3 4
+B 2 5
+B 2 6
+R 5 6
+R 2 3
+0 0 0
+1
+*/
