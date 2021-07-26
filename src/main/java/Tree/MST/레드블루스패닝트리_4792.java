@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.stream.IntStream;
 
@@ -18,25 +19,38 @@ class 레드블루스패닝트리_4792 {
         V = v;
         BE = be;
         this.edges = edges;
-        parent = IntStream.rangeClosed(0, V).toArray();
     }
 
     int solve() {
-        PriorityQueue<KruskalEdgeIW> pq = new PriorityQueue<>(edges);
-        int cnt = 0; int bCnt = 0;
-        KruskalEdgeIW e;
+        int min = MST(new PriorityQueue<>(edges));
+        if(min == -1) return 0;
 
-        while (cnt < V - 1) {
-            if(pq.isEmpty()) return 0;
+        PriorityQueue<KruskalEdgeIW> maxHeap = new PriorityQueue<>(Comparator.reverseOrder());
+        maxHeap.addAll(edges);
+        int max = MST(maxHeap);
+        if(max == -1) return 0;
+
+        return (max >= BE && BE >= min) ? 1 : 0;
+    }
+
+    int MST(PriorityQueue<KruskalEdgeIW> pq) {
+        int cnt = 0;
+        int bCnt = 0;
+
+        parent = IntStream.rangeClosed(0, V).toArray();
+        KruskalEdgeIW e;
+        while(cnt < V - 1){
+            if(pq.isEmpty()) return -1; // MST를 만들 수 없는 경우
 
             e = pq.poll();
-            if((e.w == 0 && bCnt >= BE) || (!union(e.v1, e.v2))) continue;
 
-            if(e.w == 0) bCnt++;
+            if(!union(e.v1, e.v2)) continue;
+
             cnt++;
+            if(e.w == 1) bCnt++;
         }
 
-        return 1;
+        return bCnt;
     }
 
     boolean union(int a, int b){
@@ -56,7 +70,7 @@ class 레드블루스패닝트리_4792 {
     }
 }
 
-class MainA4782{
+class MainA4792 {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int[] tmp;
@@ -67,6 +81,7 @@ class MainA4782{
 
         ArrayList<KruskalEdgeIW> edges;
         StringBuilder stb = new StringBuilder();
+
         while(!s.equals("0 0 0")){
             tmp = InputProcessor.strToIntArr(s);
             V = tmp[0]; E = tmp[1]; BE = tmp[2];
@@ -74,7 +89,7 @@ class MainA4782{
 
             for (int e = 0; e < E; e++) {
                 info = br.readLine().replace(" ", "").toCharArray();
-                edges.add(new KruskalEdgeIW(info[1] - '0', info[2] - '0', info[0] == 'B' ? 0 : 1));
+                edges.add(new KruskalEdgeIW(info[1] - '0', info[2] - '0', info[0] == 'B' ? 1 : 0));
             }
             stb.append(new 레드블루스패닝트리_4792(V, BE, edges).solve()).append("\n");
 
