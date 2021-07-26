@@ -22,7 +22,7 @@ class 학교탐방하기_13418 {
     }
 
     long solve() {
-        return Math.abs(getFatigueScore(forBad) - getFatigueScore(forGood));
+        return getFatigueScore(forBad) - getFatigueScore(forGood);
     }
 
     long getFatigueScore(ArrayList<KruskalEdgeIW> edges) {
@@ -42,7 +42,6 @@ class 학교탐방하기_13418 {
             ret += e.w;
             cnt++;
         }
-
         return ret * ret;
     }
 
@@ -72,10 +71,11 @@ class MainA13418 {
         ArrayList<KruskalEdgeIW> forGood = new ArrayList<>();
         ArrayList<KruskalEdgeIW> forBad = new ArrayList<>();
 
+        /*문제의 조건을 잘 읽자 ^*^*/
         for (int e = 0; e < E; e++) {
             tmp = InputProcessor.strToIntArr(br.readLine());
-            forGood.add(new KruskalEdgeIW(tmp[0], tmp[1], tmp[2]));
-            forBad.add(new KruskalEdgeIW(tmp[0], tmp[1], -tmp[2]));
+            forGood.add(new KruskalEdgeIW(tmp[0], tmp[1], 1 - tmp[2]));
+            forBad.add(new KruskalEdgeIW(tmp[0], tmp[1], tmp[2] - 1));
         }
 
         System.out.println(new 학교탐방하기_13418(V, forGood, forBad).solve());
