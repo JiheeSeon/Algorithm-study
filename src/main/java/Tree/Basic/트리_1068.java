@@ -12,9 +12,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 class 트리_1068 {
-    int N, D;
+    int N, D, root;
     int[] parent;
-    int root;
     ArrayList<Integer>[] topDownGraph;
     Set<Integer> leafSet;
 
@@ -31,7 +30,8 @@ class 트리_1068 {
         // set leaf
         leafSet = IntStream.range(0, N).boxed().collect(Collectors.toCollection(HashSet::new));
         for(int idx = 0; idx < N; idx++) leafSet.remove(parent[idx]);
-        dfs(0, false);
+
+        dfs(root, false);
         return leafSet.size();
     }
 
@@ -51,13 +51,16 @@ class 트리_1068 {
 
     void dfs(int now, boolean deleteFlag) {
         if(now == D) deleteFlag = true;
-        if(deleteFlag) leafSet.remove(now);
 
-        if(topDownGraph[now].size() == 0){
+        // 없애야 하는 노드의 줄기쪽에 있는 단말노드일 때
+        if(topDownGraph[now].size() == 0 && deleteFlag){
+            leafSet.remove(now); // 자기 자신 = 단말노드를 leafSet에서 제거
+            // D만 자식으로 둔 경우 부모가 리프노드가 됨 -> leafSet에 추가
             if(topDownGraph[parent[D]].size() == 1) leafSet.add(parent[D]);
             return;
         }
 
+        // internal node인 경우
         for (int child : topDownGraph[now]) {
             dfs(child, deleteFlag);
         }
@@ -74,3 +77,9 @@ class MainA1068{
         System.out.println(new 트리_1068(N, D, parent).solve());
     }
 }
+/*
+12
+9 10 1 2 2 2 4 4 5 10 -1 9
+4
+4
+*/
