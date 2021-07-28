@@ -11,13 +11,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-class 트리_1068 {
+class 트리의원소삭제후리프노드개수확인_1068 {
     int N, D, root;
     int[] parent;
     ArrayList<Integer>[] topDownGraph;
     Set<Integer> leafSet;
 
-    public 트리_1068(int n, int d, int[] parent) {
+    public 트리의원소삭제후리프노드개수확인_1068(int n, int d, int[] parent) {
         N = n;
         D = d;
         this.parent = parent;
@@ -74,7 +74,7 @@ class MainA1068{
         int[] parent = InputProcessor.strToIntArr(br.readLine());
         int D = Integer.parseInt(br.readLine());
 
-        System.out.println(new 트리_1068(N, D, parent).solve());
+        System.out.println(new 트리의원소삭제후리프노드개수확인_1068(N, D, parent).solve());
     }
 }
 /*

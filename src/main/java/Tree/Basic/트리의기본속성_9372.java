@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 
 /* 트리라는 그래프 형태를 사용해야 한다는 것을 파악하면 끝나는 문제*/
 
-class 상근이의여행_9372{
+class 트리의기본속성_9372 {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int T = Integer.parseInt(br.readLine());
