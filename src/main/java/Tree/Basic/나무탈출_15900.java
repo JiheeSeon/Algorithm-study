@@ -21,11 +21,12 @@ class 나무탈출_15900 {
 
     // 리프노드로부터의 높이들의 합이 홀수인지
     String solve() {
-        topdownDfs(1, 0);
+        backtrack(1, 0);
+//        System.out.println(ans);
         return ans % 2 == 1 ? "Yes" : "No";
     }
 
-    void topdownDfs(int now, int cnt) {
+    void backtrack(int now, int level) {
         check[now] = true;
 
         int leafChecker = 0;
@@ -33,10 +34,43 @@ class 나무탈출_15900 {
             if(check[next]) continue;
 
             leafChecker++;
-            topdownDfs(next,cnt + 1);
+            backtrack(next,level + 1);
         }
 
-        if(leafChecker == 0) ans += cnt;
+        // leaf node 도달했을 때 level 추가 => backtrack
+        if(leafChecker == 0) ans += level;
+    }
+
+    /*
+    [ 기존 로직 ]
+    자식노드마다 그를 루트로 하는 트리의 레벨 합 + 1(나와 연결되어있는 브랜치)
+    를 최종합에 더해서 return
+
+    [ 틀린 이유 ]
+    위에서 공통적으로 타고가는 브랜치라 할지라도,
+    어떤 리프노드로 가는 브랜치인지에 따라 부모 브랜치가 중복으로 몇번이고 들어감.
+    이는 리프노드에서 최종적으로 결정됨. 아래 가지수에 따라 중복이 몇번 들어갈지 결정
+    아래의 서브트리의 level 합만으로는 상위 트리와의 관계성을 명확히 하기 어려움.
+
+    [ 지향점 ]
+    결국은 backtrack 중 맨 마지막 리프에서 레벨을 더해주는 방식으로 진행해야 함.
+    */
+
+    int wrongRecursiveSolution(int node) {
+        check[node] = true;
+        int subTreeN = 0;
+        int ret = 0;
+        int tmp;
+
+        for (int child : graph[node]) {
+            if(check[child]) continue;
+
+            tmp = wrongRecursiveSolution(child);
+            ret += (tmp + 1);
+            subTreeN++;
+        }
+
+        return subTreeN == 0 ? 0 : ret;
     }
 }
 
@@ -70,7 +104,7 @@ class MainA15900{
 2 3
 No ()
 
-19
+17
 1 8
 3 5
 14 9
@@ -78,7 +112,6 @@ No ()
 12 3
 8 15
 1 4
-19 18
 6 10
 11 6
 6 2
@@ -86,7 +119,26 @@ No ()
 7 4
 16 8
 5 9
-17 18
 6 4
 3 1
+Yes(29)
+
+17
+13 17
+14 8
+16 13
+9 4
+4 2
+4 8
+5 2
+10 6
+2 6
+1 2
+11 7
+12 7
+15 12
+3 1
+13 7
+3 7
+Yes(27)
 */
