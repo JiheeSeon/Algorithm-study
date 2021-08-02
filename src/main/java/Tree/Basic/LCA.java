@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 class LCA {
     int root;
@@ -16,7 +17,7 @@ class LCA {
 
     final int minLevel = 1;
     int treeH = -1;
-    int maxLGH;
+    int lgOfMaxDistance;
 
     public LCA(int V, int root, ArrayList<Integer>[] tree) {
         this.V = V;
@@ -30,8 +31,9 @@ class LCA {
         parent[0][root] = -1;
 
         topdownDfs(root, 1, new boolean[V + 1]);
-        maxLGH = (int)(Math.log10(treeH - minLevel) / Math.log10(2));
+        lgOfMaxDistance = (int)(Math.log10(treeH - minLevel) / Math.log10(2));
         setSparseTable();
+//        displayInfo();
     }
 
     private void topdownDfs(int now, int level, boolean[] check) {
@@ -48,23 +50,25 @@ class LCA {
     }
 
     private void setSparseTable() {
-        for (int k = 1; k <= maxLGH; k++) {
+        for (int k = 1; k <= lgOfMaxDistance; k++) {
             for (int v = 1; v <= V; v++) {
                 parent[k][v] = parent[k - 1][v] == -1 ? -1 : parent[k - 1][parent[k - 1][v]];
             }
         }
     }
 
-    void displaySparseTable() {
+    void displayInfo() {
         StringBuilder stb = new StringBuilder("\n");
 
-        for (int k = 0; k <= maxLGH; k++) {
+        for (int k = 0; k <= lgOfMaxDistance; k++) {
             for (int i : parent[k]) {
                 stb.append(i).append(" ");
             }
             stb.append("\n");
         }
-        System.out.print(stb);
+        stb.append(Arrays.toString(levels));
+        System.out.println(stb);
+
     }
 
     int LCA(int node1, int node2) {
@@ -89,13 +93,22 @@ class LCA {
             }
         }
 
+//        System.out.println("node1 = " + node1 + " (" + levels[node1] + ")");
+//        System.out.println("node2 = " + node2 + " (" + levels[node2] + ")");
+
         if(node1 == node2) return node1;
 
-        while (node1 != node2) {
-            node1 = parent[0][node1];
-            node2 = parent[0][node2];
+        // opt 2> 1312ms -> 896ms
+        int i = (int)(Math.log10(levels[node1] - minLevel) / Math.log10(2)) + 1;
+        // 이진탐색 원리 차용
+        while(--i >= 0){
+//            System.out.println(i + " : " + node1 + "(" + parent[i][node1] + "), " + node2 + "(" + parent[i][node2] + ")" + " => "+ (parent[i][node1] == parent[i][node2]));
+            if(parent[i][node1] == parent[i][node2]) continue;
+
+            node1 = parent[i][node1];
+            node2 = parent[i][node2];
         }
-        return node1;
+        return parent[0][node1];
     }
 
     int solve(int a, int b) {
@@ -133,3 +146,89 @@ class LCAApplication{
         System.out.print(stb);
     }
 }
+
+/*
+[Input]
+67
+64 59
+67 63
+63 57
+62 57
+66 61
+60 56
+56 61
+57 53
+59 55
+59 65
+54 49
+47 53
+53 58
+50 46
+50 56
+55 49
+46 52
+41 47
+49 45
+48 41
+46 51
+33 46
+32 45
+44 31
+43 29
+42 28
+41 28
+39 25
+38 24
+36 22
+35 21
+20 34
+9 20
+21 9
+32 19
+22 11
+12 23
+12 24
+14 25
+16 26
+19 8
+40 25
+37 22
+31 19
+27 16
+28 16
+33 20
+29 17
+30 19
+18 8
+17 8
+16 7
+6 15
+14 6
+13 6
+12 5
+5 11
+4 9
+4 10
+2 4
+2 5
+2 6
+3 8
+7 3
+1 2
+3 1
+6
+67 26
+66 34
+52 40
+9 19
+48 47
+60 1
+
+[Output]
+16
+20
+2
+1
+41
+1
+*/
