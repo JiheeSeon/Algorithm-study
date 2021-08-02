@@ -6,15 +6,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 class 트리의높이와너비_2250 {
     int V;
     int x = 0;
+    int rootIdx;
     BinaryTreeNode_2250[] tree;
     ArrayList<LevelInfo> levelInfos = new ArrayList();
 
-    public 트리의높이와너비_2250(int V, BinaryTreeNode_2250[] tree) {
+    public 트리의높이와너비_2250(int V, int rootIdx, BinaryTreeNode_2250[] tree) {
         this.V = V;
+        this.rootIdx = rootIdx;
         this.tree = tree;
         levelInfos.add(new LevelInfo());
     }
@@ -42,7 +46,7 @@ class 트리의높이와너비_2250 {
     }
 
     String solve() {
-        inorder(tree[1], 1);
+        inorder(tree[rootIdx], 1);
 
         int width;
         int ansLevel = -1;
@@ -52,7 +56,7 @@ class 트리의높이와너비_2250 {
         for (int i = 1; i < levelInfos.size(); i++) {
             l = levelInfos.get(i);
 
-            width = l.max == l.min ? 0 : l.max - l.min + 1;
+            width = l.max - l.min + 1;
             if(ansWidth < width){
                 ansWidth = width;
                 ansLevel = i;
@@ -72,7 +76,7 @@ class BinaryTreeNode_2250{
     }
 }
 
-class Main2250{
+class MainA2250 {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int N = Integer.parseInt(br.readLine());
@@ -82,11 +86,19 @@ class Main2250{
         for (int i = 1; i <= N; i++)
             binaryTreeNodes[i] = new BinaryTreeNode_2250(i);
 
+        ArrayList<Integer> rootCandidates = IntStream.rangeClosed(1, N).boxed().collect(Collectors.toCollection(ArrayList::new));
+
         for (int i = 1; i <= N; i++) {
             tmp = InputProcessor.strToIntArr(br.readLine());
-            binaryTreeNodes[tmp[0]].left = (tmp[1] == -1) ? null : binaryTreeNodes[tmp[1]];
-            binaryTreeNodes[tmp[0]].right = (tmp[2] == -1) ? null : binaryTreeNodes[tmp[2]];
+            if(tmp[1] != -1) {
+                binaryTreeNodes[tmp[0]].left = binaryTreeNodes[tmp[1]];
+                rootCandidates.remove((Object)tmp[1]);
+            }
+            if(tmp[2] != -1){
+                binaryTreeNodes[tmp[0]].right = binaryTreeNodes[tmp[2]];
+                rootCandidates.remove((Object)tmp[2]);
+            }
         }
-        System.out.println(new 트리의높이와너비_2250(N, binaryTreeNodes).solve());
+        System.out.println(new 트리의높이와너비_2250(N, rootCandidates.get(0), binaryTreeNodes).solve());
     }
 }
