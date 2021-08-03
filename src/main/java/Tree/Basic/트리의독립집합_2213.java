@@ -67,14 +67,13 @@ class 트리의독립집합_2213 {
     }
 
     int solve(int root, int elementFlag, Set<Integer> set) {
-        if(tree[root].isEmpty())
+        if(tree[root].isEmpty()) {
             return elementFlag == IN_SET ? weights[root] : 0;
+        }
 
-        if(dp[root][elementFlag] != DEFAULT)
-            return dp[root][elementFlag];
+        if(dp[root][elementFlag] != DEFAULT) return dp[root][elementFlag];
 
         dp[root][elementFlag] = elementFlag == IN_SET ? weights[root] : 0;
-        int retInSet, retNotInSet;
 
         if (elementFlag == IN_SET) {
             for (int child : tree[root]) {
@@ -83,13 +82,14 @@ class 트리의독립집합_2213 {
             return dp[root][elementFlag];
         }else {
             for (int child : tree[root]) {
-                retInSet = solve(child, IN_SET, set);
-                retNotInSet = solve(child, NOT_IN_SET, set);
+                int retInSet = solve(child, IN_SET, set);
+                int retNotInSet = solve(child, NOT_IN_SET, set);
 
                 if (retInSet > retNotInSet) {
                     set.add(child);
                     dp[root][elementFlag] += retInSet;
                 } else {
+                    set.remove(child);
                     dp[root][elementFlag] += retNotInSet;
                 }
             }
