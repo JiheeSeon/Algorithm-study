@@ -31,9 +31,8 @@ class 트리의순회_2263 {
     }
 
     static class BinaryTreeNode{
-        final static BinaryTreeNode DEFAULT_NODE = new BinaryTreeNode(-1);
         int label;
-        BinaryTreeNode left = DEFAULT_NODE, right = DEFAULT_NODE;
+        BinaryTreeNode left = null, right = null;
 
         public BinaryTreeNode(int label) {
             this.label = label;
@@ -60,13 +59,12 @@ class 트리의순회_2263 {
             return preorder(rootNode.left, new StringBuilder()).toString();
         }
 
+        // 틀렸던 주요이유 : left 자식부터 채워져야 한다고 생각
         StringBuilder preorder(BinaryTreeNode pNode, StringBuilder stb) {
             stb.append(pNode.label).append(" ");
 
-            if(pNode.left != null){
-                preorder(pNode.left, stb);
-                if(pNode.right != null) preorder(pNode.right, stb);
-            }
+            if(pNode.left!=null) preorder(pNode.left, stb);
+            if(pNode.right != null) preorder(pNode.right, stb);
 
             return stb;
         }
@@ -78,6 +76,9 @@ class 트리의순회_2263 {
     }
 
     void connectNode(BinaryTreeNode pNode, boolean isLeftChild) {
+        // visitPtrOfPostOrder 는 1 이상일 때만 유효
+        if(visitPtrOfPostOrder == 0) return;
+
         BinaryTreeNode cNode = new BinaryTreeNode(postorder[visitPtrOfPostOrder]);
 
         if(isLeftChild) pNode.left = cNode;
@@ -86,16 +87,12 @@ class 트리의순회_2263 {
         int currentIdx = inorderIdxMapper[postorder[visitPtrOfPostOrder]];
         visited[currentIdx] = true;
 
-        if (currentIdx + 1 >= visited.length || visited[currentIdx + 1] || visitPtrOfPostOrder == 1) {
-            cNode.right = null;
-        } else{
+        if ((currentIdx + 1 < visited.length) && !visited[currentIdx + 1]) {
             visitPtrOfPostOrder--;
             connectNode(cNode, false);
         }
 
-        if(currentIdx < 1 || visited[currentIdx - 1] || visitPtrOfPostOrder == 1){
-            cNode.left = null;
-        } else{
+        if((currentIdx >= 1 && !visited[currentIdx - 1])){
             visitPtrOfPostOrder--;
             connectNode(cNode, true);
         }
@@ -127,4 +124,32 @@ TC 2
 10 7 8 4 2 5 13 15 14 11 12 9 6 3 1
 
 1 2 4 7 10 8 3 5 6 9 11 13 14 15 12
+
+TC 3
+8
+5 3 2 6 4 8 7 1
+5 3 6 8 7 4 2 1
+
+1 2 3 5 4 6 7 8
+
+TC 4
+21
+1 3 2 7 4 6 5 15 11 9 12 8 13 10 14 21 19 17 20 16 18
+1 2 3 4 5 6 7 11 12 9 13 14 10 8 15 19 20 17 18 16 21
+
+21 15 7 3 1 2 6 4 5 8 9 11 12 10 13 14 16 17 19 20 18
+
+TC 5
+10
+1 3 2 5 4 6 8 7 10 9
+1 2 3 4 5 8 10 9 7 6
+
+6 5 3 1 2 4 7 8 9 10
+
+TC 6 Right 자식만 있는 경우
+5
+1 2 3 5 4
+5 4 3 2 1
+
+1 2 3 4 5
 */
