@@ -24,6 +24,8 @@ class 가장가까운공통조상_3584 {
         this.root = root;
         this.tree = tree;
         levels = new int[V + 1];
+
+        init();
     }
 
     int[] dfs(int now, int level, boolean[] check, int[] parent) {
@@ -54,35 +56,40 @@ class 가장가까운공통조상_3584 {
         for (int lgLv = 1; lgLv <= lgOfDepth; lgLv++) {
             for (int v = 1; v <= V; v++) {
                 // 0% IndexOutOfBounds -> 50% IndexOutOfBounds
-                parent[lgLv][v] = parent[lgLv - 1][v] == -1 ? -1 : parent[lgLv - 1][parent[lgLv - 1][v]];
+                if(parent[lgLv - 1][v] == -1) continue;
+                parent[lgLv][v] = parent[lgLv - 1][parent[lgLv - 1][v]];
             }
         }
     }
 
     int solve(int A, int B) {
-        init();
-
         // levels[a] < levels[b] 가 되도록 만들기
         if(levels[A] > levels[B]){
             int tmp = A; A = B; B = tmp;
         }
 
+        if(levels[A] == 0) return 1;
+
         // adjust level of b -> make b ancestor of b same level with a
         int diffLevel = levels[B] - levels[A];
-        int lgOfDiffLevel = (int)(Math.log10(diffLevel)/Math.log10(2)) + 1;
 
-        while(--lgOfDiffLevel >= 0){
-            if(parent[lgOfDiffLevel][B] == 0) return 1;
+        if(diffLevel != 0) {
+            // diffLevel == 0 일 경우 lg 취한게 overflow 나면서 이상한 결과 나옴
+            int lgOfDiffLevel = (int) (Math.log10(diffLevel) / Math.log10(2)) + 1;
 
-            if((diffLevel & (1 << lgOfDiffLevel)) != 0){
-                B = parent[lgOfDiffLevel][B] == -1 ? -1 : parent[lgOfDiffLevel][B];
-                if(B == -1) return 1;
+            while (--lgOfDiffLevel >= 0) {
+                if (parent[lgOfDiffLevel][B] == 0) return 1;
+
+                if ((diffLevel & (1 << lgOfDiffLevel)) != 0) {
+                    B = parent[lgOfDiffLevel][B] == -1 ? -1 : parent[lgOfDiffLevel][B];
+                    if (B == -1) return 1;
+                }
             }
         }
 
         if(A == B) return A;
 
-        int lgOfBothLevel = (int)(Math.log10(A) / Math.log10(2)) + 1;
+        int lgOfBothLevel = (int)(Math.log10(levels[A]) / Math.log10(2)) + 1;
 
         // parametric search
         while (--lgOfBothLevel >= 0) {
