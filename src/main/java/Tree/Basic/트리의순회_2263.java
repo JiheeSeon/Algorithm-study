@@ -5,33 +5,35 @@ import Util.InputProcessor;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 
 class 트리의순회_2263 {
     int V;
     int[] inorder, postorder;
+    boolean[] visited;
+    int visitPtrOfPostOrder;
     int[] inorderIdxMapper;
 
-    int rightCheck;
     BinaryTree binaryTree;
 
     public 트리의순회_2263(int v, int[] inorder, int[] postorder) {
         V = v;
         this.inorder = inorder;
         this.postorder = postorder;
+        visited = new boolean[V + 1];
 
         inorderIdxMapper = new int[V + 1];
         for (int idx = 1; idx <= V; idx++) {
             inorderIdxMapper[inorder[idx]] = idx;
         }
 
-        binaryTree = new BinaryTree(postorder[V]);
-        rightCheck = V;
+        binaryTree = new BinaryTree();
+        visitPtrOfPostOrder = V;
     }
 
-    private class BinaryTreeNode{
+    static class BinaryTreeNode{
+        final static BinaryTreeNode DEFAULT_NODE = new BinaryTreeNode(-1);
         int label;
-        BinaryTreeNode left, right;
+        BinaryTreeNode left = DEFAULT_NODE, right = DEFAULT_NODE;
 
         public BinaryTreeNode(int label) {
             this.label = label;
@@ -48,14 +50,14 @@ class 트리의순회_2263 {
     }
 
     private class BinaryTree{
-        BinaryTreeNode rootNode;
+        BinaryTreeNode rootNode = new BinaryTreeNode(-2);
 
-        public BinaryTree(int label) {
-            rootNode = new BinaryTreeNode(label);
+        public BinaryTree() {
+            rootNode.right = null;
         }
 
         String preorder() {
-            return preorder(rootNode, new StringBuilder()).toString();
+            return preorder(rootNode.left, new StringBuilder()).toString();
         }
 
         StringBuilder preorder(BinaryTreeNode pNode, StringBuilder stb) {
@@ -71,39 +73,32 @@ class 트리의순회_2263 {
     }
 
     String solve() {
-        if(inorderIdxMapper[binaryTree.rootNode.label] != postorder[V])
-            connectNode(binaryTree.rootNode, inorderIdxMapper[binaryTree.rootNode.label] + 1, V);
-        connectNode(binaryTree.rootNode, 1, inorderIdxMapper[binaryTree.rootNode.label] - 1);
-
+        connectNode(binaryTree.rootNode, true);
         return binaryTree.preorder();
     }
 
-    void connectNode(BinaryTreeNode pNode, int leftIdx, int rightIdx) {
-        if(leftIdx > rightIdx) return;
+    void connectNode(BinaryTreeNode pNode, boolean isLeftChild) {
+        BinaryTreeNode cNode = new BinaryTreeNode(postorder[visitPtrOfPostOrder]);
 
-        int inorderLocationOfpNode = inorderIdxMapper[pNode.label];
+        if(isLeftChild) pNode.left = cNode;
+        else pNode.right = cNode;
 
-        // right first
-        if(inorderLocationOfpNode + 1 >= rightCheck){
-            pNode.left = new BinaryTreeNode(postorder[--rightCheck]);
-            return;
+        int currentIdx = inorderIdxMapper[postorder[visitPtrOfPostOrder]];
+        visited[currentIdx] = true;
+
+        if (currentIdx + 1 >= visited.length || visited[currentIdx + 1] || visitPtrOfPostOrder == 1) {
+            cNode.right = null;
+        } else{
+            visitPtrOfPostOrder--;
+            connectNode(cNode, false);
         }
 
-        pNode.right = new BinaryTreeNode(postorder[--rightCheck]);
-        System.out.println(pNode);
-
-        if(inorderLocationOfpNode + 1 != rightIdx){
-            connectNode(pNode.right, inorderLocationOfpNode + 1, rightIdx);
+        if(currentIdx < 1 || visited[currentIdx - 1] || visitPtrOfPostOrder == 1){
+            cNode.left = null;
+        } else{
+            visitPtrOfPostOrder--;
+            connectNode(cNode, true);
         }
-
-        System.out.println(pNode);
-
-        // left
-        pNode.left = new BinaryTreeNode(postorder[--rightCheck]);
-        if(inorderLocationOfpNode - 1 == leftIdx)
-            connectNode(pNode.left, leftIdx, inorderLocationOfpNode - 1);
-
-        System.out.println(pNode);
     }
 }
 
@@ -117,6 +112,7 @@ class MainA2263{
         System.out.println(new 트리의순회_2263(V, inorder, postorder).solve());
     }
 }
+
 /*
 TC 1
 19
@@ -124,4 +120,11 @@ TC 1
 13 14 8 15 16 9 4 10 5 2 6 17 18 11 19 12 7 3 1
 
 1 2 4 8 13 14 9 15 16 5 10 3 6 7 11 18 12 19
+
+TC 2
+15
+10 7 4 8 2 1 5 3 13 11 15 14 9 12 6
+10 7 8 4 2 5 13 15 14 11 12 9 6 3 1
+
+1 2 4 7 10 8 3 5 6 9 11 13 14 15 12
 */
