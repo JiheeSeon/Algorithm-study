@@ -5,15 +5,16 @@ import Util.InputProcessor;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 class 트리의독립집합_2213{
     int V;
     int[] weights;
     ArrayList<Integer>[] tree;
 
-    int[][] dp;
+    int[][] valDp;
+    Set<Integer>[][] setDp;
+
     final int IN_SET = 1;
     final int NOT_IN_SET = 0;
     final int DEFAULT = -1;
@@ -26,9 +27,13 @@ class 트리의독립집합_2213{
         for (int v = 1; v <= V; v++) tree[v] = new ArrayList<>();
         setTree(1, new boolean[V + 1], graph);
 
-        dp = new int[V + 1][2];
+        valDp = new int[V + 1][2];
         for (int v = 0; v <= V; v++) {
-            Arrays.fill(dp[v], DEFAULT);
+            Arrays.fill(valDp[v], DEFAULT);
+        }
+        setDp = new HashSet[V + 1][2];
+        for (int v = 0; v <= V; v++) {
+            Arrays.fill(setDp[v], null);
         }
     }
 
@@ -43,25 +48,54 @@ class 트리의독립집합_2213{
         }
     }
 
-    int solve() {
-        return Math.max(solve(1, IN_SET), solve(1, NOT_IN_SET));
+    String solve() {
+        Set<Integer> setIfContainChild = solve(1, IN_SET);
+        Set<Integer> setIfNotContainChild = solve(1, NOT_IN_SET);
+        StringBuilder stb = new StringBuilder();
+
+        if(valDp[1][IN_SET] > valDp[1][NOT_IN_SET]){
+            stb.append(valDp[1][IN_SET]).append("\n");
+            setIfContainChild.stream().sorted().forEach(s -> stb.append(s).append(" "));
+        }
+        else{
+            stb.append(valDp[1][NOT_IN_SET]).append("\n");
+            setIfNotContainChild.stream().sorted().forEach(s -> stb.append(s).append(" "));
+        }
+        return stb.toString();
     }
 
-    private int solve(int node, int setFeature) {
-        if(dp[node][setFeature] != -1) return dp[node][setFeature];
+    private Set<Integer> solve(int node, int setFeature) {
+        if(valDp[node][setFeature] != -1) return setDp[node][setFeature];
 
+        setDp[node][setFeature] = new HashSet<>();
+
+        Set<Integer> setIfNotContainChild;
         if(setFeature == IN_SET){
-            dp[node][setFeature] = weights[node];
+            valDp[node][setFeature] = weights[node];
+            setDp[node][setFeature].add(node);
 
-            for (int child : tree[node])
-                dp[node][setFeature] += solve(child, NOT_IN_SET);
+            for (int child : tree[node]) {
+                setIfNotContainChild = solve(child, NOT_IN_SET);
+                valDp[node][setFeature] += valDp[child][setFeature];
+                setDp[node][setFeature].addAll(setIfNotContainChild);
+            }
         } else{
-            dp[node][setFeature] = 0;
+            valDp[node][setFeature] = 0;
 
-            for (int child : tree[node])
-                dp[node][setFeature] += Math.max(solve(child, NOT_IN_SET), solve(child, IN_SET));
+            for (int child : tree[node]) {
+                Set<Integer> setIfContainsChild = solve(child, IN_SET);
+                setIfNotContainChild = solve(child, NOT_IN_SET);
+
+                if (valDp[child][IN_SET] > valDp[child][NOT_IN_SET]) {
+                    valDp[node][setFeature] += valDp[child][IN_SET];
+                    setDp[node][setFeature].addAll(setIfContainsChild);
+                } else{
+                    valDp[node][setFeature] += valDp[child][NOT_IN_SET];
+                    setDp[node][setFeature].addAll(setIfNotContainChild);
+                }
+            }
         }
-        return dp[node][setFeature];
+        return setDp[node][setFeature];
     }
 }
 
