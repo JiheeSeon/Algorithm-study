@@ -18,7 +18,7 @@ class 트리의독립집합_2213{
     final int REAL_ROOT = 1;
     final int NOMINAL_ROOT = 0;
 
-    IndependentSetInfo[][] setInfos;
+    IndependentSetInfo[][] setInfos; // 객체 배열
 
     public 트리의독립집합_2213(int V, int[] weights, ArrayList<Integer>[] graph) {
         this.V = V;
@@ -53,7 +53,7 @@ class 트리의독립집합_2213{
         return stb.toString();
     }
 
-    // 인자 : 위에서 주는 것 - 방문할 노드, 이번 노드 방문 여부
+    // 인자 : 위에서 주어지는 것 - 방문할 노드, 이번 노드 방문 여부, 빈 SetInfo 결과를 담을 곳
     private IndependentSetInfo solve(int now, int setFlag, IndependentSetInfo independentSetInfo) {
         if(setInfos[now][setFlag] != null) return setInfos[now][setFlag];
 
@@ -72,7 +72,7 @@ class 트리의독립집합_2213{
             //  현재 원소를 포함해야 할 경우
             if (setFlag == IN_SET) {
                 independentSetInfo.addAllElements(setInfoIfNotContainNextNode.independentSet);
-                independentSetInfo.setSize += independentSetInfo.setSize;
+                independentSetInfo.setSize += setInfoIfNotContainNextNode.setSize;
             } else {
                 // 현재 원소를 포함하지 않아야 할 경우
                 setInfoIfContainNextNode = solve(child, IN_SET, new IndependentSetInfo());
@@ -86,8 +86,6 @@ class 트리의독립집합_2213{
                 }
             }
         }
-
-        System.out.println(now + " > [" + (setFlag == IN_SET ? "In set" : "Not in set") + "] " + independentSetInfo);
 
         setInfos[now][setFlag] = independentSetInfo;
         return independentSetInfo;
