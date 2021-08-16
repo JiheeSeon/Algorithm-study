@@ -12,90 +12,107 @@ class 트리의독립집합_2213{
     int[] weights;
     ArrayList<Integer>[] tree;
 
-    int[][] valDp;
-    Set<Integer>[][] setDp;
-
     final int IN_SET = 1;
     final int NOT_IN_SET = 0;
-    final int DEFAULT = -1;
+
+    final int REAL_ROOT = 1;
+    final int NOMINAL_ROOT = 0;
+
+    IndependentSetInfo[][] setInfos;
 
     public 트리의독립집합_2213(int V, int[] weights, ArrayList<Integer>[] graph) {
         this.V = V;
         this.weights = weights;
 
         tree = new ArrayList[V + 1];
-        for (int v = 1; v <= V; v++) tree[v] = new ArrayList<>();
-        setTree(1, new boolean[V + 1], graph);
+        for (int v = 0; v <= V; v++) tree[v] = new ArrayList<>();
+        graph[NOMINAL_ROOT].add(REAL_ROOT);
 
-        valDp = new int[V + 1][2];
-        for (int v = 0; v <= V; v++) {
-            Arrays.fill(valDp[v], DEFAULT);
-        }
-        setDp = new HashSet[V + 1][2];
-        for (int v = 0; v <= V; v++) {
-            Arrays.fill(setDp[v], null);
-        }
+        setTree(NOMINAL_ROOT, graph, new boolean[V + 1]);
+
+        setInfos = new IndependentSetInfo[V + 1][2];
     }
 
-    void setTree(int node, boolean[] check, ArrayList<Integer>[] graph) {
-        check[node] = true;
+    public void setTree(int now, ArrayList<Integer>[] graph, boolean[] check) {
+        check[now] = true;
 
-        for (int child : graph[node]) {
+        for (int child : graph[now]) {
             if(check[child]) continue;
 
-            tree[node].add(child);
-            setTree(child, check, graph);
+            tree[now].add(child);
+            setTree(child, graph, check);
         }
     }
 
     String solve() {
-        Set<Integer> setIfContainChild = solve(1, IN_SET);
-        Set<Integer> setIfNotContainChild = solve(1, NOT_IN_SET);
+        IndependentSetInfo rInfo = solve(NOMINAL_ROOT, NOT_IN_SET, new IndependentSetInfo());
         StringBuilder stb = new StringBuilder();
+        stb.append(rInfo.setSize).append("\n");
+        rInfo.independentSet.forEach(r -> stb.append(r).append(" "));
 
-        if(valDp[1][IN_SET] > valDp[1][NOT_IN_SET]){
-            stb.append(valDp[1][IN_SET]).append("\n");
-            setIfContainChild.stream().sorted().forEach(s -> stb.append(s).append(" "));
-        }
-        else{
-            stb.append(valDp[1][NOT_IN_SET]).append("\n");
-            setIfNotContainChild.stream().sorted().forEach(s -> stb.append(s).append(" "));
-        }
         return stb.toString();
     }
 
-    private Set<Integer> solve(int node, int setFeature) {
-        if(valDp[node][setFeature] != -1) return setDp[node][setFeature];
+    // 인자 : 위에서 주는 것 - 방문할 노드, 이번 노드 방문 여부
+    private IndependentSetInfo solve(int now, int setFlag, IndependentSetInfo independentSetInfo) {
+        if(setInfos[now][setFlag] != null) return setInfos[now][setFlag];
 
-        setDp[node][setFeature] = new HashSet<>();
+        IndependentSetInfo setInfoIfNotContainNextNode;
+        IndependentSetInfo setInfoIfContainNextNode;
 
-        Set<Integer> setIfNotContainChild;
-        if(setFeature == IN_SET){
-            valDp[node][setFeature] = weights[node];
-            setDp[node][setFeature].add(node);
 
-            for (int child : tree[node]) {
-                setIfNotContainChild = solve(child, NOT_IN_SET);
-                valDp[node][setFeature] += valDp[child][setFeature];
-                setDp[node][setFeature].addAll(setIfNotContainChild);
-            }
-        } else{
-            valDp[node][setFeature] = 0;
+        if (setFlag == IN_SET) {
+            independentSetInfo.setSize = weights[now];
+            independentSetInfo.independentSet.add(now);
+        }
 
-            for (int child : tree[node]) {
-                Set<Integer> setIfContainsChild = solve(child, IN_SET);
-                setIfNotContainChild = solve(child, NOT_IN_SET);
+        for(int child : tree[now]){
+            setInfoIfNotContainNextNode = solve(child, NOT_IN_SET, new IndependentSetInfo());
 
-                if (valDp[child][IN_SET] > valDp[child][NOT_IN_SET]) {
-                    valDp[node][setFeature] += valDp[child][IN_SET];
-                    setDp[node][setFeature].addAll(setIfContainsChild);
-                } else{
-                    valDp[node][setFeature] += valDp[child][NOT_IN_SET];
-                    setDp[node][setFeature].addAll(setIfNotContainChild);
+            //  현재 원소를 포함해야 할 경우
+            if (setFlag == IN_SET) {
+                independentSetInfo.addAllElements(setInfoIfNotContainNextNode.independentSet);
+                independentSetInfo.setSize += independentSetInfo.setSize;
+            } else {
+                // 현재 원소를 포함하지 않아야 할 경우
+                setInfoIfContainNextNode = solve(child, IN_SET, new IndependentSetInfo());
+
+                if (setInfoIfContainNextNode.setSize >= setInfoIfNotContainNextNode.setSize) {
+                    independentSetInfo.addAllElements(setInfoIfContainNextNode.independentSet);
+                    independentSetInfo.setSize += setInfoIfContainNextNode.setSize;
+                } else {
+                    independentSetInfo.addAllElements(setInfoIfNotContainNextNode.independentSet);
+                    independentSetInfo.setSize += setInfoIfNotContainNextNode.setSize;
                 }
             }
         }
-        return setDp[node][setFeature];
+
+        System.out.println(now + " > [" + (setFlag == IN_SET ? "In set" : "Not in set") + "] " + independentSetInfo);
+
+        setInfos[now][setFlag] = independentSetInfo;
+        return independentSetInfo;
+    }
+
+    private class IndependentSetInfo{
+        Set<Integer> independentSet;
+        int setSize;
+
+        public IndependentSetInfo() {
+            independentSet = new TreeSet<>();
+            setSize = 0;
+        }
+
+        public void addAllElements(Set<Integer> setToAdd){
+            this.independentSet.addAll(setToAdd);
+        }
+
+        @Override
+        public String toString() {
+            return "{" +
+                    "independentSet=" + independentSet +
+                    " (" + setSize +
+                    ") }";
+        }
     }
 }
 
@@ -107,7 +124,7 @@ class MainA2213{
         int[] weights = InputProcessor.strToIntArr("0 " + br.readLine());
 
         ArrayList<Integer>[] graph = new ArrayList[V + 1];
-        for (int v = 1; v <= V; v++)
+        for (int v = 0; v <= V; v++)
             graph[v] = new ArrayList<>();
 
         int[] tmp;
