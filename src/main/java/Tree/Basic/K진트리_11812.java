@@ -3,9 +3,7 @@ package Tree.Basic;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Pattern;
 
 class K진트리_11812 {
@@ -36,7 +34,9 @@ class K진트리_11812 {
         if(K == 1) return b > a ? b - a : a - b;
 
         Pair pair = new Pair(a, b);
-        if(result.containsKey(pair)) return result.get(pair);
+        if(result.containsKey(pair)){
+            return result.get(pair);
+        }
 
         int levelA = getLevel(a);
         int levelB = getLevel(b);
@@ -74,7 +74,7 @@ class K진트리_11812 {
         }
 
         if(a == ancestorB){
-            if(!result.containsKey(pair)) result.put(pair, levelB - levelA);
+            result.put(pair, levelB - levelA);
             return result.get(pair);
         }
 
@@ -88,7 +88,7 @@ class K진트리_11812 {
             ancestorB = parent[(int) digit].get(ancestorB);
         }
 
-        if(!result.containsKey(pair)) result.put(pair, getLevel(a) + 1 - getLevel(ancestorA) + getLevel(b) + 1 - getLevel(ancestorB));
+        result.put(pair, getLevel(a) + 1 - getLevel(ancestorA) + getLevel(b) + 1 - getLevel(ancestorB));
         return result.get(pair);
     }
 
@@ -119,16 +119,24 @@ class K진트리_11812 {
         }
 
         @Override
+        public String toString() {
+            return "Pair{" +
+                    "a=" + a +
+                    ", b=" + b +
+                    '}';
+        }
+
+        @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Pair pair = (Pair) o;
-            return a == pair.a && b == pair.b;
+            return Math.min(a, b) == Math.min(pair.a, pair.b) && Math.max(a, b) == Math.max(pair.a, pair.b);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(a, b);
+            return Objects.hash(Math.min(a, b), Math.max(a, b));
         }
     }
 }
