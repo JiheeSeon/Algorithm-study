@@ -8,10 +8,10 @@ import java.util.regex.Pattern;
 
 class K진트리_11812 {
     long N; int K;
-    HashMap<Long, Long>[] parent;
     final int LGN;
-    Set<Long> visited;
+    HashMap<Long, Long>[] parent;
     HashMap<Pair, Integer> result;
+    Map<Long, Integer> level;
 
     public K진트리_11812(long n, int k) {
         N = n;
@@ -25,7 +25,8 @@ class K진트리_11812 {
         }
 
         result = new HashMap<>();
-        visited = new HashSet<>();
+        level = new HashMap<>();
+        level.put(1L, 0);
     }
 
     long solve(long a, long b) {
@@ -34,31 +35,26 @@ class K진트리_11812 {
         Pair pair = new Pair(a, b);
         if(result.containsKey(pair)) return result.get(pair);
 
-        int levelA = getLevel(a);
-        int levelB = getLevel(b);
-
         // swap
-        if(a > b){
-            long tmp = a;
-            int levelTmp = levelA;
-            a = b;
-            levelA = levelB;
-            b = tmp;
-            levelB = levelTmp;
-        }
+        if(a > b) { long tmp = a; a = b; b = tmp; }
 
+        int levelB, levelA;
         ArrayList<Long> visitedNodes;
-        if(!visited.contains(b)) {
-            // bottom up traverse for b
+
+        // get level & set sparse map with bottom-up traverse
+        // 1. for b
+        if(level.containsKey(b)) levelB = level.get(b);
+        else {
             visitedNodes = new ArrayList<>();
-            bottomUpDfs(b, visitedNodes);
+            levelB = bottomUpDfs(b, visitedNodes);
             setSparseMap(visitedNodes);
         }
 
-        if(!visited.contains(a)) {
-            // bottom up traverse for a
+        // 2. for a
+        if(level.containsKey(a)) levelA = level.get(a);
+        else {
             visitedNodes = new ArrayList<>();
-            bottomUpDfs(a, visitedNodes);
+            levelA = bottomUpDfs(a, visitedNodes);
             setSparseMap(visitedNodes);
         }
 
@@ -66,18 +62,22 @@ class K진트리_11812 {
         int digit = (int)(Math.log10(deltaLevel)/Math.log10(2)) + 1;
         long ancestorA = a, ancestorB = b;
 
-        // 노드 a와 level 같은 조상으로 대치
+        // make b into same level with a -> 노드 a와 level 같은 조상으로 대치
+        int res = deltaLevel;
+
         while (--digit >= 0) {
             if ((deltaLevel & (1 << digit)) != 0) {
                 ancestorB = parent[digit].get(ancestorB) == -1 ? -1 : parent[digit].get(ancestorB);
+
                 if(ancestorB == 1) break;
             }
         }
 
         if(a == ancestorB){
-            result.put(pair, levelB - levelA);
+            result.put(pair, res);
             return result.get(pair);
         }
+
 
         // b와 a의 공통조상 찾기
         digit = (int) (Math.log10(levelA) / Math.log10(2)) + 1;
@@ -86,9 +86,10 @@ class K진트리_11812 {
 
             ancestorA = parent[digit].get(ancestorA);
             ancestorB = parent[digit].get(ancestorB);
+            res += 2 * (1 << digit);
         }
 
-        result.put(pair, levelA + 1 - getLevel(ancestorA) + levelB + 1 - getLevel(ancestorB));
+        result.put(pair, res + 2);
         return result.get(pair);
     }
 
@@ -96,20 +97,21 @@ class K진트리_11812 {
         return (int)Math.ceil(Math.log10(a * (K - 1) + 1) / Math.log10(K)) - 1;
     }
 
-    private void bottomUpDfs(long now, ArrayList<Long> visitedNodes) {
-        if(parent[0].containsKey(now)) return;
+    private int bottomUpDfs(long now, ArrayList<Long> visitedNodes) {
+        if(parent[0].containsKey(now) && level.containsKey(now)) return level.get(now);
 
         visitedNodes.add(now);
-        visited.add(now);
         long p = (now + (K - 2)) / K;
         parent[0].put(now, p);
+        level.put(now, bottomUpDfs(p, visitedNodes) + 1);
+//        level.computeIfAbsent(now, s -> bottomUpDfs(p, visitedNodes) + 1);
 
-        bottomUpDfs(p, visitedNodes);
+        return level.get(now);
     }
 
     private void setSparseMap(ArrayList<Long> nodes) {
-        for (int i = 1; i < parent.length; i++) {
-            for (long node : nodes) {
+        for (long node : nodes) {
+            for (int i = 1; i < parent.length; i++) {
                 parent[i].put(node, parent[i - 1].get(node) == -1 ? -1 : parent[i - 1].get(parent[i - 1].get(node)));
             }
         }
@@ -161,3 +163,18 @@ class MainA11812{
         System.out.print(stb);
     }
 }
+
+/*
+TC
+30 4 5
+29 8
+29 13
+14 5
+8 29
+13 5
+3
+5
+3
+3
+3
+*/
