@@ -7,36 +7,32 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 class K진트리_11812 {
-    long N, K;
+    long N; int K;
     HashMap<Long, Long>[] parent;
     final int LGN;
+    Set<Long> visited;
     HashMap<Pair, Integer> result;
 
-    public K진트리_11812(long n, long k) {
+    public K진트리_11812(long n, int k) {
         N = n;
         K = k;
-        LGN = (int)(Math.log10(getLevel(N)) / Math.log10(2)) + 1;
+        LGN = (int)(Math.log10(getLevel(N)) / Math.log10(2));
 
         if(K != 1) {
-            parent = new HashMap[LGN];
+            parent = new HashMap[LGN + 1];
             for (int i = 0; i < parent.length; i++) parent[i] = new HashMap<>();
             for (HashMap<Long, Long> longLongHashMap : parent) longLongHashMap.put(1L, -1L);
         }
 
         result = new HashMap<>();
-    }
-
-    private int getLevel(long a) {
-        return (int)Math.ceil(Math.log10(a * (K - 1) + 1) / Math.log10(K)) - 1;
+        visited = new HashSet<>();
     }
 
     long solve(long a, long b) {
-        if(K == 1) return b > a ? b - a : a - b;
+        if(K == 1) return Math.abs(b - a);
 
         Pair pair = new Pair(a, b);
-        if(result.containsKey(pair)){
-            return result.get(pair);
-        }
+        if(result.containsKey(pair)) return result.get(pair);
 
         int levelA = getLevel(a);
         int levelB = getLevel(b);
@@ -51,24 +47,29 @@ class K진트리_11812 {
             levelB = levelTmp;
         }
 
-        // bottom up traverse for b
-        ArrayList<Long> visitedNodes = new ArrayList<>();
-        bottomUpDfs(b, visitedNodes);
-        setSparseMap(visitedNodes);
+        ArrayList<Long> visitedNodes;
+        if(!visited.contains(b)) {
+            // bottom up traverse for b
+            visitedNodes = new ArrayList<>();
+            bottomUpDfs(b, visitedNodes);
+            setSparseMap(visitedNodes);
+        }
 
-        // bottom up traverse for a
-        visitedNodes = new ArrayList<>();
-        bottomUpDfs(a, visitedNodes);
-        setSparseMap(visitedNodes);
+        if(!visited.contains(a)) {
+            // bottom up traverse for a
+            visitedNodes = new ArrayList<>();
+            bottomUpDfs(a, visitedNodes);
+            setSparseMap(visitedNodes);
+        }
 
-        long deltaLevel = levelB - levelA;
-        long digit = (long)(Math.log10(deltaLevel)/Math.log10(2)) + 1;
+        int deltaLevel = levelB - levelA;
+        int digit = (int)(Math.log10(deltaLevel)/Math.log10(2)) + 1;
         long ancestorA = a, ancestorB = b;
 
         // 노드 a와 level 같은 조상으로 대치
         while (--digit >= 0) {
-            if ((deltaLevel & (1L << digit)) != 0) {
-                ancestorB = parent[(int) digit].get(ancestorB) == -1 ? -1 : parent[(int) digit].get(ancestorB);
+            if ((deltaLevel & (1 << digit)) != 0) {
+                ancestorB = parent[digit].get(ancestorB) == -1 ? -1 : parent[digit].get(ancestorB);
                 if(ancestorB == 1) break;
             }
         }
@@ -78,24 +79,28 @@ class K진트리_11812 {
             return result.get(pair);
         }
 
-
         // b와 a의 공통조상 찾기
-        digit = (long) (Math.log10(levelA) / Math.log10(2)) + 1;
+        digit = (int) (Math.log10(levelA) / Math.log10(2)) + 1;
         while (--digit >= 0) {
-            if(Objects.equals(parent[(int) digit].get(ancestorA), parent[(int) digit].get(ancestorB))) continue;
+            if(Objects.equals(parent[digit].get(ancestorA), parent[digit].get(ancestorB))) continue;
 
-            ancestorA = parent[(int) digit].get(ancestorA);
-            ancestorB = parent[(int) digit].get(ancestorB);
+            ancestorA = parent[digit].get(ancestorA);
+            ancestorB = parent[digit].get(ancestorB);
         }
 
-        result.put(pair, getLevel(a) + 1 - getLevel(ancestorA) + getLevel(b) + 1 - getLevel(ancestorB));
+        result.put(pair, levelA + 1 - getLevel(ancestorA) + levelB + 1 - getLevel(ancestorB));
         return result.get(pair);
+    }
+
+    private int getLevel(long a) {
+        return (int)Math.ceil(Math.log10(a * (K - 1) + 1) / Math.log10(K)) - 1;
     }
 
     private void bottomUpDfs(long now, ArrayList<Long> visitedNodes) {
         if(parent[0].containsKey(now)) return;
 
         visitedNodes.add(now);
+        visited.add(now);
         long p = (now + (K - 2)) / K;
         parent[0].put(now, p);
 
@@ -145,7 +150,7 @@ class MainA11812{
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         long[] tmp = Pattern.compile(" ").splitAsStream(br.readLine()).mapToLong(Long::parseLong).toArray();
-        long N = tmp[0]; long K = tmp[1]; long Q = tmp[2];
+        long N = tmp[0]; int K = (int)tmp[1]; int Q = (int)tmp[2];
 
         K진트리_11812 solution = new K진트리_11812(N, K);
         StringBuilder stb = new StringBuilder();
