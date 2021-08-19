@@ -98,13 +98,12 @@ class K진트리_11812 {
     }
 
     private int bottomUpDfs(long now, ArrayList<Long> visitedNodes) {
-        if(parent[0].containsKey(now) && level.containsKey(now)) return level.get(now);
+        if(parent[0].containsKey(now)) return level.get(now);
 
         visitedNodes.add(now);
-        long p = (now + (K - 2)) / K;
+        long p = (now + K - 2) / K;
         parent[0].put(now, p);
-        level.put(now, bottomUpDfs(p, visitedNodes) + 1);
-//        level.computeIfAbsent(now, s -> bottomUpDfs(p, visitedNodes) + 1);
+        if(!level.containsKey(now)) level.put(now, bottomUpDfs(p, visitedNodes) + 1);
 
         return level.get(now);
     }
@@ -175,6 +174,12 @@ TC
 3
 5
 3
+3
+3
+
+30 4 2
+1 30
+29 1
 3
 3
 */
