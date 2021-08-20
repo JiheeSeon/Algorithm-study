@@ -16,17 +16,16 @@ class 양구출작전_16437 {
         this.graph = graph;
     }
 
-    int solve() {
+    long solve() {
         return dfs(vertices[1], new boolean[V + 1]);
     }
 
-    int dfs(VertexA16437 node, boolean[] check) {
+    long dfs(VertexA16437 node, boolean[] check) {
         // leaf node
-        if(graph[node.id].isEmpty())
-            return (vertices[node.id].isSheep) ? vertices[node.id].animalN : 0;
 
         check[node.id] = true;
-        int remainedSheep = 0;
+        long remainedSheep = 0;
+
         for (VertexA16437 child : graph[node.id]) {
             if(check[child.id]) continue;
 
