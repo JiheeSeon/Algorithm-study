@@ -35,7 +35,9 @@ class 회사문화_14267 {
         for (int[] praise : praises)
             praiseMap.put(praise[0], praiseMap.getOrDefault(praise[0], 0) + praise[1]);
 
-        for(int leaf : leafSet) bottomUpDfs(leaf);
+        for(int leaf : leafSet){
+            bottomUpDfs(leaf);
+        }
 
         StringBuilder stb = new StringBuilder();
         for (int i = 1; i <= V; i++) {
@@ -46,6 +48,7 @@ class 회사문화_14267 {
 
     int bottomUpDfs(int node) {
         if(node == ROOT) return 0;
+        if(result[node] != 0) return result[node]; // 이미 조상이 업데이트할건 없음.
 
         int res = bottomUpDfs(parent[node]);
         if(praiseMap.containsKey(node)) res += praiseMap.get(node);
@@ -60,7 +63,9 @@ class MainA14267{
         int[] tmp = InputProcessor.strToIntArr(br.readLine());
         int V = tmp[0]; int praiseN = tmp[1];
 
-        Set<Integer> leafSet = IntStream.rangeClosed(1, V).boxed().collect(Collectors.toCollection(TreeSet::new));
+        TreeSet<Integer> leafSet = IntStream.rangeClosed(1, V).boxed().collect(Collectors.toCollection(TreeSet::new));
+        leafSet = (TreeSet<Integer>) leafSet.descendingSet();
+
         int root = 0;
         int[] parent = InputProcessor.strToIntArr("0 " + br.readLine());
         for (int i : parent) {
@@ -75,3 +80,13 @@ class MainA14267{
         System.out.println(new 회사문화_14267(V, root, parent, leafSet, praises).solve());
     }
 }
+/*
+27 5
+-1 1 1 1 2 2 3 4 4 4 4 5 5 9 9 9 10 11 12 15 15 15 17 17 17 22 25
+4 10
+2 15
+5 20
+12 40
+15 100
+0 15 0 10 35 15 0 10 10 10 10 75 35 10 110 10 10 10 75 110 110 110 110 10 10 10 110 10
+*/
