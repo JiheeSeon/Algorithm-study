@@ -105,6 +105,7 @@ class 노드사이의거리_1240 {
             b = tmp;
         }
 
+        // 틀렸습니다 -> 맞았습니다
         levelA = levels.get(a);
         levelB = levels.get(b);
 
@@ -139,11 +140,10 @@ class 노드사이의거리_1240 {
 
             if(newA == newB) continue;
 
-            a = newA; b = newB;
-
-
             res += sparseMapListForDistance.get(targetDist).get(a);
             res += sparseMapListForDistance.get(targetDist).get(b);
+
+            a = newA; b = newB; // 틀렸습니다 -> 맞았습니다 원인
         }
 
         res += sparseMapListForDistance.get(0).get(a) + sparseMapListForDistance.get(0).get(b);
@@ -208,7 +208,7 @@ class MainA1240{
             tmp = InputProcessor.strToIntArr(br.readLine());
             stb.append(solution.solve(tmp[0], tmp[1])).append("\n");
         }
-//
+
         System.out.print(stb);
     }
 }
@@ -226,10 +226,9 @@ class MainA1240{
 11 7 50
 12 11 60
 4 8 80
-8 1
 11 6
+12 8
 12 7
 5 4
 7 3
-
 */
