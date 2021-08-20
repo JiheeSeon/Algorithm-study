@@ -105,6 +105,9 @@ class 노드사이의거리_1240 {
             b = tmp;
         }
 
+        levelA = levels.get(a);
+        levelB = levels.get(b);
+
         // 2. make into same level
         int deltaDist = levelB - levelA;
         int targetDist = (int)(Math.log10(deltaDist) / Math.log10(2)) + 1;
@@ -115,9 +118,9 @@ class 노드사이의거리_1240 {
             pathN = 1 << targetDist;
 
             if((deltaDist & pathN) != 0){
-                if(b == ROOT) break;
                 res += sparseMapListForDistance.get(targetDist).get(b);
                 b = sparseMapList.get(targetDist).get(b) == -1 ? -1 : sparseMapList.get(targetDist).get(b);
+                if(b == ROOT) break;
             }
         }
 
@@ -137,6 +140,7 @@ class 노드사이의거리_1240 {
             if(newA == newB) continue;
 
             a = newA; b = newB;
+
 
             res += sparseMapListForDistance.get(targetDist).get(a);
             res += sparseMapListForDistance.get(targetDist).get(b);
@@ -204,7 +208,28 @@ class MainA1240{
             tmp = InputProcessor.strToIntArr(br.readLine());
             stb.append(solution.solve(tmp[0], tmp[1])).append("\n");
         }
-
+//
         System.out.print(stb);
     }
 }
+
+/*
+12 5
+1 2 10
+3 1 1
+4 1 11
+9 6 11
+5 2 4
+6 2 1
+7 3 30
+7 10 40
+11 7 50
+12 11 60
+4 8 80
+8 1
+11 6
+12 7
+5 4
+7 3
+
+*/
