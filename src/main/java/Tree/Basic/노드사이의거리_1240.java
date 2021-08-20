@@ -35,7 +35,6 @@ class 노드사이의거리_1240 {
         sparseMapListForDistance = new ArrayList<>();
         sparseMapListForDistance.add(new HashMap<>());
         sparseMapListForDistance.get(0).put(ROOT, 0);
-        sparseMapListForDistance.get(0).put(0, 0);
 
         levels = new HashMap<>();
         resMap = new HashMap<>();
@@ -81,7 +80,7 @@ class 노드사이의거리_1240 {
                 nextNode = sparseMapList.get(i - 1).get(vertex);
                 nextD = sparseMapListForDistance.get(i - 1).get(vertex);
 
-                if(nextNode== -1){
+                if(nextNode == -1){
                     sparseMapList.get(i).put(vertex, -1);
                     sparseMapListForDistance.get(i).put(vertex, nextD);
                 } else {
@@ -116,9 +115,9 @@ class 노드사이의거리_1240 {
             pathN = 1 << targetDist;
 
             if((deltaDist & pathN) != 0){
+                if(b == ROOT) break;
                 res += sparseMapListForDistance.get(targetDist).get(b);
                 b = sparseMapList.get(targetDist).get(b) == -1 ? -1 : sparseMapList.get(targetDist).get(b);
-                if(b == ROOT) break;
             }
         }
 
@@ -127,8 +126,7 @@ class 노드사이의거리_1240 {
             return res;
         }
 
-        deltaDist = levelA;
-        targetDist = (int)(Math.log10(deltaDist) / Math.log10(2)) + 1;
+        targetDist = (int)(Math.log10(levelA) / Math.log10(2)) + 1;
 
         int newA, newB;
 
@@ -136,13 +134,12 @@ class 노드사이의거리_1240 {
             newA = sparseMapList.get(targetDist).get(a);
             newB = sparseMapList.get(targetDist).get(b);
 
-            if(Objects.equals(newA, newB)) continue;
+            if(newA == newB) continue;
 
             a = newA; b = newB;
 
-            pathN = 1 << targetDist;
-            res += sparseMapListForDistance.get(pathN).get(a);
-            res += sparseMapListForDistance.get(pathN).get(b);
+            res += sparseMapListForDistance.get(targetDist).get(a);
+            res += sparseMapListForDistance.get(targetDist).get(b);
         }
 
         res += sparseMapListForDistance.get(0).get(a) + sparseMapListForDistance.get(0).get(b);
@@ -171,14 +168,6 @@ class PairA1240 {
     @Override
     public int hashCode() {
         return Objects.hash(Math.min(a, b), Math.max(a, b));
-    }
-
-    @Override
-    public String toString() {
-        return "{" +
-                "a=" + a +
-                ", b=" + b +
-                '}';
     }
 }
 
@@ -215,6 +204,7 @@ class MainA1240{
             tmp = InputProcessor.strToIntArr(br.readLine());
             stb.append(solution.solve(tmp[0], tmp[1])).append("\n");
         }
+
         System.out.print(stb);
     }
 }
