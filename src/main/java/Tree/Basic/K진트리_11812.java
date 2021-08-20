@@ -29,6 +29,34 @@ class K진트리_11812 {
         level.put(1L, 0);
     }
 
+    private int getLevel(long a) {
+        return (int)Math.ceil(Math.log10(a * (K - 1) + 1) / Math.log10(K)) - 1;
+    }
+
+    private int bottomUpDfs(long now, ArrayList<Long> visitedNodes) {
+        if(parent[0].containsKey(now)) return level.get(now);
+
+        visitedNodes.add(now);
+        long p = (now + K - 2) / K;
+        parent[0].put(now, p);
+        if(!level.containsKey(now)) level.put(now, bottomUpDfs(p, visitedNodes) + 1);
+
+        return level.get(now);
+    }
+
+    private void setSparseMap(ArrayList<Long> nodes) {
+        long innerVal;
+
+        for (int i = 1; i < parent.length; i++) {
+            for (long node : nodes) {
+                innerVal = parent[i - 1].get(node);
+
+                if(innerVal == -1L) parent[i].put(node, -1L);
+                else parent[i].put(node, parent[i - 1].get(innerVal));
+            }
+        }
+    }
+
     long solve(long a, long b) {
         if(K == 1) return Math.abs(b - a);
 
@@ -68,16 +96,14 @@ class K진트리_11812 {
         while (--digit >= 0) {
             if ((deltaLevel & (1 << digit)) != 0) {
                 ancestorB = parent[digit].get(ancestorB) == -1 ? -1 : parent[digit].get(ancestorB);
-
                 if(ancestorB == 1) break;
             }
         }
 
         if(a == ancestorB){
             result.put(pair, res);
-            return result.get(pair);
+            return res;
         }
-
 
         // b와 a의 공통조상 찾기
         digit = (int) (Math.log10(levelA) / Math.log10(2)) + 1;
@@ -88,32 +114,10 @@ class K진트리_11812 {
             ancestorB = parent[digit].get(ancestorB);
             res += 2 * (1 << digit);
         }
+        res += 2;
 
-        result.put(pair, res + 2);
-        return result.get(pair);
-    }
-
-    private int getLevel(long a) {
-        return (int)Math.ceil(Math.log10(a * (K - 1) + 1) / Math.log10(K)) - 1;
-    }
-
-    private int bottomUpDfs(long now, ArrayList<Long> visitedNodes) {
-        if(parent[0].containsKey(now)) return level.get(now);
-
-        visitedNodes.add(now);
-        long p = (now + K - 2) / K;
-        parent[0].put(now, p);
-        if(!level.containsKey(now)) level.put(now, bottomUpDfs(p, visitedNodes) + 1);
-
-        return level.get(now);
-    }
-
-    private void setSparseMap(ArrayList<Long> nodes) {
-        for (long node : nodes) {
-            for (int i = 1; i < parent.length; i++) {
-                parent[i].put(node, parent[i - 1].get(node) == -1 ? -1 : parent[i - 1].get(parent[i - 1].get(node)));
-            }
-        }
+        result.put(pair, res);
+        return res;
     }
 
     private class Pair{
@@ -165,14 +169,16 @@ class MainA11812{
 
 /*
 TC
-30 4 5
+30 4 6
 29 8
+3 13
 29 13
 14 5
 8 29
 13 5
 3
 5
+1
 3
 3
 3
@@ -182,4 +188,8 @@ TC
 29 1
 3
 3
+
+1000000000000000 1000 1
+1 1000000000000000
+
 */
