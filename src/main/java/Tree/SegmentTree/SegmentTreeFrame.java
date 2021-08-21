@@ -1,7 +1,5 @@
 package Tree.SegmentTree;
 
-import java.util.Arrays;
-
 class SegmentTreeFrame {
     int V;
     int[] weights;
@@ -21,45 +19,40 @@ class SegmentTreeFrame {
         return segmentTree[node] = makeSegmentTree(node * 2, start, mid) + makeSegmentTree(node * 2 + 1, mid + 1, end);
     }
 
-    void setValueTree(int node, BinaryTree treeNode) {
-        int nextLeft = node * 2;
-        int nextRight = nextLeft + 1;
+    void update(int node, int start, int end, int idxToUpdate, int deltaValToUpdate) {
+        if(idxToUpdate < start || idxToUpdate > end) return;
 
-        if(nextLeft >= weights.length) return;
-        treeNode.left = new BinaryTree(nextLeft, weights[nextLeft]);
+        segmentTree[node] += deltaValToUpdate;
+        if(start == end) return;
 
-        if(nextRight >= weights.length) return;
-        treeNode.right = new BinaryTree(nextRight, weights[nextLeft]);
-
-        setValueTree(node * 2, treeNode.left);
-        setValueTree(node * 2 + 1, treeNode.right);
+        int mid = (start + end) / 2;
+        update(node * 2, start, mid, idxToUpdate, deltaValToUpdate);
+        update(node * 2 + 1, mid + 1, end, idxToUpdate, deltaValToUpdate);
     }
 
+    long getSum(int node, int start, int end, int intervalStart, int intervalEnd) {
+        if(start > intervalEnd || end < intervalStart) return 0;
+        if(start == intervalStart && intervalEnd == end) return segmentTree[node];
 
-    private class BinaryTree{
-        int label;
-        int weight;
-        BinaryTree left = null;
-        BinaryTree right = null;
+        int mid = (start + end) / 2;
+        long ret = 0;
 
-        public BinaryTree(int label, int weight) {
-            this.label = label;
-            this.weight = weight;
-        }
+        if(mid >= intervalStart)
+            ret += getSum(node * 2, start, mid, intervalStart, Math.min(intervalEnd, mid));
 
-        @Override
-        public String toString() {
-            return "{" +
-                    "label=" + label +
-                    ", weight=" + weight +
-                    ", left=" + left +
-                    ", right=" + right +
-                    '}';
-        }
+        if(mid + 1 <= intervalEnd)
+            ret += getSum(node * 2 + 1, mid + 1, end, Math.max(intervalStart, mid + 1), intervalEnd);
+
+        return ret;
     }
 }
 class SegmentTreeApplication{
     public static void main(String[] args){
-        new SegmentTreeFrame(11, new int[]{0, 8, 7, 3, 2, 5, 1, 8, 9, 8, 7, 3});
+        SegmentTreeFrame s = new SegmentTreeFrame(11, new int[]{0, 8, 7, 3, 2, 5, 1, 8, 9, 8, 7, 3});
+        s.update(1, 0, 11, 7, -5);
+        //[0, 61, 25, 36, 15, 10, 18, 18, 8, 7, 5, 5, 9, 9, 15, 3, 0, 8, 0, 0, 3, 2, 0, 0, 1, 8, 0, 0, 8, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        //-> [0, 56, 25, 31, 15, 10, 13, 18, 8, 7, 5, 5, 4, 9, 15, 3, 0, 8, 0, 0, 3, 2, 0, 0, 1, 3, 0, 0, 8, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+        System.out.println(s.getSum(1, 0, 11, 4, 9));
     }
 }
