@@ -10,8 +10,9 @@ class K진트리_11812 {
     long N; int K;
     final int LGN;
     HashMap<Long, Long>[] parent;
+
+    HashMap<Pair, Long> LCA;
     HashMap<Pair, Integer> result;
-    Map<Long, Integer> level;
 
     public K진트리_11812(long n, int k) {
         N = n;
@@ -24,24 +25,21 @@ class K진트리_11812 {
             for (HashMap<Long, Long> longLongHashMap : parent) longLongHashMap.put(1L, -1L);
         }
 
+        LCA = new HashMap<>();
         result = new HashMap<>();
-        level = new HashMap<>();
-        level.put(1L, 0);
     }
 
     private int getLevel(long a) {
         return (int)Math.ceil(Math.log10(a * (K - 1) + 1) / Math.log10(K)) - 1;
     }
 
-    private int bottomUpDfs(long now, ArrayList<Long> visitedNodes) {
-        if(parent[0].containsKey(now)) return level.get(now);
+    private void bottomUpDfs(long now, ArrayList<Long> visitedNodes) {
+        if(parent[0].containsKey(now)) return;
 
         visitedNodes.add(now);
         long p = (now + K - 2) / K;
         parent[0].put(now, p);
-        if(!level.containsKey(now)) level.put(now, bottomUpDfs(p, visitedNodes) + 1);
-
-        return level.get(now);
+        bottomUpDfs(p, visitedNodes);
     }
 
     private void setSparseMap(ArrayList<Long> nodes) {
@@ -49,6 +47,8 @@ class K진트리_11812 {
 
         for (int i = 1; i < parent.length; i++) {
             for (long node : nodes) {
+                if(parent[i].containsKey(node)) continue;
+
                 innerVal = parent[i - 1].get(node);
 
                 if(innerVal == -1L) parent[i].put(node, -1L);
@@ -57,11 +57,12 @@ class K진트리_11812 {
         }
     }
 
-    long solve(long a, long b) {
-        if(K == 1) return Math.abs(b - a);
+    int solve(long a, long b) {
+        if(K == 1) return (int) Math.abs(b - a);
 
         Pair pair = new Pair(a, b);
         if(result.containsKey(pair)) return result.get(pair);
+        if(LCA.containsKey(pair)) return getLevel(a) + getLevel(b) - 2 * getLevel(LCA.get(pair));
 
         // swap
         if(a > b) { long tmp = a; a = b; b = tmp; }
@@ -71,20 +72,16 @@ class K진트리_11812 {
 
         // get level & set sparse map with bottom-up traverse
         // 1. for b
-        if(level.containsKey(b)) levelB = level.get(b);
-        else {
-            visitedNodes = new ArrayList<>();
-            levelB = bottomUpDfs(b, visitedNodes);
-            setSparseMap(visitedNodes);
-        }
+        visitedNodes = new ArrayList<>();
+        levelB = getLevel(b);
+        bottomUpDfs(b, visitedNodes);
+        setSparseMap(visitedNodes);
 
         // 2. for a
-        if(level.containsKey(a)) levelA = level.get(a);
-        else {
-            visitedNodes = new ArrayList<>();
-            levelA = bottomUpDfs(a, visitedNodes);
-            setSparseMap(visitedNodes);
-        }
+        visitedNodes = new ArrayList<>();
+        levelA = getLevel(a);
+        bottomUpDfs(a, visitedNodes);
+        setSparseMap(visitedNodes);
 
         int deltaLevel = levelB - levelA;
         int digit = (int)(Math.log10(deltaLevel)/Math.log10(2)) + 1;
@@ -105,16 +102,42 @@ class K진트리_11812 {
             return res;
         }
 
+        ArrayList<Long> visitedNodesA = new ArrayList<>();
+        ArrayList<Long> visitedNodesB = new ArrayList<>();
+
+        long oldA, oldB;
+
         // b와 a의 공통조상 찾기
         digit = (int) (Math.log10(levelA) / Math.log10(2)) + 1;
         while (--digit >= 0) {
             if(Objects.equals(parent[digit].get(ancestorA), parent[digit].get(ancestorB))) continue;
 
+            oldA = ancestorA;
+            oldB = ancestorB;
+
             ancestorA = parent[digit].get(ancestorA);
             ancestorB = parent[digit].get(ancestorB);
+
+            while (oldA != ancestorA) {
+                visitedNodesA.add(oldA);
+                oldA = parent[0].get(oldA);
+            }
+
+            while (oldB != ancestorB) {
+                visitedNodesB.add(oldB);
+                oldB = parent[0].get(oldB);
+            }
+
             res += 2 * (1 << digit);
         }
         res += 2;
+
+        long lca = parent[0].get(ancestorA);
+        for (long vA : visitedNodesA) {
+            for (long vB : visitedNodesB) {
+                LCA.put(new Pair(vA, vB), lca);
+            }
+        }
 
         result.put(pair, res);
         return res;
@@ -126,14 +149,6 @@ class K진트리_11812 {
         public Pair(long a, long b) {
             this.a = a;
             this.b = b;
-        }
-
-        @Override
-        public String toString() {
-            return "Pair{" +
-                    "a=" + a +
-                    ", b=" + b +
-                    '}';
         }
 
         @Override
@@ -189,7 +204,20 @@ TC
 3
 3
 
-1000000000000000 1000 1
+1000000000000000 2 3
 1 1000000000000000
+1000000000000 6
+78 1000000000
+49
+39
+35
 
+1000000000000000 2 7
+1 1000000000000000
+1000000000000 6
+78 1000000000
+6 1000000000000
+39 599999
+1000000000000000 1
+599999 39
 */
