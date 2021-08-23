@@ -22,30 +22,25 @@ class 트리인가_6416 {
     }
 
     boolean solve() {
-        if(vertices.isEmpty() && edges.isEmpty()) return true;
+        if(V == 0) return true;
+
+        Set<Integer> nodeWithOneParent = new HashSet<>();
+        for (int[] edge : edges) {
+            if(edge[0] == edge[1]) return false;
+            if(nodeWithOneParent.contains(edge[1])) return false;
+            nodeWithOneParent.add(edge[1]);
+        }
+
+        Set<Integer> rootCandidates = graph.keySet();
+        rootCandidates.removeAll(nodeWithOneParent);
+
+        // 루트는 오직 한개여야 한다.
+        if(rootCandidates.size() != 1) return false;
 
         if(V - 1 != E) return false;
 
-        Map<Integer, Integer> checkMap = new HashMap<>();
-        for (int[] edge : edges) {
-            if(edge[0] == edge[1]) return false;
-            checkMap.put(edge[1], checkMap.getOrDefault(edge[1], 0) + 1);
-        }
-        System.out.println(checkMap);
-
-        Set<Integer> rootCandidates = graph.keySet();
-        rootCandidates.removeAll(checkMap.keySet());
-
-        if(rootCandidates.size() != 1) return false;
-
-        for (int c : checkMap.keySet()) {
-            if(checkMap.get(c) >= 2) return false;
-        }
-
         int root = -1;
-        for (int i : rootCandidates) {
-            root = i;
-        }
+        for (int i : rootCandidates) {root = i;}
         return dfs(root, new boolean[V + 1]);
     }
 
@@ -53,11 +48,12 @@ class 트리인가_6416 {
         if(check[node]) return false;
 
         check[node] = true;
-        boolean ret = true;
+        if(!graph.containsKey(node)) return true;
+
         for (int child : graph.get(node)){
-            if(!dfs(child, check)) ret = false;
+            if(!dfs(child, check)) return false;
         }
-        return ret;
+        return true;
     }
 }
 
@@ -92,6 +88,7 @@ class MainA6416{
                         edges.add(edge);
 
                         nextVertices = graph.getOrDefault(edge[0], new ArrayList<>());
+                        nextVertices.add(edge[1]);
                         graph.put(edge[0], nextVertices);
 
                         vertices.add(edge[0]); vertices.add(edge[1]);
@@ -110,11 +107,26 @@ class MainA6416{
     }
 }
 /*
-1 2 0 0
--1 -1
-Case 1 is a tree.
+1 2  0 0
 
 1 2  2 1  0 0
+
+1 1  0 0
+-1 -1
+
+Case 1 is a tree.
+Case 1 is not a tree.
+Case 1 is not a tree.
+
+1 2
+2 3
+3 2
+4 5
+0 0
 -1 -1
 Case 1 is not a tree.
+
+1 2  2 3  0 0
+-1 -1
+
 */
