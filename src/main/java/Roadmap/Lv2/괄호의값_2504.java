@@ -40,7 +40,8 @@ class 괄호의값_2504 {
         int tmp;
 
         while(true) {
-            System.out.println("level = " + level + " ptr = " + ptr +  " res = " + res);
+            System.out.println(stack);
+            System.out.println("level = " + level + " ptr = " + (ptr + 1) + " res = " + res);
 
             if(level == 0 && ptr >= input.length()) {
                 return stack.isEmpty() ? res : 0;
@@ -52,22 +53,24 @@ class 괄호의값_2504 {
                     if (input.charAt(ptr + 1) == parenthesisPair.get(c)){
                         if(level != 0) return parenthesisValuePair.get(c);
 
-                        res += parenthesisValuePair.get(c);
-                        ptr++;
+                        res += parenthesisValuePair.get(c); ptr++;
+                    } else {
+                        stack.push(c);
+                        tmp = solve(level + 1);
+                        System.out.println("open tmp = " + tmp);
+                        if (tmp == 0) return 0;
+                        else res += tmp;
                     }
-
-                    stack.push(c);
-                    tmp = solve(level + 1);
-                    if(tmp == 0) return 0;
-                    else res += tmp;
                 }
 
                 case ')', ']' -> {
-                    if (stack.isEmpty() || stack.pop() != parenthesisPair.get(c)) return 0;
+                    if (stack.isEmpty() || stack.pop() != parenthesisPair.get(c)){
+                        System.out.println("close = " + ptr + " " + input.charAt(ptr) + " -> return to 0");
+                        return 0;
+                    }
 
                     tmp = res * parenthesisValuePair.get(c);
                     if(level != 0) return tmp;
-
                     else res += tmp;
                 }
             }
