@@ -33,13 +33,17 @@ class 빗물_14719 {
 
         if(firstBlockIdx == -1) return 0;
 
-        while (++idx < xWidth) {
+        while (idx < xWidth) {
             previous = 0;
 
-            while (++idx < xWidth && stackedRain[idx] != 0 && previous <= stackedRain[idx]) {
+            // 연속적으로 올라갈 수 있을만큼 계속 올라간다
+            while (++idx < xWidth && previous <= stackedRain[idx]) {
                 previous = stackedRain[idx];
             }
-            secondBlockIdx = idx - 1;
+            secondBlockIdx = --idx;
+
+            if(firstBlockIdx == secondBlockIdx) return ret;
+
             standardHeight = Math.min(stackedRain[firstBlockIdx], stackedRain[secondBlockIdx]);
 
             for (int i = firstBlockIdx; i < secondBlockIdx; i++) {
@@ -48,6 +52,7 @@ class 빗물_14719 {
             }
 
             firstBlockIdx = secondBlockIdx;
+            secondBlockIdx = -1;
         }
 
         return ret;
@@ -62,3 +67,12 @@ class MainA14719{
         System.out.println(new 빗물_14719(yHeight, xWidth, tmp).solve());
     }
 }
+
+/*
+4 8
+3 2 1 2 1 0 3 2
+출력
+2
+답
+9
+*/
