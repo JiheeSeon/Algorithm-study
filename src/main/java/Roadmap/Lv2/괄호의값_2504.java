@@ -11,68 +11,61 @@ class 괄호의값_2504 {
     String input;
     int ptr = -1;
     Stack<Character> stack;
-    Map<Character, Character> parenthesisPair;
-    Map<Character, Integer> parenthesisValuePair;
+    Map<Character, Character> parenthesisMap;
+    Map<Character, Integer> parenthesisValueMap;
 
     public 괄호의값_2504(String input) {
         this.input = input;
+
         stack = new Stack<>();
+        parenthesisMap = new HashMap<>();
+        parenthesisValueMap = new HashMap<>();
 
-        parenthesisPair = new HashMap<>();
-        parenthesisPair.put('(', ')');
-        parenthesisPair.put('[', ']');
-        parenthesisPair.put(')', '(');
-        parenthesisPair.put(']', '[');
-
-        parenthesisValuePair = new HashMap<>();
-        parenthesisValuePair.put('(', 2);
-        parenthesisValuePair.put('[', 3);
-        parenthesisValuePair.put(')', 2);
-        parenthesisValuePair.put(']', 3);
+        parenthesisMap.put(')', '(');
+        parenthesisMap.put(']', '[');
+        parenthesisValueMap.put(')', 2);
+        parenthesisValueMap.put(']', 3);
     }
 
     int solve() {
-        return solve(0);
+        int sum = 0;
+        int tmp;
+        while (ptr + 1 < input.length()) {
+            tmp = getGroupValue(-1);
+            if(tmp == 0) return 0; // 검증 작업
+
+            sum += tmp;
+        }
+        return stack.isEmpty() ? sum : 0;
     }
 
-    private int solve( int level) {
-        int res = 0;
+    private int getGroupValue(int level) {
+        int res = 0; // 사실상 사이에 쌓이는 값, 하위 호출로 벌어들인 값 저장
         int tmp;
 
-        while(true) {
-            System.out.println(stack);
-            System.out.println("level = " + level + " ptr = " + (ptr + 1) + " res = " + res);
-
-            if(level == 0 && ptr >= input.length()) {
-                return stack.isEmpty() ? res : 0;
-            }
+        while (true) {
+            if(ptr + 1 >= input.length()) return res;
 
             char c = input.charAt(++ptr);
-            switch (c) {
-                case '(', '[' -> {
-                    if (input.charAt(ptr + 1) == parenthesisPair.get(c)){
-                        if(level != 0) return parenthesisValuePair.get(c);
 
-                        res += parenthesisValuePair.get(c); ptr++;
-                    } else {
-                        stack.push(c);
-                        tmp = solve(level + 1);
-                        System.out.println("open tmp = " + tmp);
-                        if (tmp == 0) return 0;
-                        else res += tmp;
-                    }
-                }
+            switch(c){
+                case '(', '[' ->{
+                    stack.push(c); // push open parenthesis to stack
+                    tmp = getGroupValue(level + 1); // get value of the pair(at the level)
 
-                case ')', ']' -> {
-                    if (stack.isEmpty() || stack.pop() != parenthesisPair.get(c)){
-                        System.out.println("close = " + ptr + " " + input.charAt(ptr) + " -> return to 0");
-                        return 0;
-                    }
-
-                    tmp = res * parenthesisValuePair.get(c);
-                    if(level != 0) return tmp;
+                    if(tmp == 0) return 0;
                     else res += tmp;
                 }
+                case ')', ']' ->{
+                    if(stack.isEmpty() || stack.pop() != parenthesisMap.get(c)) return 0;
+
+                    // 종료 조건
+                    if(stack.size() == level){
+                        // 사이에 아무 값도 없었으면 그냥 2 or 3을 반환
+                        return res == 0 ? parenthesisValueMap.get(c) : res * parenthesisValueMap.get(c);
+                    }
+                }
+                default -> { return 0; } // 틀렸습니다 -> 맞았습니다!!
             }
         }
     }
