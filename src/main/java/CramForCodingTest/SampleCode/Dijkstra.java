@@ -29,17 +29,18 @@ class Dijkstra {
         pq.add(new DijkstraEdge(startV, 0));
         dist[startV] = 0;
 
-        int cnt = 0; // 1644 ms -> 1364 ms
+        int visitedCnt = 0; // 1644 ms -> 1364 ms
         DijkstraEdge now;
 
         // 사실상 정점의 개수만큼만 반복하면 됨.
-        while (cnt < V && !pq.isEmpty()) {
+        while (visitedCnt < V && !pq.isEmpty()) {
             now = pq.poll();
             // nowEdge.vertex : 거리 갱신의 주체 (이미 걔까지의 최단거리는 정해짐)
             // nowEdge.weight는 사실상 사용되지 않음. (어차피 앞서 반영)
 
             if(check[now.vertex]) continue;
-            cnt++; // 유효한 정점일 때 횟수 추가해야 함.
+            // 이미 방문한 정점이면 dist가 이미 최소로 설정된 것, 굳이 관련 정점 업데이트할 필요 없음.
+            visitedCnt++; // 유효한 정점이라고 판단될 때 방문 횟수 추가해야 함.
             check[now.vertex] = true;
 
             for (DijkstraEdge connected : graph[now.vertex]) {
