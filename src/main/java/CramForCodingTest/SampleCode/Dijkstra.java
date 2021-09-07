@@ -36,7 +36,7 @@ class Dijkstra {
         while (visitedCnt < V && !pq.isEmpty()) {
             now = pq.poll();
             // nowEdge.vertex : 거리 갱신의 주체 (이미 걔까지의 최단거리는 정해짐)
-            // nowEdge.weight는 사실상 사용되지 않음. (어차피 앞서 반영)
+            // nowEdge.weight : 사실상 사용되지 않음. (어차피 앞서 반영)
 
             if(check[now.vertex]) continue;
             // 이미 방문한 정점이면 dist가 이미 최소로 설정된 것, 굳이 관련 정점 업데이트할 필요 없음.
