@@ -23,26 +23,27 @@ class Dijkstra {
     }
 
     String solve() {
-        Set<Integer> visited = new HashSet<>();
+        boolean[] check = new boolean[V + 1];
 
         PriorityQueue<DijkstraEdge> pq = new PriorityQueue<>();
         pq.add(new DijkstraEdge(startV, 0));
         dist[startV] = 0;
 
-//        int cnt = 0; // 1644 ms -> 1364 ms
+        int cnt = 0; // 1644 ms -> 1364 ms
         DijkstraEdge now;
 
         // 사실상 정점의 개수만큼만 반복하면 됨.
-        while (visited.size() < V && !pq.isEmpty()) {
+        while (cnt < V && !pq.isEmpty()) {
             now = pq.poll();
             // nowEdge.vertex : 거리 갱신의 주체 (이미 걔까지의 최단거리는 정해짐)
             // nowEdge.weight는 사실상 사용되지 않음. (어차피 앞서 반영)
 
-            if(visited.contains(now.vertex)) continue;
-            visited.add(now.vertex);
+            if(check[now.vertex]) continue;
+            cnt++; // 유효한 정점일 때 횟수 추가해야 함.
+            check[now.vertex] = true;
 
             for (DijkstraEdge connected : graph[now.vertex]) {
-                if(!visited.contains(connected.vertex) && dist[connected.vertex] > dist[now.vertex] + connected.weight){
+                if(!check[connected.vertex] && dist[connected.vertex] > dist[now.vertex] + connected.weight){
                     dist[connected.vertex] = dist[now.vertex] + connected.weight;
                     pq.add(new DijkstraEdge(connected.vertex, dist[connected.vertex]));
                 }
