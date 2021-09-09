@@ -6,6 +6,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+/*
+문제 접근
+직사각형의 구간 합이라 보기에는 직접적으로 합을 사용하지 않음.
+다만, 직사각형으로 만들어야 한다는 점에서 구간마다 최소 높이를 빠르게 구해야 한다.
+>> 구간을 잡아서 최소 높이를 바로 바로 구할 수 있으면 우선 높이는 해결
+
+Then 구간은 어떤 기준으로 잡아야 하지?
+> 어차피 다 체크하긴 해야 하는데,
+  현재 minHeight 구한 거 기준 왼, 오른쪽 구간 체크
+*/
+
 class 직사각형_6549 {
     int N, H;
     long[] height;
