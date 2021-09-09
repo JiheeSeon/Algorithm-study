@@ -17,7 +17,7 @@ class SegmentTree {
 
         // set basic information of tree
         H = (int) (Math.ceil(Math.log10(N) / Math.log10(2)));
-        tree = new int[1 << (H + 1)];
+        tree = new int[1 << (H + 1)]; // 2^(H + 1)
 
         init(0, input.length - 1, 1);
     }
@@ -38,13 +38,9 @@ class SegmentTree {
 
     private int sum(int start, int end, int a, int b, int idx) {
         if(end < a || start > b) return 0;
-
+        else if(a <= start && end <= b) return tree[idx];
         int mid = (start + end) / 2;
-
-        if(a == start && b == end) return tree[idx];
-        else if(b <= mid) return sum(start, mid, a, b, idx * 2); // 왼쪽 트리
-        else if(mid + 1 <= a) return sum(mid + 1, end, a, b, idx * 2 + 1); // 오른쪽 트리
-        else return sum(start, mid, a, mid, idx * 2) + sum(mid + 1, end, mid + 1, b, idx * 2 + 1); // 두 트리 모두 사용
+        return sum(start, mid, a, b, idx * 2) + sum(mid + 1, end, a, b, idx * 2 + 1); // 두 트리 모두 사용
     }
 }
 
