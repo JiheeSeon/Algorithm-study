@@ -43,7 +43,7 @@ class SegmentTree {
 
     private BigInteger sum(int start, int end, int a, int b, int idx) {
         if(end < a || start > b) return BigInteger.ZERO;
-        else if(a <= start && end <= b) return tree[idx];
+        else if(a <= start && end <= b) return tree[idx]; // 사실상 여기서 결정
         int mid = (start + end) / 2;
         return sum(start, mid, a, b, idx * 2).add(sum(mid + 1, end, a, b, idx * 2 + 1)); // 두 트리 모두 사용
     }
