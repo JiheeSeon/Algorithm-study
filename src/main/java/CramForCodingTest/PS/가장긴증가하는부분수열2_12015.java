@@ -24,6 +24,7 @@ class 가장긴증가하는부분수열2_12015 {
         for (int i = 1 ; i < arr.length; i++) { //O(n) * O(log n) = O(nlog n)
             int lbIdx = lowerBound(0, sequence.size(), arr[i]);
 
+            // 무조건 대체하는게 맞는가? -> 어차피 뒷쪽 sequence에 영향 안감.
             if(lbIdx < sequence.size()) sequence.set(lbIdx, arr[i]);
             else sequence.add(arr[i]);
         }
