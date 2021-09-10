@@ -21,41 +21,29 @@ class 공유기설치_2110 {
     int solve() {
         int left = 1; int right = locations[locations.length - 1] - locations[0];
         int mid, idx;
-        int nowDist, accDist;
-        int selectedN;
-        int breakVal;
+        int prev;
+        int cnt;
+        int dist;
 
         while (left <= right) {
             mid = (left + right) / 2;
 
-            idx = 1; accDist = 0;
-            selectedN = 1;
-            breakVal = 0;
+            prev = locations[0];
+            idx = 1;
+            cnt = 1;
 
             while (idx < locations.length) {
-                nowDist = locations[idx] - locations[idx - 1];
+                dist = locations[idx] - prev;
 
-                if (breakVal != 0 || nowDist > mid) {
-                    if(breakVal < nowDist) breakVal = nowDist;
-                    idx++;
-                    continue;
+                if(mid <= dist){
+                    cnt++;
+                    prev = locations[idx];
                 }
-
-                if(accDist + nowDist <= mid){
-                    accDist += nowDist;
-                } else{
-                    selectedN++;
-                    accDist = nowDist;
-                }
-
                 idx++;
             }
 
-            if (accDist == mid) selectedN++;
-            else if (accDist > mid) selectedN += 2;
-
-            if(breakVal != 0 || selectedN > C) left = mid + 1;
-            else right = mid - 1;
+            if(cnt >= C) left = mid + 1; // 놓은 공유기 수가 필요한 공유기의 개수보다 여유 있을 때
+            else right = mid - 1; // right에는 확실한게 국룰, 무조건 더 놔야 할 경우 right 조정(강한 조정)
         }
 
         return right;
