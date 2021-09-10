@@ -7,12 +7,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-class 가장긴증가하는부분수열2_12015 {
+class 가장긴증가하는부분수열2_12015_LowerBound {
     int N;
     int[] arr;
     ArrayList<Integer> sequence;
 
-    public 가장긴증가하는부분수열2_12015(int N, int[] arr){
+    public 가장긴증가하는부분수열2_12015_LowerBound(int N, int[] arr){
         this.N = N;
         this.arr = arr;
         sequence = new ArrayList<>();
@@ -46,11 +46,11 @@ class 가장긴증가하는부분수열2_12015 {
     }
 }
 
-class MainA12015{
+class MainA12015_LowerBound {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int N = Integer.parseInt(br.readLine());
         int[] arr = InputProcessor.strToIntArr(br.readLine());
-        System.out.println(new 가장긴증가하는부분수열2_12015(N, arr).solve());
+        System.out.println(new 가장긴증가하는부분수열2_12015_LowerBound(N, arr).solve());
     }
 }

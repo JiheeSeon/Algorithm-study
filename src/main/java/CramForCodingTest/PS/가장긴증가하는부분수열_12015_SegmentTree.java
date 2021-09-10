@@ -7,11 +7,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
-class 가장긴증가하는부분수열_12015_segmentTree {
+class 가장긴증가하는부분수열_12015_SegmentTree {
     int N, H;
     int[] arr, tree;
+
     Pair12015[] pairs;
-    public 가장긴증가하는부분수열_12015_segmentTree(int n, int[] arr) {
+
+    public 가장긴증가하는부분수열_12015_SegmentTree(int n, int[] arr) {
         N = n;
         this.arr = arr;
 
@@ -72,12 +74,12 @@ class Pair12015 implements Comparable<Pair12015>{
     }
 }
 
-class MainA12015_2{
+class MainA12015_SegmentTree {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int N = Integer.parseInt(br.readLine());
         int[] arr = InputProcessor.strToIntArr(br.readLine());
-        System.out.println(new 가장긴증가하는부분수열_12015_segmentTree(N, arr).solve());
+        System.out.println(new 가장긴증가하는부분수열_12015_SegmentTree(N, arr).solve());
     }
 }
 

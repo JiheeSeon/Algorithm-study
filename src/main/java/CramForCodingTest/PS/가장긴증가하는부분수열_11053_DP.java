@@ -6,11 +6,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-class 가장긴증가하는부분수열2_12015_DP {
+class 가장긴증가하는부분수열_11053_DP {
     int N;
     int[] arr;
 
-    public 가장긴증가하는부분수열2_12015_DP(int n, int[] arr) {
+    public 가장긴증가하는부분수열_11053_DP(int n, int[] arr) {
         N = n;
         this.arr = arr;
     }
@@ -34,12 +34,12 @@ class 가장긴증가하는부분수열2_12015_DP {
     }
 }
 
-class MainA12015_DP{
+class MainA11053_DP {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int N = Integer.parseInt(br.readLine());
         int[] arr = InputProcessor.strToIntArr(br.readLine());
 
-        System.out.println(new 가장긴증가하는부분수열2_12015_DP(N, arr).solve());
+        System.out.println(new 가장긴증가하는부분수열_11053_DP(N, arr).solve());
     }
 }
