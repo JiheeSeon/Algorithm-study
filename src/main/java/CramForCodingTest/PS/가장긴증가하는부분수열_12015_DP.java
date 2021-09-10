@@ -20,14 +20,13 @@ class 가장긴증가하는부분수열2_12015_DP {
         int max = 0;
 
         for (int i = 0; i < N; i++) {
-            if(dp[i] == 0) dp[i] = 1;
+            if(dp[i] == 0) dp[i] = 1; // 초기화
 
             for (int j = 0; j < i; j++) {
-                if(arr[i] > arr[j]) {
+                if(arr[i] > arr[j]) { // 내가 j를 마지막으로 하는 수열에 들어갈 수 있는 경우
                     if (dp[i] < dp[j] + 1) dp[i] = dp[j] + 1;
                 }
             }
-
             max = Math.max(max, dp[i]);
         }
 
