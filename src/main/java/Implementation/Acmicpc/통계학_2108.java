@@ -65,3 +65,91 @@ class MainA2108{
         System.out.println(stb);
     }
 }
+
+// Reference https://blog.naver.com/jihogrammer/222281999239
+class MainA2108_Other {
+
+    private static final int MEAN = 0, MEDIAN = 1, MODE = 2, RANGE = 3, MAX = 4000;
+
+    public static void main(String[] args) throws Exception {
+
+        int N = read(13); // Fixed Odd Number
+        int[] number = new int[(MAX << 1) + 1]; // 0 ~ 8001 -> -4000 ~ 4000
+        int[] result = new int[4]; // MEAN = 0, MEDIAN = 1, MODE = 2, RANGE = 3
+
+        int sum = 0;
+        int min = MAX;
+        int max = ~MAX;
+
+        for (int i = 0; i < N; i++) {
+
+            // Optimization
+            int num = read(13);
+
+            // MEAN
+            sum += num;
+
+            // RANGE
+            if (min > num) min = num;
+            if (max < num) max = num;
+
+            // Count
+            num += MAX;
+            number[num]++;
+
+            // MODE
+            if (result[MODE] < number[num])
+                result[MODE] = number[num];
+
+        }
+
+        // Get Values
+        double flag = sum > 0 ? 0.5 : -0.5;
+        result[MEAN]  = (int) ((double) sum / N + flag);
+        result[RANGE] = max - min;
+        getValues(number, result, N/2);
+
+        // Print Result
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 4; i++) sb.append(result[i]).append('\n');
+        System.out.print(sb);
+    }
+
+    private static void getValues(int[] number, int[] result, int mid) {
+        int len  = MAX << 1;
+        int mode = result[MODE];
+        int cnt  = 0;
+        int modeFlag = 0;
+        boolean medianFlag = true;
+
+        for (int i = 0; i <= len; i++) {
+            if (number[i] < 1) continue;
+
+            if (medianFlag && (cnt += number[i]) > mid) {
+                medianFlag = false;
+                result[MEDIAN] = i - MAX;
+            }
+
+            if (modeFlag < 2 && number[i] == mode) {
+                modeFlag++;
+                result[MODE] = i - MAX;
+            }
+
+            if (!medianFlag && modeFlag > 1) break;
+
+        }
+    }
+
+    private static int read(int flag) throws Exception {
+        int c, N = System.in.read() - 48;
+
+        if (N + 48 == '-') {
+            N = 0;
+            while ((c = System.in.read()) > flag) N = 10 * N - c + 48;
+        } else
+            while ((c = System.in.read()) > flag) N = 10 * N + c - 48;
+
+        return N;
+
+    }
+}
