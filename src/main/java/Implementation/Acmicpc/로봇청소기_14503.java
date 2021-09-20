@@ -94,22 +94,30 @@ class MainA14503{
             if(start[nowY][nowX][DIRECTION] == -1) nextD = (nowD + 3) % 4;
             else nextD = start[nowY][nowX][DIRECTION];
 
-            while(loopN++ < start[nowY][nowX][REMAINED_LOOP]){
-                start[nowY][nowX][REMAINED_LOOP] -= 1;
+            System.out.println("start[nowY][nowX][REMAINED_LOOP] = " + start[nowY][nowX][REMAINED_LOOP]);
 
+            while(loopN++ < start[nowY][nowX][REMAINED_LOOP]){
+                System.out.println("loopN = " + loopN + " vs "+ start[nowY][nowX][REMAINED_LOOP]);
+                System.out.println("nextD = " + nextD);
                 if(nextD > 4) continue;
 
                 nextY = nowY + deltaD[nextD][0];
                 nextX = nowX + deltaD[nextD][1];
 
+                if(visited[nextY][nextX] == CLEANED) continue;
+
+                System.out.println("nextY = " + nextY + ", nextX = " + nextX);
+
                 if(0 <= nextY && nextY < yHeight && 0 <= nextX && nextX < xWidth && visited[nextY][nextX] == UNCLEANED){
                     start[nowY][nowX][DIRECTION] = (nextD + 3) % 4;
+
                     System.out.println("phase 2. nowD = " + nowD + ", nowY = " + nowY + ", nowX = " + nowX
                             + " , start[" + nowY + "]["+ nowX + "]" +"["+ DIRECTION + "] >> " +  start[nowY][nowX][DIRECTION]
                             + " , start[" + nowY + "]["+ nowX + "]" +"["+ REMAINED_LOOP + "] >> " +  start[nowY][nowX][REMAINED_LOOP]  + "\n");
 
                     nowD = nextD; nowY = nextY; nowX = nextX;
 
+                    start[nowY][nowX][REMAINED_LOOP] -= loopN;
                     ISCLEANABLE = true;
                     break;
                 }
@@ -122,6 +130,7 @@ class MainA14503{
                 if(start[nowY][nowX][DIRECTION] == CANNOT_GO_TO_BACKWARD) break;
 
                 start[nowY][nowX][DIRECTION] = CANNOT_CLEAN;
+                start[nowY][nowX][REMAINED_LOOP] = 0;
 
                 nextD = nowD < 2 ? (nowD + 2) % 4 : nowD - 2;
                 nextY = nowY + deltaD[nextD][0];
