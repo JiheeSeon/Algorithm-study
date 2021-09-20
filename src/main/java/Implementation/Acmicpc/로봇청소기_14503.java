@@ -5,14 +5,11 @@ import Util.InputProcessor;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 
 /*
 문제
 로봇 청소기가 주어졌을 때, 청소하는 영역의 개수를 구하는 프로그램을 작성하시오.
-
-로봇 청소기가 있는 장소는 N×M 크기의 직사각형으로 나타낼 수 있으며, 1×1크기의 정사각형 칸으로 나누어져 있다.
-각각의 칸은 벽 또는 빈 칸이다. 청소기는 바라보는 방향이 있으며, 이 방향은 동, 서, 남, 북중 하나이다.
-지도의 각 칸은 (r, c)로 나타낼 수 있고, r은 북쪽으로부터 떨어진 칸의 개수, c는 서쪽으로 부터 떨어진 칸의 개수이다.
 
 N -> yHeight (세로 길이)    M -> xWidth(가로 길이)
 r -> y                     c -> x
@@ -28,6 +25,7 @@ r -> y                     c -> x
 * 로봇 청소기는 이미 청소되어있는 칸을 또 청소하지 않으며, 벽을 통과할 수 없다.
 
 문제 분석
+
 int[][] visited = input으로 받아온 이중배열
 int[][] directions = {{-1, 0}, {1, 0}, {1, 0}, {-1, 0}} // 북 0 -> 동 1 -> 남 2 -> 서 3
 
@@ -60,18 +58,20 @@ class MainA14503{
         int[][] deltaD = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}}; // 북 0 -> 동 1 -> 남 2 -> 서 3
 
         int[][] visited = new int[yHeight][xWidth];
-        for (int y = 0; y < yHeight; y++)
-            visited[y] = InputProcessor.strToIntArr(br.readLine());
+        for (int y = 0; y < yHeight; y++) visited[y] = InputProcessor.strToIntArr(br.readLine());
 
-        int[][] start = new int[yHeight][xWidth];
+
+        final int DIRECTION = 0;
+        final int REMAINED_LOOP = 1;
+        int[][][] start = new int[yHeight][xWidth][2];
         for (int y = 0; y < yHeight; y++) {
             for (int x = 0; x < xWidth; x++) {
-                if(visited[y][x] == 1) start[y][x] = 5;
-                else start[y][x] = 1;
+                if(visited[y][x] == 1) start[y][x] = new int[]{CANNOT_CLEAN, 0};
+                else start[y][x] = new int[]{-1, 4};
             }
         }
 
-        int cnt = 0;
+        int cnt = 0; int loopN;
         int nextD, nextY, nextX;
 
         boolean ISCLEANABLE = true;
@@ -79,55 +79,63 @@ class MainA14503{
         while(true){
             // 2번
 //            if(CLEANABLE && visited[nowY][nowX] == CLEANED) break;
-//            System.out.println("phase 1. NOW (" + nowD + ", " + nowY + ", "+ nowX + ")" + " -> " + start[nowY][nowX] + ", " + (cnt + 1));
-            if(start[nowY][nowX] == 6) break;
+            System.out.println("phase 1. NOW (" + nowD + ", " + nowY + ", "+ nowX + ")" + " -> " + Arrays.toString(start[nowY][nowX]) + ", " + (cnt + 1));
+            if(start[nowY][nowX][DIRECTION] == CANNOT_GO_TO_BACKWARD) break;
 
             if(ISCLEANABLE && visited[nowY][nowX] == UNCLEANED){
-//                System.out.println("( + " + nowY + ", " + nowX + ")" + visited[nowY][nowX]);
+                System.out.println("CLEANING (" + nowY + ", " + nowX + ") " + visited[nowY][nowX]);
                 visited[nowY][nowX] = CLEANED;
                 cnt++;
             }
 
             ISCLEANABLE = false;
+            loopN = 0;
 
-            for(int i = start[nowY][nowX]; i <= 4; i++){
-                nextD = nowD < i ? (nowD - i + 4) % 4 : nowD - i;
+            if(start[nowY][nowX][DIRECTION] == -1) nextD = (nowD + 3) % 4;
+            else nextD = start[nowY][nowX][DIRECTION];
+
+            while(loopN++ < start[nowY][nowX][REMAINED_LOOP]){
+                start[nowY][nowX][REMAINED_LOOP] -= 1;
+
+                if(nextD > 4) continue;
+
                 nextY = nowY + deltaD[nextD][0];
                 nextX = nowX + deltaD[nextD][1];
 
-//                System.out.println("Inside for loop. (" + nextD + ", " + nextY + ", " + nextX + ")" + " -> " + (0 <= nextY && nextY < yHeight && 0 <= nextX && nextX < xWidth ? visited[nextY][nextX] : "Out of bounds"));
-
                 if(0 <= nextY && nextY < yHeight && 0 <= nextX && nextX < xWidth && visited[nextY][nextX] == UNCLEANED){
-                    start[nowY][nowX] = i + 1;
+                    start[nowY][nowX][DIRECTION] = (nextD + 3) % 4;
+                    System.out.println("phase 2. nowD = " + nowD + ", nowY = " + nowY + ", nowX = " + nowX
+                            + " , start[" + nowY + "]["+ nowX + "]" +"["+ DIRECTION + "] >> " +  start[nowY][nowX][DIRECTION]
+                            + " , start[" + nowY + "]["+ nowX + "]" +"["+ REMAINED_LOOP + "] >> " +  start[nowY][nowX][REMAINED_LOOP]  + "\n");
 
                     nowD = nextD; nowY = nextY; nowX = nextX;
-//                    System.out.println("phase 2. nextD = " + nowD + " nextY = " + nowY + " nextX = " + nowX +"\n");
+
                     ISCLEANABLE = true;
                     break;
                 }
+
+                nextD = (nextD + 3) % 4;
             }
 
-
             if (!ISCLEANABLE) {
-                // 위에서 break가 안되었으면 == 어디든 청소 불가능했다는 의미
-                if(start[nowY][nowX] == 6) break;
+                // 위에서 break가 안되었으면 == 어디든 청소 불가능했다는 의미 or 이미 청소 안된 걸 배열을 통해 확인한 경우
+                if(start[nowY][nowX][DIRECTION] == CANNOT_GO_TO_BACKWARD) break;
 
-                start[nowY][nowX] = 5;
+                start[nowY][nowX][DIRECTION] = CANNOT_CLEAN;
 
                 nextD = nowD < 2 ? (nowD + 2) % 4 : nowD - 2;
                 nextY = nowY + deltaD[nextD][0];
                 nextX = nowX + deltaD[nextD][1];
 
                 if(nextY < 0 || nextX < 0 || nextY >= yHeight || nextX >= xWidth
-                        || visited[nextY][nextX] == WALL || start[nextY][nextX] == CANNOT_GO_TO_BACKWARD){
-                    start[nowY][nowX] = 6;
+                        || visited[nextY][nextX] == WALL || start[nextY][nextX][0] == CANNOT_GO_TO_BACKWARD){
+                    start[nowY][nowX][0] = CANNOT_GO_TO_BACKWARD;
                     break;
                 }
 
                 nowY = nextY; nowX = nextX;
-                ISCLEANABLE = false;
-//                System.out.println("phase 2.1. nextD = " + nowD + " nextY = " + nowY + " nextX = " + nowX);
-//                System.out.println();
+                System.out.println("phase 2.1. nextD = " + nowD + " nextY = " + nowY + " nextX = " + nowX);
+                System.out.println();
             }
         }
 
@@ -165,7 +173,7 @@ class MainA14503{
 6  [1] [0] (14)(13)(10)(9) [0] [1] [0] [1]
 7  [1] (16)(15)(2) (1) (8) [1] [1] [0] [1]
 8  [1] (17)(18)(3) (4) (7) [1] [1] [0] [1]
-9  [1] (21)(19)(20)(5) (6) [0] [0] [0] [1]
+9  [1] [0](19)(20)(5) (6) [0] [0] [0] [1]
 10 [1] [1] [1] [1] [1] [1] [1] [1] [1] [1]
 
 왜 21이 아니지?
