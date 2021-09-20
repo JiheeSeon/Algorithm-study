@@ -5,7 +5,6 @@ import Util.InputProcessor;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 
 /*
 문제
@@ -52,6 +51,9 @@ class MainA14503{
         final int WALL = 1;
         final int CLEANED = 2;
 
+        final int CANNOT_CLEAN = 5;
+        final int CANNOT_GO_TO_BACKWARD = 6;
+
         int[] yxd = InputProcessor.strToIntArr(br.readLine());
         int nowY = yxd[0]; int nowX = yxd[1]; int nowD = yxd[2];
 
@@ -77,11 +79,8 @@ class MainA14503{
         while(true){
             // 2번
 //            if(CLEANABLE && visited[nowY][nowX] == CLEANED) break;
-            System.out.println("phase 1. NOW (" + nowD + ", " + nowY + ", "+ nowX + ")" + " -> " + start[nowY][nowX] + ", " + (cnt + 1));
+//            System.out.println("phase 1. NOW (" + nowD + ", " + nowY + ", "+ nowX + ")" + " -> " + start[nowY][nowX] + ", " + (cnt + 1));
             if(start[nowY][nowX] == 6) break;
-
-            for(int y = 0; y < yHeight; y++)
-                System.out.println(Arrays.toString(start[y]));
 
             if(ISCLEANABLE && visited[nowY][nowX] == UNCLEANED){
 //                System.out.println("( + " + nowY + ", " + nowX + ")" + visited[nowY][nowX]);
@@ -96,37 +95,39 @@ class MainA14503{
                 nextY = nowY + deltaD[nextD][0];
                 nextX = nowX + deltaD[nextD][1];
 
-                System.out.println("Inside for loop. (" + nextD + ", " + nextY + ", " + nextX + ")" + " -> " + (0 <= nextY && nextY < yHeight && 0 <= nextX && nextX < xWidth ? visited[nextY][nextX] : "Out of bounds"));
+//                System.out.println("Inside for loop. (" + nextD + ", " + nextY + ", " + nextX + ")" + " -> " + (0 <= nextY && nextY < yHeight && 0 <= nextX && nextX < xWidth ? visited[nextY][nextX] : "Out of bounds"));
 
                 if(0 <= nextY && nextY < yHeight && 0 <= nextX && nextX < xWidth && visited[nextY][nextX] == UNCLEANED){
                     start[nowY][nowX] = i + 1;
 
                     nowD = nextD; nowY = nextY; nowX = nextX;
-                    System.out.println("phase 2. nextD = " + nowD + " nextY = " + nowY + " nextX = " + nowX);
-
+//                    System.out.println("phase 2. nextD = " + nowD + " nextY = " + nowY + " nextX = " + nowX +"\n");
                     ISCLEANABLE = true;
-                    System.out.println();
                     break;
                 }
             }
 
+
             if (!ISCLEANABLE) {
                 // 위에서 break가 안되었으면 == 어디든 청소 불가능했다는 의미
+                if(start[nowY][nowX] == 6) break;
+
                 start[nowY][nowX] = 5;
 
                 nextD = nowD < 2 ? (nowD + 2) % 4 : nowD - 2;
                 nextY = nowY + deltaD[nextD][0];
                 nextX = nowX + deltaD[nextD][1];
 
-                if(nextY < 0 || nextX < 0 || nextY >= yHeight || nextX >= xWidth || visited[nextY][nextX] == WALL || start[nextY][nextX] == 6){
+                if(nextY < 0 || nextX < 0 || nextY >= yHeight || nextX >= xWidth
+                        || visited[nextY][nextX] == WALL || start[nextY][nextX] == CANNOT_GO_TO_BACKWARD){
                     start[nowY][nowX] = 6;
                     break;
                 }
 
-                nowD = nextD; nowY = nextY; nowX = nextX;
+                nowY = nextY; nowX = nextX;
                 ISCLEANABLE = false;
-                System.out.println("phase 2.1. nextD = " + nowD + " nextY = " + nowY + " nextX = " + nowX);
-                System.out.println();
+//                System.out.println("phase 2.1. nextD = " + nowD + " nextY = " + nowY + " nextX = " + nowX);
+//                System.out.println();
             }
         }
 
@@ -168,6 +169,7 @@ class MainA14503{
 10 [1] [1] [1] [1] [1] [1] [1] [1] [1] [1]
 
 왜 21이 아니지?
+그리고 왜 계속 돌지? (무한 루프)
 
 57
 */
